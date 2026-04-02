@@ -17,16 +17,17 @@ from pymodab import find_root, find_default, get_evaluation_count
 
 # Find the root of cos(x) - x = 0 in [0, 1]
 root = find_root(lambda x: math.cos(x) - x, 0, 1, 1e-3, 1e-3, 10)
-print(f"Root: {root}")  # 0.7390851332151607
+print(f"Root: {root}")  # 0.7390851332086904
 
 # Get the number of function evaluations
 print(f"Evaluations: {get_evaluation_count()}")
-# Aproximation error
 print(f"Error:       {math.cos(root) - root}")
 
 # Using default tolerances
 root = find_root(lambda x: x**2 - 2, 1, 2)
-print(f"sqrt(2) = {root}")  # 1.4142135623730951
+print(f"sqrt(2) = {root}")  # 1.414213562373095
+
+# Get the number of function evaluations
 print(f"Evaluations: {get_evaluation_count()}")
 print(f"Error:       {root**2 - 2}")
 ```
