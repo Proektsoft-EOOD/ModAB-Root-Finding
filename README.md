@@ -32,12 +32,12 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Implementations in other software/libraries
 
-Calcpad - 					https://www.proektsoft.bg/bg/catalog/221.html   - C#
-Root-Fortran - 				https://github.com/jacobwilliams/roots-fortran	- Fortran
-ROOT.CERN - 				https://github.com/root-project/root			- C++
-SCiML/NonlinearSolve.jl - 	https://github.com/SciML/NonlinearSolve.jl		- Julia
-JuliaMath/Roots.jl -		https://github.com/JuliaMath/Roots.jl			- Julia
-MultiFloats.jl - 			https://github.com/dzhang314/MultiFloats.jl		- Julia
+Calcpad - 					https://www.proektsoft.bg/bg/catalog/221.html   - C#  
+Root-Fortran - 				https://github.com/jacobwilliams/roots-fortran	- Fortran  
+ROOT.CERN - 				https://github.com/root-project/root			- C++  
+SCiML/NonlinearSolve.jl - 	https://github.com/SciML/NonlinearSolve.jl		- Julia  
+JuliaMath/Roots.jl -		https://github.com/JuliaMath/Roots.jl			- Julia  
+MultiFloats.jl - 			https://github.com/dzhang314/MultiFloats.jl		- Julia  
 
 ## References
 
