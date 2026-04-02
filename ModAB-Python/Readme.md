@@ -1,15 +1,15 @@
-# PyModAB
+## PyModAB root-finding library
 
-A fast and robust root-finding library using the Modified Anderson-Bjork method (Ganchovski, Traykov), written in C for Python.
+A fast and robust root-finding library for Python using the Modified Anderson-Bjork method (Ganchovski & Traykov, 2023), written in C.
+It finds the root of a single nonlinear equation `f(x) = 0` within the specified interval `[x1, x2]`.
 
-
-## Installation
+### Installation
 
 ```bash
 pip install pymodab
 ```
 
-## Usage
+### Usage
 
 ```python
 import math
@@ -27,9 +27,9 @@ print(f"sqrt(2) = {root}")  # 1.4142135623730951
 print(f"Evaluations: {get_evaluation_count()}")
 ```
 
-## API
+### API
 
-### `find_root(f, x1, x2, atol=1e-14, rtol=1e-14, max_iter=200)`
+#### `find_root(f, x1, x2, atol=1e-14, rtol=1e-14, max_iter=200)`
 
 Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
@@ -46,27 +46,36 @@ Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
 Convenience wrapper for `find_root` with default tolerances.
 
-### `get_evaluation_count()`
+#### `get_evaluation_count()`
 
 Returns the number of function evaluations from the last root-finding call.
 
-## Algorithm
+### Algorithm
 
 Modified Anderson-Björck's method is a new robust and efficient bracketing root-finding algorithm. It combines bisection with Anderson-Björk's method to achieve both fast performance and worst-case optimality.
 
-References:
+#### References:
 
-Ganchovski N.; Traykov A. Modified Anderson-Björck's method for solving non-linear equations in structural mechanics. IOP Conference Series: Materials Science and Engineering 2023, 1276 (1) 012010, IOP Publishing. 
+Ganchovski N.; Traykov A. Modified Anderson-Björck's method for solving non-linear equations in structural mechanics. IOP Conference Series: Materials Science and Engineering 2023, 1276 (1) 012010, IOP Publishing.  
 https://iopscience.iop.org/article/10.1088/1757-899X/1276/1/012010/pdf
 
-Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. Improvements of the Modified Anderson-Björck (modAB) Root-Finding Algorithm. Preprints 2026, 2026032190.
+Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. Improvements of the Modified Anderson-Björck (modAB) Root-Finding Algorithm. Preprints 2026, 2026032190.  
 https://www.preprints.org/manuscript/202603.2190
 
-## License
+### License
 
 MIT License
 
 ### Benchmark results
+
+The modAB algorithm is benchmarked against the available algorithms in Python/SciPy in respect to number of evaluations and execution times:
+* `bisect`- Bisection method
+* `brentq` - Brent’s method (van Wijngaarden–Dekker–Brent, 1973)
+* `brenth` - Brent–Dekker variant (hyperbolic extrapolation variant, 1975)
+* `ridder` - Ridder’s method (1979)
+* `toms748` - Alefeld–Potra–Shi method (1995 - TOMS Algorithm 748)
+* `chandr` - Chandrupatla's method (1997) - `scipy.optimize.elementwise.find_root`
+* `modAB` - Modified Anderson Bjork's method (Ganchovski & Traykov, 2023)
 
 #### Function evaluations
 
@@ -90,10 +99,11 @@ MEDIAN|  13.8022|   4.5878|   4.3595|   5.6256| 306.4098|   1.2803|
    MAX|  21.8886|  36.7684|  50.2981|  54.4431|1542.8365|   4.3991|
 FACTOR|   8.700x|   5.477x|   5.503x|   6.329x| 334.189x|   1.000x|
 
-Notes:
-Run on: 02.04.2026
-Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM
-Windows 11 Home
-numpy Version: 2.4.4
-scipy Version: 1.17.1
-pymodab Version: 1.0.0
+#### Notes:
+
+Last Run on: 02.04.2026  
+Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
+Windows 11 Home  
+numpy Version: 2.4.4  
+scipy Version: 1.17.1  
+pymodab Version: 1.0.0  
