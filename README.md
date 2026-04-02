@@ -28,7 +28,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 ## License
 
-MIT License - see [LICENSE](C/LICENSE) for details.
+MIT License - see the [LICENSE](C/LICENSE) file for details.
 
 ## Implementations in other software/libraries
 
