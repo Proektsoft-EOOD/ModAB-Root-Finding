@@ -1,11 +1,13 @@
 Detailed Benchmark Results
 ===
-Run on: 02.04.2026  
-Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
-Windows 11 Home  
-numpy Version: 2.4.4  
-scipy Version: 1.17.1  
-pymodab Version: 1.0.0  
+The modAB algorithm is benchmarked against the available algorithms in Python/SciPy in respect to number of evaluations and execution times:
+* `bisect`- Bisection method
+* `brentq` - Brent’s method (van Wijngaarden–Dekker–Brent, 1973)
+* `brenth` - Brent–Dekker variant (hyperbolic extrapolation variant, 1975)
+* `ridder` - Ridder’s method (1979)
+* `toms748` - Alefeld–Potra–Shi method (1995 - TOMS Algorithm 748)
+* `chandr` - Chandrupatla's method (1997) - `scipy.optimize.elementwise.find_root`
+* `modAB` - Modified Anderson Bjork's method (Ganchovski & Traykov, 2023)
 
 Calculated root values
 ====
@@ -404,5 +406,14 @@ Func|   bisect|   brentq|   brenth|   ridder|   chandr|    modAB|
    AVG|  13.7641|   8.6654|   8.7063|  10.0124| 528.6913|   1.5820|
 MEDIAN|  13.8022|   4.5878|   4.3595|   5.6256| 306.4098|   1.2803|
    MIN|   1.4287|   1.7302|   1.6219|   1.3884|  72.9172|   0.6143|
-   MAX|  21.8886|  36.7684|  50.2981|  54.4431| 1542.8365|   4.3991|
+   MAX|  21.8886|  36.7684|  50.2981|  54.4431|1542.8365|   4.3991|
 FACTOR|   8.700x|   5.477x|   5.503x|   6.329x| 334.189x|   1.000x|
+
+Notes:
+====
+Last Run on: 02.04.2026  
+Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
+Windows 11 Home  
+numpy Version: 2.4.4  
+scipy Version: 1.17.1  
+pymodab Version: 1.0.0  
