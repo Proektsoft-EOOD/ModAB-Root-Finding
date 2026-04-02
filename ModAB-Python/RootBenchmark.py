@@ -257,7 +257,7 @@ def run():
     print("===")
     header = f"{'Func':>4}| " + "| ".join(f"{name:>{col_w}}" for name, _ in solvers)
     print(header)
-    print("-- | -- | -- | -- | -- | -- |")
+    print("------ | ------: | ------: | ------: | ------: | ------: | ------: |")
     for p in all_problems:
         line = f"{p.name:>4}| "
         for name, solver in solvers:
@@ -274,7 +274,7 @@ def run():
     print("===")
     header = f"{'Func':>4}| " + "| ".join(f"{name:>{col_w}}" for name, _ in solvers)
     print(header)
-    print("-- | -- | -- | -- | -- | -- |")
+    print("------ | ------: | ------: | ------: | ------: | ------: | ------: |")
     fval_data = []
     for p in all_problems:
         line = f"{p.name:>4}| "
@@ -297,7 +297,7 @@ def run():
     print("===")
     header = f"{'Func':>4}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers)
     print(header)
-    print("-- | -- | -- | -- | -- | -- |")
+    print("------ | ------: | ------: | ------: | ------: | ------: | ------: |")
     count_data = []
     totals = [0] * len(solvers)
     for p in all_problems:
