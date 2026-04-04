@@ -5,6 +5,7 @@ const std = @import("std");
 /// using the modified Anderson-Bjork method (Ganchovski, Traykov).
 /// `F(x)` must be continuous and sign(F(x1) - y0) ≠ sign(F(x2) - y0).
 /// Returns the root if found, or NaN on failure (e.g., max iterations exceeded or invalid bracket).
+/// Zig translation developed by @Ramsyana (https://github.com/ramsyana/Zig-Math-Algorithms)
 pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, precision: f64) f64 {
     var x1 = @min(x1_, x2_);
     var x2 = @max(x1_, x2_);
