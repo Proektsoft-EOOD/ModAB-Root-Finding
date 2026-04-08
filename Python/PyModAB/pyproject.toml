@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymodab"
-version = "1.0.1"
+version = "1.0.2"
 description = "Fast and robust root-finding library using the Modified Anderson-Bjork method"
 readme = "README.md"
 license = "MIT"
@@ -32,8 +32,8 @@ classifiers = [
 requires-python = ">=3.8"
 
 [project.urls]
-Homepage = "https://github.com/ModAB-Root-Finding/ModAB-Python"
-Repository = "https://github.com/ModAB-Root-Finding/ModAB-Python"
+Homepage = "https://github.com/Just-A-Random-Geek/ModAB-Root-Finding/tree/main/Python/PyModAB"
+Repository = "https://github.com/Just-A-Random-Geek/ModAB-Root-Finding/tree/main/Python/PyModAB"
 
 [tool.setuptools.packages.find]
 where = ["src"]
