@@ -1,4 +1,4 @@
-#include <math.h>
+		#include <math.h>
 #include <stdbool.h>
 
 // Cross-platform export macro
@@ -51,13 +51,14 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
 
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? 0.5 * (x1 + x2) : (x1 * y2 - y1 * x2) / (y2 - y1);
-        double y3;
         // Check for x-convergence
         double eps = aTol + rTol * fabs(x3);
         if (x2 - x1 <= eps) {
             evaluation_count = i + 1; // Saves one function evaluation if satisfied
             return x3;
         }
+        
+        double y3;
         if (bisection) {
             y3 = f(x3);
             double ym = 0.5 * (y1 + y2);

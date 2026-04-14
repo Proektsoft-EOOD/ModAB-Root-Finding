@@ -83,23 +83,23 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4411|     2548|     2512|     3158|     1873|     1758|
+   SUM|     4411|     2548|     2512|     3158|     1873|     1723|
    AVG|       48|       28|       27|       34|       20|       19|
 MEDIAN|       49|       12|       12|       16|       12|       12|
    MIN|        3|        4|        4|        4|        3|        3|
-   MAX|       53|      102|      102|      202|       58|       56|
-FACTOR|   2.509x|   1.449x|   1.429x|   1.796x|   1.065x|   1.000x|
+   MAX|       53|      102|      102|      202|       58|       55|
+FACTOR|   2.560x|   1.479x|   1.458x|   1.833x|   1.087x|   1.000x|
 
 #### Execution times  (ms per problem, 100 iterations)
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1266.30|   797.21|   800.98|   921.14| 48639.60|   145.55|
-   AVG|  13.7641|   8.6654|   8.7063|  10.0124| 528.6913|   1.5820|
-MEDIAN|  13.8022|   4.5878|   4.3595|   5.6256| 306.4098|   1.2803|
-   MIN|   1.4287|   1.7302|   1.6219|   1.3884|  72.9172|   0.6143|
-   MAX|  21.8886|  36.7684|  50.2981|  54.4431|1542.8365|   4.3991|
-FACTOR|   8.700x|   5.477x|   5.503x|   6.329x| 334.189x|   1.000x|
+   SUM|  2842.38|  2077.80|  1464.31|  1854.27| 100429.98|   287.89|
+   AVG|  30.8954|  22.5848|  15.9164|  20.1551| 1091.6302|   3.1293|
+MEDIAN|  29.4968|   9.9226|   9.2430|  11.4640| 702.8896|   2.7059|
+   MIN|   4.4171|   4.0385|   3.7629|   2.3574| 173.5578|   1.1338|
+   MAX|  60.1204| 292.9884|  81.5352| 141.5226| 3600.9297|   9.2801|
+FACTOR|   9.873x|   7.217x|   5.086x|   6.441x| 348.847x|   1.000x|
 
 #### Notes:
 
@@ -108,7 +108,7 @@ Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM
 Windows 11 Home  
 numpy Version: 2.4.4  
 scipy Version: 1.17.1  
-pymodab Version: 1.0.1  
+pymodab Version: 1.0.3  
 
 The complete source code to reproduce the above benchmarks is available in [RootBenchmark.py](RootBenchmark.py).  
 Detailed benchmark results are listed in [BenchmarkResults.md](BenchmarkResults.md).  

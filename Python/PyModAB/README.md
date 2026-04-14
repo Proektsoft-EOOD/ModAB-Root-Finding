@@ -105,4 +105,4 @@ Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM
 Windows 11 Home  
 numpy Version: 2.4.4  
 scipy Version: 1.17.1  
-pymodab Version: 1.0.1
+pymodab Version: 1.0.3
