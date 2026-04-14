@@ -15,17 +15,25 @@
             var bisection = true; // Initialize the method to bisection
             var side = 0; // Store the side that moved last: -1 for left, 1 for right, 0 for none
             var threshold = p2.X - p1.X; // Threshold to reset to bisection
-            const double C = 16; // Safety factor of 4 iteration behind the threshold
+            const double C = 16; // Safety factor of 4 iterations behind the threshold
             for (int i = 1; i <= MaxIterations; ++i)
             {
+                var x3 = bisection ? Node.Mid(p1, p2) : Node.Sec(p1, p2);
+                // Check for X-convergence and return the result
+                var eps2 = aTol + rTol * Math.Abs(x3);
+                if (p2.X - p1.X <= eps2)
+                {
+                    EvaluationCount = i + 1;
+                    return x3;
+                }
                 Node p3;
                 if (bisection)
                 {
-                    p3 = new Node(Node.Mid(p1, p2), F);
+                    p3 = new Node(x3, F);
                     double y1 = p1.Y, y2 = p2.Y;
-                    var ym = (y1 + y2) / 2.0;
+                    var ym = 0.5 * (y1 + y2);
                     var r = 1 - Math.Abs(ym / (y2 - y1)); // Symmetry factor
-                    var k = r * r; // Deviation factor
+                    var k = r * r; // Deviation factor - quadratic
                     // Check if function is close enough to straight line and switch to false-position
                     if (Math.Abs(ym - p3.Y) < k * (Math.Abs(p3.Y) + Math.Abs(ym)))
                     {
@@ -35,7 +43,6 @@
                 }
                 else
                 {
-                    var x3 = Node.Sec(p1, p2);
                     // Clamp the secant point to the interval [p1.X, p2.X]
                     // Otherwise, for very flat functions where p1.Y and p2.Y are close
                     // floating-point round-off errors can shoot the point outside the interval
@@ -46,24 +53,20 @@
                     else
                         p3 = new Node(x3, F); // Evaluate only if not clamped
 
-                    threshold /= 2.0;
+                    threshold *= 0.5;
                 }
-                // Check for convergence and return the result
-                var eps2 = aTol + rTol * Math.Abs(p3.X);
-                if (p3.Y == 0 || p2.X - p1.X <= eps2)
+                // Check for Y-convergence and return the result
+                if (p3.Y == 0)
                 {
                     EvaluationCount = i + 2;
-                    return p3.X;
+                    return x3;
                 }
                 if (Math.Sign(p1.Y) == Math.Sign(p3.Y))
                 {
                     if (side == 1) // Apply Anderson-Bjork correction to the right side
                     {
                         var m = 1 - p3.Y / p1.Y;
-                        if (m <= 0)
-                            p2.Y /= 2;
-                        else
-                            p2.Y *= m;
+                        p2.Y *= m <= 0 ? 0.5 : m;
                     }
                     else if (!bisection)
                         side = 1;
@@ -75,10 +78,7 @@
                     if (side == -1) // Apply Anderson-Bjork correction to the left side
                     {
                         var m = 1 - p3.Y / p2.Y;
-                        if (m <= 0)
-                            p1.Y /= 2;
-                        else
-                            p1.Y *= m;
+                        p1.Y *= m <= 0 ? 0.5 : m;
                     }
                     else if (!bisection)
                         side = -1;

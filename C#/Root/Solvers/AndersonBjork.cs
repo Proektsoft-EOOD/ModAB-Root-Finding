@@ -21,23 +21,26 @@
             var x0 = p1.X;
             for (int i = 1; i <= MaxIterations; ++i)
             {
-                Node p3 = new(Node.Sec(p1, p2), F);
-                var eps = (aTol + rTol * Math.Abs(p3.X)) / 2.0;
-                if (p3.Y == 0 || Math.Abs(p3.X - x0) <= eps)
+                var x3 = Node.Sec(p1, p2);
+                var eps = (aTol + rTol * Math.Abs(x3)) / 2.0;
+                if (Math.Abs(x3 - x0) <= eps)
+                {
+                    EvaluationCount = i + 1;
+                    return x3;
+                }
+                x0 = x3;
+                Node p3 = new(x3, F);
+                if (p3.Y == 0)
                 {
                     EvaluationCount = i + 2;
-                    return p3.X;
+                    return x3;
                 }
-                x0 = p3.X;
                 if (Math.Sign(p1.Y) == Math.Sign(p3.Y))
                 {
                     if (side == 1)
                     {
                         double m = 1 - p3.Y / p1.Y;
-                        if (m <= 0)
-                            p2.Y /= 2;
-                        else
-                            p2.Y *= m;
+                        p2.Y *= m <= 0 ? 0.5 : m;
                     }
                     else
                         side = 1;
@@ -49,10 +52,7 @@
                     if (side == -1)
                     {
                         double m = 1 - p3.Y / p2.Y;
-                        if (m <= 0)
-                            p1.Y /= 2;
-                        else
-                            p1.Y *= m;
+                        p1.Y *= m <= 0 ? 0.5 : m;
                     }
                     else
                         side = -1;

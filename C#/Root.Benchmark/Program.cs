@@ -1,2 +1,4 @@
 ﻿using Root.Benchmark;
-Benchmark.Run();
+using BenchmarkDotNet.Running;
+BenchmarkCount.Run();
+BenchmarkRunner.Run<BenchmarkTime>();

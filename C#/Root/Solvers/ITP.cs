@@ -23,28 +23,38 @@
             double eps2 = aTol + rTol * span;
             int nb = (int)Math.Ceiling(Math.Log2(span / eps2));
             int nmax = nb + n0;
-            double xb = Node.Mid(p1, p2);
             for (int i = 1; i <= MaxIterations; ++i)
             {
-                double xf = Node.Sec(p1, p2);
-                double σ = Math.Sign(xb - xf);
+                double xb = Node.Mid(p1, p2);
                 span = p2.X - p1.X;
-                double δ = Math.Min(k1 * Math.Pow(span, k2), Math.Abs(xb - xf));
-                double xt = xf + σ * δ;
-                double rho = Math.Max(0, Math.Min(eps2 * Math.Pow(2d, nmax - i) - span / 2d, Math.Abs(xt - xb)));
-                xt = xb - σ * rho;
-                Node p = new(xt, F);
-                if (Math.Sign(p1.Y) == Math.Sign(p.Y))
+                if (span < aTol + rTol * span)
+                {
+                    EvaluationCount = i + 1;
+                    return xb;
+                }
+                // Interpolate
+                double xf = Node.Sec(p1, p2);
+                // Truncate
+                double σ = Math.Sign(xb - xf);
+                double δ = k1 * Math.Pow(span, k2);
+                double xt = δ <= Math.Abs(xb - xf) ? 
+                    xf + σ * δ : 
+                    xb;
+                // Project
+                double r = Math.Max(0, eps2 * Math.Pow(2, nmax - i) - span / 2);
+                double x = Math.Abs(xt - xb) <= r ?
+                    xt :
+                    xb - σ * r;
+                // Update
+                Node p = new(x, F);
+                if (Math.Sign(p.Y) == Math.Sign(p1.Y))
                     p1 = p;
-                else
+                else if (Math.Sign(p.Y) == Math.Sign(p2.Y))
                     p2 = p;
-
-                xb = Node.Mid(p1, p2);
-                double eps = aTol + rTol * Math.Abs(xb);
-                if (p.Y == 0 || p2.X - p1.X < eps)
+                else
                 {
                     EvaluationCount = i + 2;
-                    return xb;
+                    return x;
                 }
             }
             EvaluationCount = MaxIterations + 2;

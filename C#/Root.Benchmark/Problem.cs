@@ -4,9 +4,9 @@
     // to define a test problem for the numerical library
     internal struct Problem
     {
-        public string Name;
-        public Func<double, double> F;
-        public double a;
-        public double b;
+        internal string Name;
+        internal Func<double, double> F;
+        internal double a;
+        internal double b;
     }
 }

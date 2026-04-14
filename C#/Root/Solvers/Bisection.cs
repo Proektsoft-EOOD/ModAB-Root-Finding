@@ -15,16 +15,20 @@
 
             for (int i = 1; i <= MaxIterations; ++i)
             {
-                Node p3 = new(Node.Mid(p1, p2), F);
-                double d = p2.X - p1.X;
-                var eps2 = aTol + rTol * Math.Abs(p3.X);
-                if (p3.Y == 0.0 || d <= eps2)
+                var x3 = Node.Mid(p1, p2);
+                var eps2 = aTol + rTol * Math.Abs(x3);
+                // Check for X-convergence and return the result as a secant step
+                if (p2.X - p1.X <= eps2)
                 {
-                    if (d <= eps2)
-                        p3.X = Node.Sec(p1, p2);
-
+                    EvaluationCount = i + 1;
+                    return Node.Sec(p1, p2);
+                }
+                Node p3 = new(x3, F);
+                // Check for Y-convergence and return the result
+                if (p3.Y == 0.0)
+                {
                     EvaluationCount = i + 2;
-                    return p3.X;
+                    return x3;
                 }
                 if (Math.Sign(p1.Y) == Math.Sign(p3.Y))
                     p1 = p3;

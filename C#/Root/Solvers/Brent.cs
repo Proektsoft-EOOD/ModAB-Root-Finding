@@ -35,7 +35,7 @@
                 var eps = (aTol + rTol * Math.Abs(p2.X)) / 2.0;
                 if (p2.Y == 0.0|| Math.Abs(xm) <= eps)  //Convergence check.
                 {
-                    EvaluationCount = i + 2;
+                    EvaluationCount = i + 1;
                     return p2.X;
                 }
                 if (Math.Abs(e) >= eps && Math.Abs(p1.Y) > Math.Abs(p2.Y))

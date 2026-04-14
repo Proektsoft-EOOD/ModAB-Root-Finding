@@ -14,9 +14,12 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     # calculate k on each bisection step with account for local function properties and symmetry
     for i in 1:maxIter
-        local x3, y3
+        local x3 = bisection ? (x1 + x2) / 2 : (x1 * y2 - y1 * x2) / (y2 - y1)
+        if x2 - x1 <= epsx # x-convergence check
+            return x3
+        end
+        local y3
         if bisection
-            x3 = (x1 + x2) / 2
             y3 = f(x3) - y  # Function value at midpoint
             ym = (y1 + y2) / 2 # Ordinate of chord at midpoint
             r = 1 - abs(ym / (y2 - y1)) # Symmetry factor
@@ -27,7 +30,6 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
                 threshold = (x2 - x1) * C
             end
         else
-            x3 = (x1 * y2 - y1 * x2) / (y2 - y1)
             if x3 <= x1
                 x3, y3 = x1, y1
             elseif x3 >= x2
@@ -38,7 +40,7 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
             threshold /= 2
         end
 
-        if abs(y3) <= epsy || x2 - x1 <= epsx # Convergence check
+        if abs(y3) <= epsy # y-convergence check
             return x3
         end
 

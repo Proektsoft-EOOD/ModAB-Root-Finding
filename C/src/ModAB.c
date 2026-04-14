@@ -50,14 +50,18 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     const double C = 16.0; // Safety factor
 
     for (int i = 1; i <= maxIter; ++i) {
-        double x3, y3;
-
+        double x3 = bisection ? 0.5 * (x1 + x2) : (x1 * y2 - y1 * x2) / (y2 - y1);
+        double y3;
+        // Check for x-convergence
+        double eps = aTol + rTol * fabs(x3);
+        if (x2 - x1 <= eps) {
+            evaluation_count = i + 1; // Saves one function evaluation if satisfied
+            return x3;
+        }
         if (bisection) {
-            x3 = 0.5 * (x1 + x2);  // Slightly faster than division
             y3 = f(x3);
             double ym = 0.5 * (y1 + y2);
-            double dy = y2 - y1;
-            double r = 1.0 - fabs(ym / dy); // Symmetry factor
+            double r = 1.0 - fabs(ym / (y2 - y1)); // Symmetry factor
             double k = r * r; // Deviation factor
             // Check if function is close enough to straight line
             if (fabs(ym - y3) < k * (fabs(y3) + fabs(ym))) {
@@ -65,7 +69,6 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 threshold = (x2 - x1) * C;
             }
         } else {
-            x3 = (x1 * y2 - y1 * x2) / (y2 - y1);
             // Clamp secant point to interval to handle floating-point errors
             if (x3 <= x1) {
                 x3 = x1; y3 = y1;
@@ -77,9 +80,8 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             threshold *= 0.5;
         }
 
-        // Check for convergence
-        double eps = aTol + rTol * fabs(x3);
-        if (y3 == 0.0 || x2 - x1 <= eps) {
+        // Check for y-convergence
+        if (y3 == 0.0) {
             evaluation_count = i + 2;
             return x3;
         }
