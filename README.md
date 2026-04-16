@@ -32,7 +32,7 @@ MIT License - see the [LICENSE](C/LICENSE) file for details.
 
 ## Implementations in other software/libraries
 
-Calcpad - 					https://www.proektsoft.bg/bg/catalog/221.html   - C#  
+Calcpad - 					https://calcpad.eu   - C#  
 Root-Fortran - 				https://github.com/jacobwilliams/roots-fortran	- Fortran  
 ROOT.CERN - 				https://github.com/root-project/root			- C++  
 SCiML/NonlinearSolve.jl - 	https://github.com/SciML/NonlinearSolve.jl		- Julia  
