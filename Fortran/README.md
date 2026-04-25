@@ -4,7 +4,7 @@ Code and benchmarks are based on [Roots-Fortran](https://github.com/jacobwilliam
 by [Jacob Williams](https://github.com/jacobwilliams) fork:   
 https://github.com/Proektsoft-EOOD/roots-fortran
 
-Relative number of evaluations to modAB
+Relative number of evaluations to modAB:
 
 <img height="500" alt="image" src="https://github.com/user-attachments/assets/69749408-a623-4b3e-bff2-85c37de666a1" />
  
