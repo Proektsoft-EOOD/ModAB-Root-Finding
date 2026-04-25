@@ -1,0 +1,224 @@
+nprob     n evals Best Methods
+    1     1     8 Best: rbp, muller
+    2     1    12 Best: modab, chandrupatla
+    3     1     8 Best: brent, brentq
+    4     1    10 Best: chandrupatla
+    5     1    10 Best: chandrupatla
+    6     1    10 Best: modab
+    7     1    11 Best: modab, muller
+    8     1    11 Best: modab
+    9     1    11 Best: modab
+   10     1    11 Best: brentq
+   11     1    11 Best: modab, brent, brentq, brenth, muller
+   12    40     4 Best: ridders
+   12   100     4 Best: ridders
+   12   200     4 Best: ridders
+   13     1    11 Best: itp
+   14     1     7 Best: muller
+   15     4    12 Best: chandrupatla
+   15     6    13 Best: modab, chandrupatla
+   15     8    13 Best: chandrupatla
+   15    10    13 Best: chandrupatla
+   15    12    14 Best: chandrupatla
+   16     4    12 Best: chandrupatla
+   16     6    12 Best: ridders, chandrupatla
+   16     8    13 Best: modab, chandrupatla
+   16    10    13 Best: chandrupatla
+   16    12    13 Best: chandrupatla
+   17     8    12 Best: ridders, chandrupatla
+   17    10    12 Best: chandrupatla
+   17    12    13 Best: chandrupatla
+   17    14    14 Best: modab, chandrupatla
+   18     1     8 Best: rbp, pegasus, muller, chandrupatla
+   19     1     6 Best: brenth
+   19     2     8 Best: toms748, anderson_bjorck, brenth, muller, chandrupatla
+   19     3     9 Best: brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   19     4    10 Best: modab, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   19     5    10 Best: modab, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   19    10    11 Best: modab, pegasus, toms748, brent, brentq, brenth, muller, chandrupatla
+   19    20    11 Best: illinois, pegasus, toms748
+   19    40    13 Best: modab, pegasus, toms748, brent, brentq, brenth, muller, chandrupatla
+   19    60    13 Best: pegasus, toms748, brenth, muller
+   19    80    13 Best: pegasus, toms748
+   19   100    13 Best: pegasus, toms748
+   20     5     4 Best: bdqrf, rbp
+   20    10     6 Best: rbp, muller
+   20    20     6 Best: bdqrf, rbp
+   21     2     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+   21     5     8 Best: brent, brentq, chandrupatla
+   21    10    10 Best: modab, toms748, brent, brentq, anderson_bjorck, brenth, chandrupatla
+   21    15    10 Best: chandrupatla
+   21    20    11 Best: toms748
+   22     1     8 Best: toms748, anderson_bjorck, brenth
+   22     2     9 Best: brenth
+   22     4     8 Best: brent, brentq, brenth, muller, chandrupatla
+   22     5     7 Best: brent, brentq, brenth
+   22     8     7 Best: brent, brentq, brenth
+   22    15     6 Best: brent, brentq, brenth
+   22    20     6 Best: brent, brentq, brenth
+   23     1     7 Best: toms748, brenth, chandrupatla
+   23     5     8 Best: toms748, brent, brentq, anderson_bjorck, brenth
+   23    10     8 Best: brent, brentq
+   23    15     9 Best: anderson_bjorck
+   23    20    10 Best: anderson_bjorck
+   24     2     4 Best: brent, brentq
+   24     5     5 Best: anderson_bjorck
+   24    15     5 Best: anderson_bjorck
+   24    20     5 Best: anderson_bjorck
+   25     2     4 Best: zhang
+   25     3     5 Best: toms748
+   25     4    10 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+   25     5    10 Best: pegasus, toms748, anderson_bjorck, brenth
+   25     6    10 Best: pegasus, toms748, anderson_bjorck
+   25     7    10 Best: pegasus, toms748, anderson_bjorck
+   25     9    10 Best: pegasus, anderson_bjorck, brenth
+   25    11    10 Best: pegasus, anderson_bjorck, brenth
+   25    13    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth
+   25    15    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   25    17    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth, chandrupatla
+   25    19    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   25    21    10 Best: illinois, pegasus, anderson_bjorck, brenth, muller, chandrupatla
+   25    23     7 Best: blendtf
+   25    25    10 Best: illinois, pegasus, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   25    27     9 Best: pegasus, muller, chandrupatla
+   25    29     9 Best: brenth, muller, chandrupatla
+   25    31     9 Best: brenth, chandrupatla
+   25    33     9 Best: brent, brentq, anderson_bjorck, brenth, chandrupatla
+   26     1     3 Best: barycentric
+   27     1     4 Best: ridders, bdqrf, rbp, muller
+   28     1    14 Best: pegasus, anderson_bjorck
+   28     2    14 Best: anderson_bjorck
+   29    20    19 Best: anderson_bjorck
+   29    40    21 Best: pegasus, anderson_bjorck
+   29   100    21 Best: pegasus, anderson_bjorck
+   30     1     7 Best: pegasus
+   31     1     9 Best: brenth, muller, chandrupatla
+   32     1    11 Best: pegasus, toms748, muller, chandrupatla
+   33     1     4 Best: blendtf
+   34     1     8 Best: toms748, brent, brentq, anderson_bjorck, brenth
+   35     1     7 Best: brenth, muller
+   36     1     3 Best: blendtf
+   37     1    13 Best: itp, modab, anderson_bjorck, chandrupatla
+   38     1    10 Best: muller, chandrupatla
+   39     1    10 Best: muller
+   40     1    13 Best: bisection, modab, chandrupatla
+   41     1     8 Best: regula_falsi, modab, pegasus, brent, brentq, anderson_bjorck, brenth
+   42     1     6 Best: brent, brentq, brenth
+   43     1    10 Best: pegasus, brenth, muller
+   44     1    10 Best: anderson_bjorck
+   45    20     5 Best: anderson_bjorck
+   45    30     6 Best: anderson_bjorck
+   46     1     4 Best: blendtf
+   47     1     9 Best: anderson_bjorck, brenth, muller, chandrupatla
+   48     1    48 Best: modab
+   49     1    16 Best: itp
+   50     1    52 Best: bisection, modab
+   51     1    13 Best: bisection, modab, chandrupatla
+   52     1    46 Best: bisection, modab
+   53     1     5 Best: itp
+   54     1    12 Best: bisection, modab, chandrupatla
+   55     1     4 Best: itp
+   56     1     9 Best: itp
+   57     1     3 Best: barycentric
+   58     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+   59     1     9 Best: muller
+   60     1    14 Best: anderson_bjorck
+   61     1     8 Best: rbp, modab, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   62     1    14 Best: chandrupatla
+   63     1     8 Best: modab, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller
+   64     1     7 Best: muller
+   65     1     9 Best: muller
+   66     1     8 Best: rbp, muller
+   67     1    12 Best: brent, brentq, brenth, chandrupatla
+   68     1     8 Best: itp, toms748, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   69     1     6 Best: bdqrf, rbp
+   70     1     6 Best: rbp
+   71     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+   72     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+   73     1    10 Best: toms748
+   74     1    12 Best: modab, brenth, muller
+   75     1    11 Best: toms748
+   76     1     9 Best: toms748, brent, brentq, brenth
+   77     1     8 Best: toms748
+   78     1    12 Best: itp, modab, toms748, chandrupatla
+   79     1     9 Best: toms748
+   80     1     8 Best: toms748, brent, brentq, brenth
+   81     1     9 Best: pegasus, anderson_bjorck
+   82     1     9 Best: toms748, brent, brentq, brenth
+   83     1    12 Best: ridders, modab, muller, chandrupatla
+   84     1    12 Best: toms748
+   85     1    13 Best: modab
+   86     1     9 Best: toms748, muller
+   87     1     8 Best: pegasus
+   88     1     9 Best: toms748
+   89     1    10 Best: ridders, rbp, modab, muller, chandrupatla
+   90     1     8 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   91     1     8 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth, chandrupatla
+   92     1     8 Best: toms748, anderson_bjorck, brenth, muller, chandrupatla
+   93     1    10 Best: rbp, muller
+   94     1     6 Best: rbp, muller
+   95     1     7 Best: pegasus, toms748, anderson_bjorck, muller, chandrupatla
+   96     1     9 Best: modab, pegasus, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   97     1     8 Best: rbp, pegasus, toms748, anderson_bjorck, brenth, muller, chandrupatla
+   98     1     8 Best: brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+   99     1     8 Best: brent, brentq
+  100     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+  101     5     6 Best: muller
+  101    10     6 Best: rbp, muller
+  101    20     6 Best: bdqrf, rbp, muller
+  102     1    15 Best: itp
+  103     1     4 Best: bdqrf, rbp, muller
+  104     1     4 Best: bdqrf, muller
+  105     1     6 Best: rbp, muller
+  106     1     3 Best: blendtf
+  107     1     4 Best: bdqrf, rbp, muller
+  108     1     9 Best: brent, brentq, brenth, chandrupatla
+  109     1     9 Best: itp, brent, brentq, chandrupatla
+  110     1     7 Best: toms748, muller
+  111     1     7 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+  112     1    10 Best: rbp, modab, pegasus, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+  113     1    10 Best: brent, brentq, brenth
+  114     1     7 Best: toms748, muller, chandrupatla
+  115     1     8 Best: muller
+  116     1     8 Best: rbp, toms748, brent, brentq, anderson_bjorck, brenth, muller
+  117     1     7 Best: muller
+  118     1     7 Best: muller
+  119     1     9 Best: brenth, muller, chandrupatla
+  120     1     7 Best: illinois
+  121     1     8 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller
+  122     1    10 Best: pegasus, toms748, brent, brentq
+  123     1    10 Best: brenth
+  124     1     8 Best: modab, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller
+  125     1    10 Best: toms748, brent, brentq, brenth
+  126     1     9 Best: rbp, modab, muller, chandrupatla
+  127     1     3 Best: barycentric
+  128     1    35 Best: bisection, modab
+  129     1    35 Best: bisection, modab
+  130     1     4 Best: blendtf
+  131     1     3 Best: blendtf
+  132     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
+  133     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, anderson_bjorck
+  134     1     9 Best: modab, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, chandrupatla
+  135     1    12 Best: itp
+  136     1     9 Best: muller
+  137     1     7 Best: muller, chandrupatla
+  138     1    11 Best: toms748
+  139     1    15 Best: brent, brentq, anderson_bjorck
+  140     1     4 Best: ridders, blendtf
+  141     1     7 Best: muller
+  142     1     6 Best: blendtf
+  143     1    16 Best: itp
+  144     1    11 Best: bisection, modab, chandrupatla
+  145     1    10 Best: muller
+  146     1     7 Best: muller
+  147     1     9 Best: muller
+  148     1     6 Best: blendtf
+  149     1    18 Best: bisection, modab, chandrupatla
+  150     1    11 Best: bisection, modab, chandrupatla
+  151     1    11 Best: toms748
+  152     1     5 Best: anderson_bjorck
+  153     1    10 Best: brenth
+  154     1    11 Best: anderson_bjorck
+  155     1    10 Best: bdqrf, rbp, muller
+  156     1     7 Best: pegasus, brent, brentq, anderson_bjorck, brenth, muller
+  157     1    12 Best: chandrupatla
