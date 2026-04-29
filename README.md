@@ -38,7 +38,7 @@ ROOT.CERN - 				https://github.com/root-project/root			- C++
 SCiML/NonlinearSolve.jl - 	https://github.com/SciML/NonlinearSolve.jl		- Julia  
 JuliaMath/Roots.jl -		https://github.com/JuliaMath/Roots.jl			- Julia  
 MultiFloats.jl - 			https://github.com/dzhang314/MultiFloats.jl		- Julia  
-PyModAB - 			https://pypi.org/project/pymodab/		- Python  
+PyModAB - 			https://pypi.org/project/pymodab/		- Python/C
 
 ## References
 
