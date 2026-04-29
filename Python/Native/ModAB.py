@@ -1,9 +1,13 @@
 import math
 def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     """
-    Finds the root of f(x) = target within [x1, x2] using
-    modified Anderson-Björk method (Ganchovski, Traykov).
+    Finds the root of f(x) = y within [x1, x2] using
+    modified Anderson-Björk method (Ganchovski, Traykov, 2023).
     f(x) must be continuous and sign(f(x1) - y) ≠ sign(f(x2) - y).
+    It laso includes the recent changes from the following paper:
+    Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. 
+    Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm. Algorithms 2026, 19, 332. 
+    https://doi.org/10.3390/a19050332
     """
     if x2 < x1:
         x1, x2 = x2, x1 
@@ -22,7 +26,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     for _ in range(maxiter):
         x3 = (x1 + x2) * 0.5 if bisection else (x1 * y2 - y1 * x2) / (y2 - y1)
-        epsx = xtol + xtol * abs(x3)
+        epsx = xtol * max(abs(x3), 1)
         if x2 - x1 <= epsx: # x-convergence check
             return x3
         

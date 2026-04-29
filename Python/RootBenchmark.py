@@ -355,7 +355,7 @@ def run():
     for t in total_time:
         line += f"{t:>{cnt_w}.2f}| "
     print(line)
-
+    print(header)
     # Stats block for timing
     _print_stats_block(time_data, cnt_w, [n for n, _ in solvers], integer_vals=False)
 

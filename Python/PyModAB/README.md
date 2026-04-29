@@ -58,8 +58,9 @@ Modified Anderson-Björck's method is a new robust and efficient bracketing root
 Ganchovski N.; Traykov A. Modified Anderson-Björck's method for solving non-linear equations in structural mechanics. IOP Conference Series: Materials Science and Engineering 2023, 1276 (1) 012010, IOP Publishing.  
 https://iopscience.iop.org/article/10.1088/1757-899X/1276/1/012010/pdf
 
-Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. Improvements of the Modified Anderson-Björck (modAB) Root-Finding Algorithm. Preprints 2026, 2026032190.  
-https://www.preprints.org/manuscript/202603.2190
+Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm. Algorithms 2026, 19, 332. 
+https://doi.org/10.3390/a19050332
+
 
 ### License
 
@@ -105,4 +106,4 @@ Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM
 Windows 11 Home  
 numpy Version: 2.4.4  
 scipy Version: 1.17.1  
-pymodab Version: 1.0.3
+pymodab Version: 1.0.4
