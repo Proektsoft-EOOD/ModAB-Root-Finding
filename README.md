@@ -3,7 +3,7 @@
 
 This repository provides efficient implementations of the **Modified Anderson-Björck (ModAB)** bracketing root-finding algorithm for solving nonlinear equations of the form `f(x) = 0`.
 
-Available in **C**, **C#**,  **Python**, **Julia**, **Zig** and **C++ (ROOT.CERN framework)**.
+Available in **C**, **C#**, **Python**, **Julia**, **Zig**, **Rust** and **C++ (ROOT.CERN framework)**.
 
 ## ✨ Features
 
