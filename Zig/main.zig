@@ -241,7 +241,7 @@ const all_problems = [_]Problem{
     .{ .name = "f_62", .f = f_62, .a = std.math.pi / 2.0, .b = std.math.pi },
     // Oliveira-Takahashi (f63-f83)
     .{ .name = "f_63", .f = f_63, .a = -1.0, .b = 1.0 },
-    .{ .name = "f_64", .f = f_64_fn, .a = -1.0, .b = 1.0 },
+    .{ .name = "f_64", .f = f_64, .a = -1.0, .b = 1.0 },
     .{ .name = "f_65", .f = f_65, .a = -1.0, .b = 1.0 },
     .{ .name = "f_66", .f = f_66, .a = -1.0, .b = 1.0 },
     .{ .name = "f_67", .f = f_67, .a = -1.0, .b = 1.0 },
