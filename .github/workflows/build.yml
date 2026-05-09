@@ -41,7 +41,7 @@ jobs:
         working-directory: C
 
   build-rust:
-    name: Build Rust
+    name: Build & Test Rust
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,8 +53,12 @@ jobs:
         run: cargo build --release
         working-directory: Rust
 
+      - name: Run tests
+        run: cargo run --release
+        working-directory: Rust
+
   build-java:
-    name: Build Java
+    name: Build & Test Java
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -69,8 +73,12 @@ jobs:
         run: javac ModAB.java ModABTest.java
         working-directory: Java
 
+      - name: Run tests
+        run: java ModABTest
+        working-directory: Java
+
   build-typescript:
-    name: Build TypeScript
+    name: Build & Test TypeScript
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,8 +95,12 @@ jobs:
         run: tsc
         working-directory: TypeScript
 
+      - name: Run tests
+        run: node dist/ModAB_test.js
+        working-directory: TypeScript
+
   build-python:
-    name: Build Python Package
+    name: Build & Test Python
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -97,6 +109,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Run native tests
+        run: python ModAB_test.py
+        working-directory: Python/Native
 
       - name: Install build tools
         run: pip install build
