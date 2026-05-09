@@ -1,0 +1,134 @@
+name: Build All Implementations
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-csharp:
+    name: Build C# (.NET)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: C#
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+        working-directory: C#
+
+  build-c:
+    name: Build C
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc
+
+      - name: Build shared library
+        run: gcc -shared -fPIC -O2 -o libModAB.so src/ModAB.c -Iinclude -lm
+        working-directory: C
+
+  build-rust:
+    name: Build Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
+        run: cargo build --release
+        working-directory: Rust
+
+  build-java:
+    name: Build Java
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Compile
+        run: javac ModAB.java ModABTest.java
+        working-directory: Java
+
+  build-typescript:
+    name: Build TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install TypeScript
+        run: npm install -g typescript
+
+      - name: Compile
+        run: tsc
+        working-directory: TypeScript
+
+  build-python:
+    name: Build Python Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build tools
+        run: pip install build
+
+      - name: Build package
+        run: python -m build
+        working-directory: Python/PyModAB
+
+  build-fortran:
+    name: Build Fortran
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install gfortran
+        run: sudo apt-get update && sudo apt-get install -y gfortran
+
+      - name: Compile module
+        run: gfortran -c -O2 src/root_module.F90 -o root_module.o
+        working-directory: Fortran
+
+  build-zig:
+    name: Build Zig
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: '0.13.0'
+
+      - name: Build
+        run: zig build-lib -OReleaseFast ModAB.zig
+        working-directory: Zig
