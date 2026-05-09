@@ -122,7 +122,7 @@ jobs:
         working-directory: Python/PyModAB
 
   build-fortran:
-    name: Build Fortran
+    name: Build & Test Fortran
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -134,8 +134,20 @@ jobs:
         run: gfortran -c -O2 src/root_module.F90 -o root_module.o
         working-directory: Fortran
 
+      - name: Compile and run OO tests
+        run: |
+          gfortran -O2 src/root_module.F90 test/root_tests_oo.f90 -o root_tests_oo
+          ./root_tests_oo
+        working-directory: Fortran
+
+      - name: Compile and run test 2
+        run: |
+          gfortran -O2 src/root_module.F90 test/root_test_2.f90 -o root_test_2
+          ./root_test_2
+        working-directory: Fortran
+
   build-zig:
-    name: Build Zig
+    name: Build & Test Zig
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -145,6 +157,12 @@ jobs:
         with:
           version: '0.13.0'
 
-      - name: Build
+      - name: Build library
         run: zig build-lib -OReleaseFast ModAB.zig
+        working-directory: Zig
+
+      - name: Build and run tests
+        run: |
+          zig build-exe -OReleaseFast main.zig -femit-bin=modab_test
+          ./modab_test
         working-directory: Zig

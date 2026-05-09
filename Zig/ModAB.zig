@@ -98,11 +98,3 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, precision: f64
 
     return std.math.nan(f64);
 }
-
-pub fn main() void {
-    const cos = struct {
-        fn call(x: f64) f64 { return std.math.cos(x); }
-    }.call;
-    const result = modAB(cos, 0.0, 2.0, 0.0, 1e-14);
-    std.debug.print("cos(x)=0 root: {d:.15}\n", .{result});
-}
