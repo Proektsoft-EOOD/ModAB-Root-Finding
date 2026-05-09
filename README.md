@@ -28,6 +28,8 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 ## ⏱️ Benchmark results
 
+&emsp;&emsp;[For 92 functions test set](/MDPI-Algorithms-Data/Test%20Functions.pdf)
+
 <img width="595" height="400" alt="image" src="https://github.com/user-attachments/assets/cd8b63e9-15d6-4cb0-863a-ccdd445de80e" />
 
 ### Times
@@ -59,6 +61,8 @@ Worst | 38 | 43 | 6 | 7 | 3 | 1 | 1 | 1
 Median | 49.0 | 48.5 | 13.0 | 11.0 | 22.0 | 16.0 | 12.0 | 12.0
 Std Dev | 7.6 | 79.0 | 41.0 | 48.2 | 19.0 | 20.5 | 40.2 | 15.1
 Std Error | 0.80 | 8.23 | 4.27 | 5.03 | 1.98 | 2.13 | 4.19 | 1.58
+
+&emsp;&emsp;[Detailed results](Benchmark%20results.md)
 
 ## 📄 License
 
