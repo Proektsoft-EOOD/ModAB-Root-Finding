@@ -70,21 +70,21 @@ MIT License - see the [LICENSE](C/LICENSE) file for details.
 
 ## 🧮 Implementations in other software/libraries
 
-Calcpad - 					https://calcpad.eu   - C#  
+Calcpad - 					https://calcpad.eu   							- C#  
 Root-Fortran - 				https://github.com/jacobwilliams/roots-fortran	- Fortran  
 ROOT.CERN - 				https://github.com/root-project/root			- C++  
 SCiML/NonlinearSolve.jl - 	https://github.com/SciML/NonlinearSolve.jl		- Julia  
 JuliaMath/Roots.jl -		https://github.com/JuliaMath/Roots.jl			- Julia  
 MultiFloats.jl - 			https://github.com/dzhang314/MultiFloats.jl		- Julia  
-PyModAB - 			https://pypi.org/project/pymodab/		- Python/C
+PyModAB - 					https://pypi.org/project/pymodab/				- Python/C
 
 ## 📚 References
 
-1. Ganchovski N. Structural Analysis by Functional Modeling in the Cloud.  PhD Thesis **2025**, UACEG, Sofia
+1. Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm. Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
 
-2. Ganchovski, N.; Traykov, A. (2023). "Modified Anderson-Björck's method for solving non-linear equations in structural mechanics." *IOP Conference Series: Materials Science and Engineering*, 1276(1), 012010. [DOI: 10.1088/1757-899X/1276/1/012010](https://doi.org/10.1088/1757-899X/1276/1/012010)
+2. Ganchovski N. Structural Analysis by Functional Modeling in the Cloud.  PhD Thesis **2025**, UACEG, Sofia
 
-3. Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A. Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm. Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
+3. Ganchovski, N.; Traykov, A. (2023). "Modified Anderson-Björck's method for solving non-linear equations in structural mechanics." *IOP Conference Series: Materials Science and Engineering*, 1276(1), 012010. [DOI: 10.1088/1757-899X/1276/1/012010](https://doi.org/10.1088/1757-899X/1276/1/012010)
 
 ## 🐝Contributing
 
