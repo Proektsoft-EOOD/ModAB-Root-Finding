@@ -26,7 +26,7 @@ The ModAB algorithm combines the reliability of bisection with the speed of the 
 
 This hybrid approach achieves superlinear convergence while maintaining the worst-case optimality of bisection.
 
-## ⏱️ Benchmarkя
+## ⏱️ Benchmarks
 
 &emsp;&emsp;[For 92 functions test set](/MDPI-Algorithms-Data/Test%20Functions.pdf)
 
