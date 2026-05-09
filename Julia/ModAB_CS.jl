@@ -7,6 +7,9 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
     abs(y1) <= epsy && return x1
     y2 = f(x2) - y
     abs(y2) <= epsy && return x2
+    if sign(y1) == sign(y2)
+        return NaN
+    end
     epsx = xtol * (x2 - x1)
     side = 0
     bisection = true

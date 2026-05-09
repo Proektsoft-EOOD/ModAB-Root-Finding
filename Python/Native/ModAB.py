@@ -21,6 +21,9 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     if abs(y2) <= epsy:
         return x2   
 
+    if ((y1 > 0) == (y2 > 0))
+        return float('nan') # No sign change - no root guaranteed
+
     side = 0
     bisection = True
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough

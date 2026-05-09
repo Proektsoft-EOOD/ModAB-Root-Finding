@@ -22,7 +22,6 @@ where
     if x2 < x1 {
         std::mem::swap(&mut x1, &mut x2);
     }
-
     let epsy = ytol * y.abs().max(1.0);
     let mut y1 = f(x1) - y;
     if y1.abs() <= epsy {
@@ -32,23 +31,22 @@ where
     if y2.abs() <= epsy {
         return x2;
     }
-
+    if (y1 > 0.0) == (y2 > 0.0) {
+        return f64::NAN;
+    }
     let mut side: i32 = 0;
     let mut bisection = true;
     let mut threshold = x2 - x1;
-
     for _ in 0..maxiter {
         let mut x3 = if bisection {
             (x1 + x2) * 0.5
         } else {
             (x1 * y2 - y1 * x2) / (y2 - y1)
         };
-
         let epsx = xtol * x3.abs().max(1.0);
         if x2 - x1 <= epsx {
             return x3;
         }
-
         let y3: f64;
         if bisection {
             y3 = f(x3) - y;
@@ -72,11 +70,9 @@ where
             }
             threshold *= 0.5;
         }
-
         if y3.abs() <= epsy {
             return x3;
         }
-
         if (y1 > 0.0) == (y3 > 0.0) {
             if side == 1 {
                 let m = 1.0 - y3 / y1;
@@ -96,7 +92,6 @@ where
             x2 = x3;
             y2 = y3;
         }
-
         if x2 - x1 > threshold {
             bisection = true;
             side = 0;

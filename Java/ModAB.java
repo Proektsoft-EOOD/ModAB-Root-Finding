@@ -30,29 +30,27 @@ public class ModAB {
             x1 = x2;
             x2 = temp;
         }
-
         double epsy = ytol * Math.max(Math.abs(y), 1);
         double y1 = f.applyAsDouble(x1) - y;
         if (Math.abs(y1) <= epsy) {
             return x1;
         }
-
         double y2 = f.applyAsDouble(x2) - y;
         if (Math.abs(y2) <= epsy) {
             return x2;
         }
-
+        if ((y1 > 0) == (y2 > 0)) {
+            return Double.NaN; // No sign change - no root guaranteed
+        }
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
-
         for (int i = 0; i < maxiter; i++) {
             double x3 = bisection ? (x1 + x2) * 0.5 : (x1 * y2 - y1 * x2) / (y2 - y1);
             double epsx = xtol * Math.max(Math.abs(x3), 1);
             if (x2 - x1 <= epsx) {
                 return x3;
             }
-
             double y3;
             if (bisection) {
                 y3 = f.applyAsDouble(x3) - y;
@@ -76,11 +74,9 @@ public class ModAB {
                 }
                 threshold *= 0.5;
             }
-
             if (Math.abs(y3) <= epsy) {
                 return x3;
             }
-
             if ((y1 > 0) == (y3 > 0)) {
                 if (side == 1) {
                     double m = 1 - y3 / y1;
@@ -100,7 +96,6 @@ public class ModAB {
                 x2 = x3;
                 y2 = y3;
             }
-
             if (x2 - x1 > threshold) {
                 bisection = true;
                 side = 0;
