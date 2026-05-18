@@ -2,10 +2,10 @@ import math
 
 def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     """
-    King-order variant of the modified Anderson-Björk method.
+    King-order variant of the modified Anderson-Björk method (MDPI Algorithms, 2026).
     It is identical to the original ModAB except for the lines marked "#King (new)".
     The only change: in the interpolation phase, attempt an explicit
-    3-point Anderson-Björck step (Newton on the parabola through the last
+    3-point Anderson-Björck step (Newton divided differences through the last
     three evaluated points). It is used only if it stays inside the bracket
     and makes at least Brent-grade progress; otherwise the algorithm falls
     back to the original modAB step exactly. This lifts the asymptotic
@@ -30,26 +30,25 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     side = 0
     bisection = True
     threshold = x2 - x1                      # Threshold to fall back to bisection if AB fails
-    xb, fb, xc, fc, nh = x1, y1, x2, y2, 2   #King (new): last evaluated points
-    last_span = abs(x2 - x1)                 #King (new): previous bracketing move
+    xb, fb, xc, fc, nh = x1, y1, x2, y2, 2   #King (new) last evaluated points
+    last = abs(x2 - x1)                      #King (new) previous bracketing move
     for _ in range(maxiter):
-        used_ab = False                      #King (new)
+        use_ab = True                        #King (new)
         if bisection:
             x3 = (x1 + x2) * 0.5
         else:
             x3 = (x1 * y2 - y1 * x2) / (y2 - y1)
-            if nh >= 3:                                              #King (new)
-                if xc != xb and xb != xa and xc != xa:               #King (new)
-                    fbc = (fc - fb) / (xc - xb)                      #King (new)
-                    fab = (fb - fa) / (xb - xa)                      #King (new)
-                    fabc = (fbc - fab) / (xc - xa)                   #King (new)
-                    gp = fbc + fabc * (xc - xb)                      #King (new)
-                    if gp != 0.0:                                    #King (new)
-                        x_ab = xc - fc / gp                          #King (new)
-                        if (x1 < x_ab < x2 and                       #King (new)
-                                abs(x_ab - xc) < 0.5 * last_span):   #King (new)
-                            x3 = x_ab                                #King (new)
-                            used_ab = True                           #King (new)
+            if nh >= 3:                                                #King (new) perform Newton divided differences step
+                if xc != xb and xb != xa and xc != xa:                 #King (new)
+                    fbc = (fc - fb) / (xc - xb)                        #King (new)
+                    fab = (fb - fa) / (xb - xa)                        #King (new)
+                    fabc = (fbc - fab) / (xc - xa)                     #King (new)
+                    gp = fbc + fabc * (xc - xb)                        #King (new) parabola slope at point c
+                    if gp != 0.0:                                      #King (new)
+                        xk = xc - fc / gp                              #King (new)
+                        if x1 < xk < x2 and abs(xk - xc) < 0.5 * last: #King (new)
+                            x3 = xk                                    #King (new)
+                            use_ab = False                             #King (new)
 
         epsx = xtol * max(abs(x3), 1)
         if x2 - x1 <= epsx:  # x-convergence check
@@ -76,29 +75,29 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
         if abs(y3) <= epsy:  # y-convergence check
             return x3
 
-        if not (x3 == x1 or x3 == x2):   #King (new): record evaluated point
+        if not (x3 == x1 or x3 == x2):                        #King (new) record evaluated point
             xa, fa, xb, fb, xc, fc = xb, fb, xc, fc, x3, y3   #King (new)
-            if nh < 3: nh += 1           #King (new)
+            if nh < 3: nh += 1                                #King (new)
 
         if (y1 > 0) == (y3 > 0):  # Same sign check
-            span = abs(x3 - x1)                                  #King (new)
-            if side == 1 and not used_ab:                      #King (new - added: and not used_ab)
+            span = abs(x3 - x1)                               #King (new)
+            if side == 1 and use_ab:                          #King (new) added: and use_ab
                 m = 1 - y3 / y1
                 y2 = y2 * m if m > 0 else y2 * 0.5
             elif not bisection:
                 side = 1
             x1, y1 = x3, y3
         else:
-            span = abs(x3 - x2)                                  #King (new)
-            if side == -1 and not used_ab:                     #King (new - added: and not used_ab)
+            span = abs(x3 - x2)                               #King (new)
+            if side == -1 and use_ab:                         #King (new) added: and use_ab
                 m = 1 - y3 / y2
                 y1 = y1 * m if m > 0 else y1 * 0.5
             elif not bisection:
                 side = -1
             x2, y2 = x3, y3
 
-        if span > 0:                       #King (new - track move size for the guard)
-            last_span = span               #King (new)
+        if span > 0:                       #King (new) track span size for the guard
+            last = span               #King (new)
 
         if x2 - x1 > threshold:  # AB failed to shrink the interval enough
             bisection = True
