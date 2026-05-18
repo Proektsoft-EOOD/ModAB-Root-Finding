@@ -41,7 +41,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             k = r * r             # Deviation factor
             if abs(ym - y3) < k * (abs(y3) + abs(ym)):
                 bisection = False
-                threshold = (x2 - x1) * 8  # Safety factor: 4 bisection iterations = 2^4
+                threshold = (x2 - x1) * 16  # Safety factor: 4 bisection iterations = 2^4
         else:
             if x3 <= x1:
                 x3, y3 = x1, y1
