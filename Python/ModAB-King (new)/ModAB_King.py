@@ -43,9 +43,9 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                     fbc = (fc - fb) / (xc - xb)                        #King (new)
                     fab = (fb - fa) / (xb - xa)                        #King (new)
                     fabc = (fbc - fab) / (xc - xa)                     #King (new)
-                    gp = fbc + fabc * (xc - xb)                        #King (new) parabola slope at point c
-                    if gp != 0.0:                                      #King (new)
-                        xk = xc - fc / gp                              #King (new)
+                    fpc = fbc + fabc * (xc - xb)                       #King (new) parabola slope at point c
+                    if fpc != 0.0:                                     #King (new)
+                        xk = xc - fc / fpc                             #King (new)
                         if x1 < xk < x2 and abs(xk - xc) < 0.5 * last: #King (new)
                             x3 = xk                                    #King (new)
                             use_ab = False                             #King (new)
@@ -96,8 +96,8 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 side = -1
             x2, y2 = x3, y3
 
-        if span > 0:                       #King (new) track span size for the guard
-            last = span               #King (new)
+        if span > 0:                       #King (new) track span size for the guard check
+            last = span                    #King (new)
 
         if x2 - x1 > threshold:  # AB failed to shrink the interval enough
             bisection = True
