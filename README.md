@@ -1,7 +1,7 @@
 
 # ModAB Root-Finding Algorithm
 
-This repository provides efficient implementations of the **Modified Anderson-Björck (ModAB)** bracketing root-finding algorithm for solving nonlinear equations of the form `f(x) = 0`.
+This repository provides efficient implementations of the **Modified Anderson-Björck (ModAB)** bracketing root-finding algorithm [1] for solving nonlinear equations of the form `f(x) = 0`.
 
 Available in **C**, **C#**, **C++ (ROOT.CERN framework)**, **Python**, **Julia**, **Zig**, **Rust**, **Java**, **TypeScript**, and **Excel/VBA**.
 
