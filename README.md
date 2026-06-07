@@ -3,7 +3,7 @@
 
 This repository provides efficient implementations of the **Modified Anderson-Björck (ModAB)** bracketing root-finding algorithm for solving nonlinear equations of the form `f(x) = 0`.
 
-Available in **C**, **C#**, **Python**, **Julia**, **Zig**, **Rust** and **C++ (ROOT.CERN framework)**.
+Available in **C**, **C#**, **C++ (ROOT.CERN framework)**, **Python**, **Julia**, **Zig**, **Rust**, **Java**, **TypeScript**, and **Excel/VBA**.
 
 ## ✨ Features
 
@@ -76,6 +76,7 @@ ROOT.CERN - 				https://github.com/root-project/root			- C++
 SCiML/NonlinearSolve.jl - 	https://github.com/SciML/NonlinearSolve.jl		- Julia  
 JuliaMath/Roots.jl -		https://github.com/JuliaMath/Roots.jl			- Julia  
 MultiFloats.jl - 			https://github.com/dzhang314/MultiFloats.jl		- Julia  
+mpmath - 					https://github.com/mpmath/mpmath			- Python  
 PyModAB - 					https://pypi.org/project/pymodab/				- Python/C
 
 ## 📚 References
