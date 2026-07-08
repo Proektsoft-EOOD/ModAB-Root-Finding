@@ -25,17 +25,18 @@ static inline double clamp(double d, double min, double max) {
   return d < min ? min : (d > max ? max : d);
 }
 
-        // Finds the root of "F(x) = 0" within the interval [x1, x2]
-        // with the specified precisions - absolute: aTol and relative: rTol,
-        // using an improved version of the modified Anderson Bjork's method:
-        //     Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
-        //     Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
-        //     Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
-        // Additional fixes proposed by L. Tomov are applied in this version:
-        //     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
-        //     2. The original function values y1 and y2 (without A&B corrections) 
-        //        are stored for later use in bisection fallback
-        // F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double aTol, double rTol, int maxIter) {
+// Finds the root of "F(x) = 0" within the interval [x1, x2]
+// with the specified precisions - absolute: aTol and relative: rTol,
+// using an improved version of the modified Anderson Bjork's method:
+//     Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
+//     Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
+//     Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
+// Additional fixes proposed by L. Tomov are applied in this version:
+//     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
+//     2. The original function values y1 and y2 (without A&B corrections) 
+//        are stored for later use in bisection fallback
+// F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))
+EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double aTol, double rTol, int maxIter) {
     evaluation_count = 0;
 
     // Ensure x1 < x2
