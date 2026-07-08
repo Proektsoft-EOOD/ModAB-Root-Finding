@@ -21,11 +21,21 @@ static inline bool same_sign(double a, double b) {
     return (a > 0) == (b > 0);
 }
 
-// Finds the root of "F(x) = 0" within the interval [x1, x2]
-// with the specified precisions - absolute: aTol and relative: rTol,
-// using an improved version of the modified Anderson Bjork's method (Ganchovski, Traykov).
-// F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))
-EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double aTol, double rTol, int maxIter) {
+static inline double clamp(double d, double min, double max) {
+  return d < min ? min : (d > max ? max : d);
+}
+
+        // Finds the root of "F(x) = 0" within the interval [x1, x2]
+        // with the specified precisions - absolute: aTol and relative: rTol,
+        // using an improved version of the modified Anderson Bjork's method:
+        //     Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
+        //     Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
+        //     Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
+        // Additional fixes proposed by L. Tomov are applied in this version:
+        //     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
+        //     2. The original function values y1 and y2 (without A&B corrections) 
+        //        are stored for later use in bisection fallback
+        // F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double aTol, double rTol, int maxIter) {
     evaluation_count = 0;
 
     // Ensure x1 < x2
@@ -47,6 +57,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     bool bisection = true;
     int side = 0; // -1 for left, 1 for right, 0 for none
     double threshold = x2 - x1;
+    double f1 = y1, f2 = y2;
     const double C = 16.0; // Safety factor
 
     for (int i = 1; i <= maxIter; ++i) {
@@ -55,14 +66,14 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
         double eps = aTol + rTol * fabs(x3);
         if (x2 - x1 <= eps) {
             evaluation_count = i + 1; // Saves one function evaluation if satisfied
-            return x3;
+            return bisection ? x3 : clamp(x3, x1, x2);
         }
         
         double y3;
         if (bisection) {
             y3 = f(x3);
-            double ym = 0.5 * (y1 + y2);
-            double r = 1.0 - fabs(ym / (y2 - y1)); // Symmetry factor
+            double ym = 0.5 * (f1 + f2);
+            double r = 1.0 - fabs(ym / (f2 - f1)); // Symmetry factor
             double k = r * r; // Deviation factor
             // Check if function is close enough to straight line
             if (fabs(ym - y3) < k * (fabs(y3) + fabs(ym))) {
@@ -72,9 +83,9 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
         } else {
             // Clamp secant point to interval to handle floating-point errors
             if (x3 <= x1) {
-                x3 = x1; y3 = y1;
+                x3 = x1; y3 = f1;
             } else if (x3 >= x2) {
-                x3 = x2; y3 = y2;
+                x3 = x2; y3 = f2;
             } else {
                 y3 = f(x3);
             }
@@ -94,7 +105,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             } else if (!bisection) {
                 side = 1;
             }
-            x1 = x3; y1 = y3;
+            x1 = x3; f1 = y1 = y3;
         } else {
             if (side == -1) { // Anderson-Bjork correction
                 double m = 1.0 - y3 / y2;
@@ -102,7 +113,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             } else if (!bisection) {
                 side = -1;
             }
-            x2 = x3; y2 = y3;
+            x2 = x3; f2 = y2 = y3;
         }
 
         if (x2 - x1 > threshold) {

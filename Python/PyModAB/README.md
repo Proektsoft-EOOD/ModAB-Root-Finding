@@ -1,4 +1,7 @@
-A fast and robust root-finding library for Python, using the Modified Anderson-Bjork method (Ganchovski & Traykov, 2023), written in C.
+A fast and robust root-finding library written in C for Python, using the Modified Anderson-Bjork method:
+Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
+Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
+Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
 It finds the root of a single nonlinear equation `f(x) = 0` within the specified interval `[x1, x2]`.
 
 ### Installation

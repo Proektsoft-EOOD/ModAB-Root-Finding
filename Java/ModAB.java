@@ -1,12 +1,15 @@
 import java.util.function.DoubleUnaryOperator;
-
 /*
- * Modified Anderson-Björk root-finding algorithm.
- * Based on: Ganchovski, Traykov (2023) and improvements from:
- * Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
- * Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm.
- * Algorithms 2026, 19, 332.
- * https://doi.org/10.3390/a19050332
+* Finds the root of "F(x) = 0" within the interval [x1, x2]
+* with the specified precisions - absolute: aTol and relative: rTol,
+* using an improved version of the modified Anderson Bjork's method:
+*     Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
+*     Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
+*     Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
+* Additional fixes proposed by L. Tomov are applied in this version:
+*     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
+*     2. The original function values y1 and y2 (without A&B corrections) 
+*        are stored for later use in bisection fallback
  */
 public class ModAB {
 
@@ -42,6 +45,7 @@ public class ModAB {
         if ((y1 > 0) == (y2 > 0)) {
             return Double.NaN; // No sign change - no root guaranteed
         }
+        double f1 = y1, f2 = y2;
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
@@ -54,21 +58,21 @@ public class ModAB {
             double y3;
             if (bisection) {
                 y3 = f.applyAsDouble(x3) - y;
-                double ym = (y1 + y2) * 0.5;
-                double dy = y2 - y1;
+                double ym = (f1 + f2) * 0.5;
+                double dy = f2 - f1;
                 double r = 1 - Math.abs(ym / dy);
                 double k = r * r;
                 if (Math.abs(ym - y3) < k * (Math.abs(y3) + Math.abs(ym))) {
                     bisection = false;
-                    threshold = (x2 - x1) * 8;
+                    threshold = (x2 - x1) * 16;
                 }
             } else {
                 if (x3 <= x1) {
                     x3 = x1;
-                    y3 = y1;
+                    y3 = f1;
                 } else if (x3 >= x2) {
                     x3 = x2;
-                    y3 = y2;
+                    y3 = f2;
                 } else {
                     y3 = f.applyAsDouble(x3) - y;
                 }
@@ -86,6 +90,7 @@ public class ModAB {
                 }
                 x1 = x3;
                 y1 = y3;
+                f1 = y3;
             } else {
                 if (side == -1) {
                     double m = 1 - y3 / y2;
@@ -95,6 +100,7 @@ public class ModAB {
                 }
                 x2 = x3;
                 y2 = y3;
+                f2 = y3;
             }
             if (x2 - x1 > threshold) {
                 bisection = true;

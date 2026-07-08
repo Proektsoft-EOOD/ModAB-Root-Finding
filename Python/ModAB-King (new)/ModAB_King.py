@@ -27,6 +27,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     if ((y1 > 0) == (y2 > 0)):
         return float('nan')  # No sign change - no root guaranteed
 
+    f1, f2 = y1, y2 # Values for symmetry check kept unmodified by A&B corrections
     side = 0
     bisection = True
     threshold = x2 - x1                      # Threshold to fall back to bisection if AB fails
@@ -52,12 +53,12 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
 
         epsx = xtol * max(abs(x3), 1)
         if x2 - x1 <= epsx:  # x-convergence check
-            return x3
+            return x3 if bisection else max(x1, min(x3, x2)) # Clamp the secant value
 
         if bisection:
             y3 = f(x3) - y
-            ym = (y1 + y2) * 0.5
-            dy = y2 - y1
+            ym = (f1 + f2) * 0.5
+            dy = f2 - f1
             r = 1 - abs(ym / dy)
             k = r * r
             if abs(ym - y3) < k * (abs(y3) + abs(ym)):
@@ -65,9 +66,9 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 threshold = (x2 - x1) * 16
         else:
             if x3 <= x1:
-                x3, y3 = x1, y1
+                x3, y3 = x1, f1
             elif x3 >= x2:
-                x3, y3 = x2, y2
+                x3, y3 = x2, f2
             else:
                 y3 = f(x3) - y
             threshold *= 0.5
@@ -87,6 +88,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             elif not bisection:
                 side = 1
             x1, y1 = x3, y3
+            f1 = y1 # Store unmodified y1 value to be used for bisection fallback
         else:
             span = abs(x3 - x2)                               #King (new)
             if side == -1 and use_ab:                         #King (new) added: and use_ab
@@ -95,6 +97,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             elif not bisection:
                 side = -1
             x2, y2 = x3, y3
+            f2 = y2 # Store unmodified y1 value to be used for bisection fallback
 
         if span > 0:                       #King (new) track span size for the guard check
             last = span                    #King (new)

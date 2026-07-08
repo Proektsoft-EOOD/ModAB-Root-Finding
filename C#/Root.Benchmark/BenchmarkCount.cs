@@ -487,13 +487,14 @@ namespace Root.Benchmark
             },
             new() { // Near symmetric function
                 Name = "f93",
-                F = (x) => Math.Pow(x, 7)- 0.001,
+                F = (x) => Math.Pow(x, 7) - 0.001,
                 a = -10, b = 10
             },
         };
         internal static void Run()
         {
             var problems = (new[] { problems1, problems2, problems3 }).SelectMany(x => x).ToArray();
+            problems = [problems3[^1]];
             const double tol = 1e-14;
             for (int i = 0; i < 3; ++i)
             {

@@ -52,7 +52,7 @@ fn solve_secant(f: &dyn Fn(f64) -> f64, a: f64, b: f64, eps: f64) -> f64 {
 }
 
 fn solve_modab(f: &dyn Fn(f64) -> f64, a: f64, b: f64, eps: f64) -> f64 {
-    mod_ab_root(|x| f(x), a, b, 0.0, eps, eps, MAX_ITER)
+    mod_ab_root(|x| f(x), a, b, 0.0, eps, 0.0, MAX_ITER)
 }
 
 // ---------------------------------------------------------------------------

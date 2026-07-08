@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymodab"
-version = "1.0.4"
+version = "1.0.5"
 description = "Fast and robust root-finding library using the Modified Anderson-Bjork method"
 readme = "README.md"
 license = "MIT"
 authors = [
-    {name = "Ganchovski, Traykov"}
+    {name = "Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A."}
 ]
 keywords = ["root-finding", "nonlinear equations", "numerical methods", "computational mathematics", "optimization", "bisection", "Anderson-Bjork"]
 classifiers = [

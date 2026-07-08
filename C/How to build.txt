@@ -1,0 +1,13 @@
+1. Install Ubuntu on WSL
+2. Install zig on ubuntu
+wget https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz
+tar -xf zig-x86_64-linux-0.16.0.tar.xz
+sudo mv zig-x86_64-linux-0.16.0 /opt/zig
+sudo ln -s /opt/zig/zig /usr/local/bin/zig
+zig version   # should print 0.16.0
+3. Build:
+cd /mnt/c/Users/proek/Documents/GitHub/ModAB-Root-Finding/C/src/
+zig cc -shared -O3 -target x86_64-linux-gnu modAB.c -o libmodAB.so
+zig cc -shared -O3 -target x86_64-windows-gnu modAB.c -o modAB.dll
+zig cc -shared -O3 -target x86_64-macos modAB.c -o libmodAB_x64.dylib
+zig cc -shared -O3 -target aarch64-macos modAB.c -o libmodAB_arm64.dylib
