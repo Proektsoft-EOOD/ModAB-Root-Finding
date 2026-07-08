@@ -485,6 +485,11 @@ namespace Root.Benchmark
                 F = (x) => x*x*x - 0.001,
                 a = -10, b = 10
             },
+            new() { // Near symmetric function
+                Name = "f93",
+                F = (x) => Math.Pow(x, 7)- 0.001,
+                a = -10, b = 10
+            },
         };
         internal static void Run()
         {
@@ -498,7 +503,7 @@ namespace Root.Benchmark
                     case 1: Console.WriteLine("Function values"); break;
                     case 2: Console.WriteLine("Evaluation count"); break;
                 }
-                Console.WriteLine("Func;   bs;    fp;   ill;    ab;   ITP;   rid;    br;  modAB_old;  modAB");
+                Console.WriteLine("Func;   bs;    fp;   ill;    ab;   ITP;   rid;    br;  modAB");
                 const int methodCount = 8;
                 var sum = new int[methodCount];
                 var max = new int[methodCount];

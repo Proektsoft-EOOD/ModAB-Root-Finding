@@ -115,7 +115,7 @@ Worst | 38 | 43 | 6 | 7 | 3 | 1 | 1 | 1
 Median | 49.0 | 48.5 | 13.0 | 11.0 | 22.0 | 16.0 | 12.0 | 12.0
 Std Dev | 7.6 | 79.0 | 41.0 | 48.2 | 19.0 | 20.5 | 40.2 | 15.1
 Std Error | 0.80 | 8.23 | 4.27 | 5.03 | 1.98 | 2.13 | 4.19 | 1.58
-Func | bs | fp | ill | ab | ITP | rid | br | modAB2
+Func | bs | fp | ill | ab | ITP | rid | br | modAB
 
 ### Root Values
 Func | bs | fp | ill | AB | ITP | Rid | Br | modAB
