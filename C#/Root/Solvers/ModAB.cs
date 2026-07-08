@@ -9,8 +9,8 @@
         //     Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
         //     Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
         // Additional fixes is applied in this version:
-        //     1. The secant point is clamped to the interval [p1.X, p2.X] before exiting due to X-convergence
-        //     2. The unmodified function values y1 and y2 are stored to be used for the bisection fallback
+        //     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
+        //     2. The original function values y1 and y2 (without A&B corrections) are stored to be used for the bisection fallback
         // F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))
         public static double ModAB(Func<double, double> F, double x1, double x2,
             double aTol = 1e-14, double rTol = 1e-14)
