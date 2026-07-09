@@ -1,0 +1,15 @@
+name = "root_module"
+version = "0.1.0"
+license = "BSD-3-Clause"
+description = "Root solvers for modern Fortran, including the modAB method (fork of roots-fortran)"
+homepage = "https://github.com/Proektsoft-EOOD/roots-fortran"
+
+[library]
+source-dir = "src"
+
+[install]
+library = true
+
+[dev-dependencies]
+FACE = { git = "https://github.com/szaghi/FACE" }
+pyplot-fortran = { git = "https://github.com/jacobwilliams/pyplot-fortran" }

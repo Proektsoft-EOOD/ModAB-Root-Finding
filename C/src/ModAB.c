@@ -31,7 +31,7 @@ static inline double clamp(double d, double min, double max) {
 //     Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 //     Improvements to the Modified Anderson–Björck(modAB) Root-Finding Algorithm.
 //     Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
-// Additional fixes proposed by L. Tomov are applied in this version:
+// Additional fixes proposed by L. Tomov are included in this version:
 //     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
 //     2. The original function values y1 and y2 (without A&B corrections) 
 //        are stored for later use in bisection fallback

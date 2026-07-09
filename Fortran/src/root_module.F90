@@ -2762,7 +2762,12 @@
 !  * Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 !    Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm.
 !    Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
-
+!  * Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
+!    Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm.
+!    Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
+!  * Includes additional fixes proposed by L. Tomov, as follows:
+!    1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
+!    2. The original function values y1 and y2 (without A&B corrections) are stored for later use in bisection fallback
     subroutine ModAB(me,ax,bx,fax,fbx,xzero,fzero,iflag)
 
     implicit none
@@ -2776,15 +2781,15 @@
     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-2`=max iterations reached)
 
-    real(wp) :: x1,x2,x0,x3,y1,y2,y3,ym,m,r,k,threshold
+    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ym,m,r,k,threshold
     integer :: i  !! iteration counter
     logical :: root_found, bis
     integer :: side !! for tracking the side
 
     iflag = 0
     side = 0
-    x1 = ax; y1 = fax
-    x2 = bx; y2 = fbx
+    x1 = ax; y1 = fax; f1 = y1
+    x2 = bx; y2 = fbx; f2 = y2
     bis = .true.
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
     do i = 1, me%maxiter
@@ -2792,8 +2797,8 @@
             x3 = 0.5_wp*(x1+x2)
             y3 = me%f(x3)
             if (me%solution(x3,y3,xzero,fzero)) return
-            ym = 0.5_wp*(y1+y2)
-            r  = 1.0_wp - abs(ym/(y2-y1))  ! symmetry factor
+            ym = 0.5_wp*(f1+f2)
+            r  = 1.0_wp - abs(ym/(f2-f1))  ! symmetry factor
             k  = r*r                         ! deviation factor
             if (abs(ym-y3) < k*(abs(ym) + abs(y3))) then
                 bis = .false.
@@ -2804,10 +2809,10 @@
             ! Clamp secant point to the interval to handle floating-point errors
             if (x3 <= x1) then
                 x3 = x1
-                y3 = y1  ! clamped: reuse known y1
+                y3 = f1  ! clamped: reuse known original f1 (untouched by A&B modifications)
             else if (x3 >= x2) then
                 x3 = x2
-                y3 = y2  ! clamped: reuse known y2
+                y3 = f2  ! clamped: reuse known original f2 (untouched by A&B modifications)
             else
                 y3 = me%f(x3)  ! not clamped: evaluate y3
                 if (me%solution(x3,y3,xzero,fzero)) return
@@ -2844,10 +2849,12 @@
             if (.not. bis) side = 1
             x1 = x3
             y1 = y3
+            f1 = y3
         else
             if (.not. bis) side = 2
             x2 = x3
             y2 = y3
+            f2 = y3
         end if
         if (x2-x1 > threshold) then ! if Anderson-Bjork is not shrinking the interval fast enough
             bis  = .true. ! reset to bisection.
