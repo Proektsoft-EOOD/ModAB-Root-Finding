@@ -34,49 +34,115 @@ fn sgn(x: f64) f64 {
 // Test functions f01-f33: Sergio Galdino (Regula falsi methods)
 // ============================================================================
 
-fn f_01(x: f64) f64 { return std.math.pow(f64, x, 3) - 1.0; }
-fn f_02(x: f64) f64 { return x * x * (x * x / 3.0 + @sqrt(2.0) * @sin(x)) - @sqrt(3.0) / 18.0; }
-fn f_03(x: f64) f64 { return 11.0 * std.math.pow(f64, x, 11) - 1.0; }
-fn f_04(x: f64) f64 { return std.math.pow(f64, x, 3) + 1.0; }
-fn f_05(x: f64) f64 { return std.math.pow(f64, x, 3) - 2.0 * x - 5.0; }
-fn f_06(x: f64) f64 { return 2.0 * x * @exp(-5.0) + 1.0 - 2.0 * @exp(-5.0 * x); }
-fn f_07(x: f64) f64 { return 2.0 * x * @exp(-10.0) + 1.0 - 2.0 * @exp(-10.0 * x); }
-fn f_08(x: f64) f64 { return 2.0 * x * @exp(-20.0) + 1.0 - 2.0 * @exp(-20.0 * x); }
-fn f_09(x: f64) f64 { return (1.0 + std.math.pow(f64, 1.0 - 5.0, 2)) * x * x - std.math.pow(f64, 1.0 - 5.0 * x, 2); }
-fn f_10(x: f64) f64 { return (1.0 + std.math.pow(f64, 1.0 - 10.0, 2)) * x * x - std.math.pow(f64, 1.0 - 10.0 * x, 2); }
-fn f_11(x: f64) f64 { return (1.0 + std.math.pow(f64, 1.0 - 20.0, 2)) * x * x - std.math.pow(f64, 1.0 - 20.0 * x, 2); }
-fn f_12(x: f64) f64 { return x * x - std.math.pow(f64, 1.0 - x, 5); }
-fn f_13(x: f64) f64 { return x * x - std.math.pow(f64, 1.0 - x, 10); }
-fn f_14(x: f64) f64 { return x * x - std.math.pow(f64, 1.0 - x, 20); }
-fn f_15(x: f64) f64 { return (1.0 + std.math.pow(f64, 1.0 - 5.0, 4)) * x - std.math.pow(f64, 1.0 - 5.0 * x, 4); }
-fn f_16(x: f64) f64 { return (1.0 + std.math.pow(f64, 1.0 - 10.0, 4)) * x - std.math.pow(f64, 1.0 - 10.0 * x, 4); }
-fn f_17(x: f64) f64 { return (1.0 + std.math.pow(f64, 1.0 - 20.0, 4)) * x - std.math.pow(f64, 1.0 - 20.0 * x, 4); }
-fn f_18(x: f64) f64 { return @exp(-5.0 * x) * (x - 1.0) + std.math.pow(f64, x, 5); }
-fn f_19(x: f64) f64 { return @exp(-10.0 * x) * (x - 1.0) + std.math.pow(f64, x, 10); }
-fn f_20(x: f64) f64 { return @exp(-20.0 * x) * (x - 1.0) + std.math.pow(f64, x, 20); }
-fn f_21(x: f64) f64 { return x * x + @sin(x / 5.0) - 0.25; }
-fn f_22(x: f64) f64 { return x * x + @sin(x / 10.0) - 0.25; }
-fn f_23(x: f64) f64 { return x * x + @sin(x / 20.0) - 0.25; }
-fn f_24(x: f64) f64 { return (x + 2.0) * (x + 1.0) * std.math.pow(f64, x - 3.0, 3); }
-fn f_25(x: f64) f64 { return std.math.pow(f64, x - 4.0, 5) * @log(x); }
-fn f_26(x: f64) f64 { return std.math.pow(f64, @sin(x) - x / 4.0, 3); }
+fn f_01(x: f64) f64 {
+    return std.math.pow(f64, x, 3) - 1.0;
+}
+fn f_02(x: f64) f64 {
+    return x * x * (x * x / 3.0 + @sqrt(2.0) * @sin(x)) - @sqrt(3.0) / 18.0;
+}
+fn f_03(x: f64) f64 {
+    return 11.0 * std.math.pow(f64, x, 11) - 1.0;
+}
+fn f_04(x: f64) f64 {
+    return std.math.pow(f64, x, 3) + 1.0;
+}
+fn f_05(x: f64) f64 {
+    return std.math.pow(f64, x, 3) - 2.0 * x - 5.0;
+}
+fn f_06(x: f64) f64 {
+    return 2.0 * x * @exp(-5.0) + 1.0 - 2.0 * @exp(-5.0 * x);
+}
+fn f_07(x: f64) f64 {
+    return 2.0 * x * @exp(-10.0) + 1.0 - 2.0 * @exp(-10.0 * x);
+}
+fn f_08(x: f64) f64 {
+    return 2.0 * x * @exp(-20.0) + 1.0 - 2.0 * @exp(-20.0 * x);
+}
+fn f_09(x: f64) f64 {
+    return (1.0 + std.math.pow(f64, 1.0 - 5.0, 2)) * x * x - std.math.pow(f64, 1.0 - 5.0 * x, 2);
+}
+fn f_10(x: f64) f64 {
+    return (1.0 + std.math.pow(f64, 1.0 - 10.0, 2)) * x * x - std.math.pow(f64, 1.0 - 10.0 * x, 2);
+}
+fn f_11(x: f64) f64 {
+    return (1.0 + std.math.pow(f64, 1.0 - 20.0, 2)) * x * x - std.math.pow(f64, 1.0 - 20.0 * x, 2);
+}
+fn f_12(x: f64) f64 {
+    return x * x - std.math.pow(f64, 1.0 - x, 5);
+}
+fn f_13(x: f64) f64 {
+    return x * x - std.math.pow(f64, 1.0 - x, 10);
+}
+fn f_14(x: f64) f64 {
+    return x * x - std.math.pow(f64, 1.0 - x, 20);
+}
+fn f_15(x: f64) f64 {
+    return (1.0 + std.math.pow(f64, 1.0 - 5.0, 4)) * x - std.math.pow(f64, 1.0 - 5.0 * x, 4);
+}
+fn f_16(x: f64) f64 {
+    return (1.0 + std.math.pow(f64, 1.0 - 10.0, 4)) * x - std.math.pow(f64, 1.0 - 10.0 * x, 4);
+}
+fn f_17(x: f64) f64 {
+    return (1.0 + std.math.pow(f64, 1.0 - 20.0, 4)) * x - std.math.pow(f64, 1.0 - 20.0 * x, 4);
+}
+fn f_18(x: f64) f64 {
+    return @exp(-5.0 * x) * (x - 1.0) + std.math.pow(f64, x, 5);
+}
+fn f_19(x: f64) f64 {
+    return @exp(-10.0 * x) * (x - 1.0) + std.math.pow(f64, x, 10);
+}
+fn f_20(x: f64) f64 {
+    return @exp(-20.0 * x) * (x - 1.0) + std.math.pow(f64, x, 20);
+}
+fn f_21(x: f64) f64 {
+    return x * x + @sin(x / 5.0) - 0.25;
+}
+fn f_22(x: f64) f64 {
+    return x * x + @sin(x / 10.0) - 0.25;
+}
+fn f_23(x: f64) f64 {
+    return x * x + @sin(x / 20.0) - 0.25;
+}
+fn f_24(x: f64) f64 {
+    return (x + 2.0) * (x + 1.0) * std.math.pow(f64, x - 3.0, 3);
+}
+fn f_25(x: f64) f64 {
+    return std.math.pow(f64, x - 4.0, 5) * @log(x);
+}
+fn f_26(x: f64) f64 {
+    return std.math.pow(f64, @sin(x) - x / 4.0, 3);
+}
 fn f_27(x: f64) f64 {
     const q = pp(x);
     const s: f64 = if (q < 3.0) 1.0 else if (q > 3.0) -1.0 else 0.0;
     return (81.0 - q * (108.0 - q * (54.0 - q * (12.0 - q)))) * s;
 }
-fn f_28(x: f64) f64 { return @sin(std.math.pow(f64, x - 7.143, 3)); }
-fn f_29(x: f64) f64 { return @exp(std.math.pow(f64, x - 3.0, 5)) - 1.0; }
-fn f_30(x: f64) f64 { return @exp(std.math.pow(f64, x - 3.0, 5)) - @exp(x - 1.0); }
-fn f_31(x: f64) f64 { return std.math.pi - 1.0 / x; }
-fn f_32(x: f64) f64 { return 4.0 - @tan(x); }
-fn f_33(x: f64) f64 { return @cos(x) - std.math.pow(f64, x, 3); }
+fn f_28(x: f64) f64 {
+    return @sin(std.math.pow(f64, x - 7.143, 3));
+}
+fn f_29(x: f64) f64 {
+    return @exp(std.math.pow(f64, x - 3.0, 5)) - 1.0;
+}
+fn f_30(x: f64) f64 {
+    return @exp(std.math.pow(f64, x - 3.0, 5)) - @exp(x - 1.0);
+}
+fn f_31(x: f64) f64 {
+    return std.math.pi - 1.0 / x;
+}
+fn f_32(x: f64) f64 {
+    return 4.0 - @tan(x);
+}
+fn f_33(x: f64) f64 {
+    return @cos(x) - std.math.pow(f64, x, 3);
+}
 
 // ============================================================================
 // Test functions f34-f40: Steven A. Stage (Brent's method improvements)
 // ============================================================================
 
-fn f_34(x: f64) f64 { return @cos(x) - x; }
+fn f_34(x: f64) f64 {
+    return @cos(x) - x;
+}
 fn f_35(x: f64) f64 {
     const s: f64 = if (x <= 2.0 / 3.0) 1.0 else -1.0;
     return @sqrt(@abs(x - 2.0 / 3.0)) * s - 0.1;
@@ -85,23 +151,47 @@ fn f_36(x: f64) f64 {
     const s: f64 = if (x <= 2.0 / 3.0) 1.0 else -1.0;
     return std.math.pow(f64, @abs(x - 2.0 / 3.0), 0.2) * s;
 }
-fn f_37(x: f64) f64 { return std.math.pow(f64, x - 7.0 / 9.0, 3) + (x - 7.0 / 9.0) * 1e-3; }
-fn f_38(x: f64) f64 { return if (x <= 1.0 / 3.0) -0.5 else 0.5; }
-fn f_39(x: f64) f64 { return if (x <= 1.0 / 3.0) -1e-3 else 1.0 - 1e-3; }
-fn f_40(x: f64) f64 { return if (x == 0.0) 0.0 else 1.0 / (x - 2.0 / 3.0); }
+fn f_37(x: f64) f64 {
+    return std.math.pow(f64, x - 7.0 / 9.0, 3) + (x - 7.0 / 9.0) * 1e-3;
+}
+fn f_38(x: f64) f64 {
+    return if (x <= 1.0 / 3.0) -0.5 else 0.5;
+}
+fn f_39(x: f64) f64 {
+    return if (x <= 1.0 / 3.0) -1e-3 else 1.0 - 1e-3;
+}
+fn f_40(x: f64) f64 {
+    return if (x == 0.0) 0.0 else 1.0 / (x - 2.0 / 3.0);
+}
 
 // ============================================================================
 // Test functions f41-f62: Swift & Lindfield (Continuation methods)
 // ============================================================================
 
-fn f_41(x: f64) f64 { return 2.0 * x * @exp(-5.0) - 2.0 * @exp(-5.0 * x) + 1.0; }
-fn f_42(x: f64) f64 { return (x * x - x - 6.0) * (x * x - 3.0 * x + 2.0); }
-fn f_43(x: f64) f64 { return std.math.pow(f64, x, 3); }
-fn f_44(x: f64) f64 { return std.math.pow(f64, x, 5); }
-fn f_45(x: f64) f64 { return std.math.pow(f64, x, 7); }
-fn f_46(x: f64) f64 { return (@exp(-5.0 * x) - x - 0.5) / std.math.pow(f64, x, 5); }
-fn f_47(x: f64) f64 { return 1.0 / @sqrt(x) - 2.0 * @log(5e3 * @sqrt(x)) + 0.8; }
-fn f_48(x: f64) f64 { return 1.0 / @sqrt(x) - 2.0 * @log(5e7 * @sqrt(x)) + 0.8; }
+fn f_41(x: f64) f64 {
+    return 2.0 * x * @exp(-5.0) - 2.0 * @exp(-5.0 * x) + 1.0;
+}
+fn f_42(x: f64) f64 {
+    return (x * x - x - 6.0) * (x * x - 3.0 * x + 2.0);
+}
+fn f_43(x: f64) f64 {
+    return std.math.pow(f64, x, 3);
+}
+fn f_44(x: f64) f64 {
+    return std.math.pow(f64, x, 5);
+}
+fn f_45(x: f64) f64 {
+    return std.math.pow(f64, x, 7);
+}
+fn f_46(x: f64) f64 {
+    return (@exp(-5.0 * x) - x - 0.5) / std.math.pow(f64, x, 5);
+}
+fn f_47(x: f64) f64 {
+    return 1.0 / @sqrt(x) - 2.0 * @log(5e3 * @sqrt(x)) + 0.8;
+}
+fn f_48(x: f64) f64 {
+    return 1.0 / @sqrt(x) - 2.0 * @log(5e7 * @sqrt(x)) + 0.8;
+}
 fn f_49(x: f64) f64 {
     if (x <= 0.0) {
         return -std.math.pow(f64, x, 3) - x - 1.0;
@@ -109,47 +199,111 @@ fn f_49(x: f64) f64 {
         return std.math.cbrt(x) - x - 1.0;
     }
 }
-fn f_50(x: f64) f64 { return std.math.pow(f64, x, 3) - 2.0 * x - x + 3.0; }
-fn f_51(x: f64) f64 { return @log(x); }
-fn f_52(x: f64) f64 { return (10.0 - x) * @exp(-10.0 * x) - std.math.pow(f64, x, 10) + 1.0; }
-fn f_53(x: f64) f64 { return @exp(@sin(x)) - x - 1.0; }
-fn f_54(x: f64) f64 { return 2.0 * @sin(x) - 1.0; }
-fn f_55(x: f64) f64 { return (x - 1.0) * @exp(-x); }
-fn f_56(x: f64) f64 { return std.math.pow(f64, x - 1.0, 3) - 1.0; }
-fn f_57(x: f64) f64 { return @exp(x * x + 7.0 * x - 30.0) - 1.0; }
-fn f_58(x: f64) f64 { return std.math.atan(x) - 1.0; }
-fn f_59(x: f64) f64 { return @exp(x) - 2.0 * x - 1.0; }
-fn f_60(x: f64) f64 { return @exp(-x) - x - @sin(x); }
-fn f_61(x: f64) f64 { return x * x - std.math.pow(f64, @sin(x), 2) - 1.0; }
-fn f_62(x: f64) f64 { return @sin(x) - x / 2.0; }
+fn f_50(x: f64) f64 {
+    return std.math.pow(f64, x, 3) - 2.0 * x - x + 3.0;
+}
+fn f_51(x: f64) f64 {
+    return @log(x);
+}
+fn f_52(x: f64) f64 {
+    return (10.0 - x) * @exp(-10.0 * x) - std.math.pow(f64, x, 10) + 1.0;
+}
+fn f_53(x: f64) f64 {
+    return @exp(@sin(x)) - x - 1.0;
+}
+fn f_54(x: f64) f64 {
+    return 2.0 * @sin(x) - 1.0;
+}
+fn f_55(x: f64) f64 {
+    return (x - 1.0) * @exp(-x);
+}
+fn f_56(x: f64) f64 {
+    return std.math.pow(f64, x - 1.0, 3) - 1.0;
+}
+fn f_57(x: f64) f64 {
+    return @exp(x * x + 7.0 * x - 30.0) - 1.0;
+}
+fn f_58(x: f64) f64 {
+    return std.math.atan(x) - 1.0;
+}
+fn f_59(x: f64) f64 {
+    return @exp(x) - 2.0 * x - 1.0;
+}
+fn f_60(x: f64) f64 {
+    return @exp(-x) - x - @sin(x);
+}
+fn f_61(x: f64) f64 {
+    return x * x - std.math.pow(f64, @sin(x), 2) - 1.0;
+}
+fn f_62(x: f64) f64 {
+    return @sin(x) - x / 2.0;
+}
 
 // ============================================================================
 // Test functions f63-f83: Oliveira & Takahashi (Bisection enhancement)
 // ============================================================================
 
-fn f_63(x: f64) f64 { return x * @exp(x) - 1.0; }
-fn f_64(x: f64) f64 { return @tan(x - 0.1); }
-fn f_65(x: f64) f64 { return @sin(x) + 0.5; }
-fn f_66(x: f64) f64 { return 4.0 * std.math.pow(f64, x, 5) + x * x + 1.0; }
-fn f_67(x: f64) f64 { return x + std.math.pow(f64, x, 10) - 1.0; }
-fn f_68(x: f64) f64 { return std.math.pow(f64, std.math.pi, x) - std.math.e; }
-fn f_69(x: f64) f64 { return @log(@abs(x - 10.0 / 9.0)); }
-fn f_70(x: f64) f64 { return 1.0 / 3.0 + std.math.cbrt(x) + std.math.pow(f64, x, 3); }
-fn f_71(x: f64) f64 { return (x + 2.0 / 3.0) / (x + 101.0 / 100.0); }
-fn f_72(x: f64) f64 { return std.math.pow(f64, x * 1e6 - 1.0, 3); }
-fn f_73(x: f64) f64 { return @exp(x) * std.math.pow(f64, x * 1e6 - 1.0, 3); }
-fn f_74(x: f64) f64 { return std.math.pow(f64, x - 1.0 / 3.0, 2) * std.math.atan(x - 1.0 / 3.0); }
+fn f_63(x: f64) f64 {
+    return x * @exp(x) - 1.0;
+}
+fn f_64(x: f64) f64 {
+    return @tan(x - 0.1);
+}
+fn f_65(x: f64) f64 {
+    return @sin(x) + 0.5;
+}
+fn f_66(x: f64) f64 {
+    return 4.0 * std.math.pow(f64, x, 5) + x * x + 1.0;
+}
+fn f_67(x: f64) f64 {
+    return x + std.math.pow(f64, x, 10) - 1.0;
+}
+fn f_68(x: f64) f64 {
+    return std.math.pow(f64, std.math.pi, x) - std.math.e;
+}
+fn f_69(x: f64) f64 {
+    return @log(@abs(x - 10.0 / 9.0));
+}
+fn f_70(x: f64) f64 {
+    return 1.0 / 3.0 + std.math.cbrt(x) + std.math.pow(f64, x, 3);
+}
+fn f_71(x: f64) f64 {
+    return (x + 2.0 / 3.0) / (x + 101.0 / 100.0);
+}
+fn f_72(x: f64) f64 {
+    return std.math.pow(f64, x * 1e6 - 1.0, 3);
+}
+fn f_73(x: f64) f64 {
+    return @exp(x) * std.math.pow(f64, x * 1e6 - 1.0, 3);
+}
+fn f_74(x: f64) f64 {
+    return std.math.pow(f64, x - 1.0 / 3.0, 2) * std.math.atan(x - 1.0 / 3.0);
+}
 fn f_75(x: f64) f64 {
     const t = 3.0 * x - 1.0;
     return sgn(t) * (1.0 - @sqrt(1.0 - t * t / 81.0));
 }
-fn f_76(x: f64) f64 { return if (x > (1.0 - 1e6) / 1e6) (1.0 + 1e6) / 1e6 else -1.0; }
-fn f_77(x: f64) f64 { return if (x != 1.0 / 21.0) 1.0 / (21.0 * x - 1.0) else 0.0; }
-fn f_78(x: f64) f64 { return x * x / 4.0 + @ceil(x / 2.0) - 0.5; }
-fn f_79(x: f64) f64 { return @ceil(10.0 * x - 1.0) + 0.5; }
-fn f_80(x: f64) f64 { return x + @sin(x * 1e6) / 10.0 + 1e-3; }
-fn f_81(x: f64) f64 { return if (x > -1.0) 1.0 + @sin(1.0 / (x + 1.0)) else -1.0; }
-fn f_82(x: f64) f64 { return 202.0 * x - 2.0 * @floor((2.0 * x + 1e-2) / 2e-2) - 0.1; }
+fn f_76(x: f64) f64 {
+    return if (x > (1.0 - 1e6) / 1e6) (1.0 + 1e6) / 1e6 else -1.0;
+}
+fn f_77(x: f64) f64 {
+    return if (x != 1.0 / 21.0) 1.0 / (21.0 * x - 1.0) else 0.0;
+}
+fn f_78(x: f64) f64 {
+    return x * x / 4.0 + @ceil(x / 2.0) - 0.5;
+}
+fn f_79(x: f64) f64 {
+    return @ceil(10.0 * x - 1.0) + 0.5;
+}
+fn f_80(x: f64) f64 {
+    return x + @sin(x * 1e6) / 10.0 + 1e-3;
+}
+fn f_81(x: f64) f64 {
+    return if (x > -1.0) 1.0 + @sin(1.0 / (x + 1.0)) else -1.0;
+}
+fn f_82(x: f64) f64 {
+    return 202.0 * x - 2.0 * @floor((2.0 * x + 1e-2) / 2e-2) - 0.1;
+}
 fn f_83(x: f64) f64 {
     const t = 202.0 * x - 2.0 * @floor((2.0 * x + 1e-2) / 2e-2) - 0.1;
     return t * t * t;
@@ -159,15 +313,36 @@ fn f_83(x: f64) f64 {
 // Test functions f84-f92: SciML project benchmarks
 // ============================================================================
 
-fn f_84(x: f64) f64 { return (x - 1.0) * (x - 2.0) * (x - 3.0) * (x - 4.0) * (x - 5.0) - 0.05; }
-fn f_85(x: f64) f64 { return @sin(x) - 0.5 * x - 0.3; }
-fn f_86(x: f64) f64 { return @exp(x) - 1.0 - x - x * x / 2.0 - 0.005; }
-fn f_87(x: f64) f64 { return 1.0 / (x - 0.5) - 2.0 - 0.05; }
-fn f_88(x: f64) f64 { return @log(x) - x + 2.0 - 0.05; }
-fn f_89(x: f64) f64 { return @sin(20.0 * x) + 0.1 * x - 0.1; }
-fn f_90(x: f64) f64 { return std.math.pow(f64, x, 3) - 2.0 * std.math.pow(f64, x, 2) + x - 0.025; }
-fn f_91(x: f64) f64 { return x * @sin(1.0 / x) - 0.1 - 0.01; }
-fn f_92(x: f64) f64 { return std.math.pow(f64, x, 3) - 0.001; }
+fn f_84(x: f64) f64 {
+    return (x - 1.0) * (x - 2.0) * (x - 3.0) * (x - 4.0) * (x - 5.0) - 0.05;
+}
+fn f_85(x: f64) f64 {
+    return @sin(x) - 0.5 * x - 0.3;
+}
+fn f_86(x: f64) f64 {
+    return @exp(x) - 1.0 - x - x * x / 2.0 - 0.005;
+}
+fn f_87(x: f64) f64 {
+    return 1.0 / (x - 0.5) - 2.0 - 0.05;
+}
+fn f_88(x: f64) f64 {
+    return @log(x) - x + 2.0 - 0.05;
+}
+fn f_89(x: f64) f64 {
+    return @sin(20.0 * x) + 0.1 * x - 0.1;
+}
+fn f_90(x: f64) f64 {
+    return std.math.pow(f64, x, 3) - 2.0 * std.math.pow(f64, x, 2) + x - 0.025;
+}
+fn f_91(x: f64) f64 {
+    return x * @sin(1.0 / x) - 0.1 - 0.01;
+}
+fn f_92(x: f64) f64 {
+    return std.math.pow(f64, x, 3) - 0.001;
+}
+fn f_93(x: f64) f64 {
+    return std.math.pow(f64, x, 7) - 0.001;
+}
 
 // ============================================================================
 // All problems array
@@ -271,6 +446,7 @@ const all_problems = [_]Problem{
     .{ .name = "f_90", .f = f_90, .a = -1.0, .b = 2.0 },
     .{ .name = "f_91", .f = f_91, .a = 0.01, .b = 1.0 },
     .{ .name = "f_92", .f = f_92, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_93", .f = f_93, .a = -10.0, .b = 10.0 },
 };
 
 pub fn main() void {

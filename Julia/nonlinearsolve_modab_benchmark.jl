@@ -150,6 +150,7 @@ const problems3 = [
     Problem("f90", x -> x^3 - 2x^2 + x - 0.025, -1.0, 2.0),
     Problem("f91", x -> x * sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", x -> x^3 - 0.001, -10, 10),
+    Problem("f93", x -> x^3 - 0.001, -10, 10),
 ]
 
 const all_problems = vcat(problems1, problems2, problems3)
@@ -171,10 +172,10 @@ function run_benchmark()
 
     # Results
     println("Results")
-    header = lpad("Func", 4) * "; " * join([lpad(name, col_w) for (name, _) in solvers], "; ")
+    header = lpad("Func", 6) * "; " * join([lpad(name, col_w) for (name, _) in solvers], "; ")
     println(header)
     for p in all_problems
-        line = lpad(p.name, 4) * "; "
+        line = lpad(p.name, 6) * "; "
         for (name, solver) in solvers
             cf = CountedFunc(p.f, 0)
             try
@@ -195,11 +196,11 @@ function run_benchmark()
 
     # Function evaluation counts
     println("Function evaluations")
-    header = lpad("Func", 4) * "; " * join([lpad(name, 7) for (name, _) in solvers], "; ")
+    header = lpad("Func", 6) * "; " * join([lpad(name, 7) for (name, _) in solvers], "; ")
     println(header)
     total = zeros(Int, length(solvers))
     for p in all_problems
-        line = lpad(p.name, 4) * "; "
+        line = lpad(p.name, 6) * "; "
         for (j, (name, solver)) in enumerate(solvers)
             cf = CountedFunc(p.f)
             try
@@ -214,7 +215,7 @@ function run_benchmark()
     end
 
     # Print totals
-    line = lpad("SUM", 4) * "; "
+    line = lpad("SUM", 6) * "; "
     for t in total
         line *= lpad(string(t), 7) * "; "
     end

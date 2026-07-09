@@ -1,0 +1,2 @@
+npx tsc
+node dist\ModAB_test.js

@@ -37,7 +37,7 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
             if x3 <= x1
                 x3, y3 = x1, f1
             elseif x3 >= x2
-                x3 , y3 = x2, f2
+                x3, y3 = x2, f2
             else
                 y3 = f(x3) - y
             end    

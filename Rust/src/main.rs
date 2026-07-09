@@ -83,47 +83,29 @@ fn all_problems() -> Vec<Problem> {
 
     // ----- Galdino (problems1) -----
     v.push(make("f01", |x| x.powi(3) - 1.0, 0.5, 1.5));
-    v.push(make("f02",
-        |x| x.powi(2) * (x.powi(2) / 3.0 + 2f64.sqrt() * x.sin())
-            - 3f64.sqrt() / 18.0, 0.1, 1.0));
+    v.push(make("f02", |x| x.powi(2) * (x.powi(2) / 3.0 + 2f64.sqrt() * x.sin()) - 3f64.sqrt() / 18.0, 0.1, 1.0));
     v.push(make("f03", |x| 11.0 * x.powi(11) - 1.0, 0.1, 1.0));
     v.push(make("f04", |x| x.powi(3) + 1.0, -1.8, 0.0));
     v.push(make("f05", |x| x.powi(3) - 2.0 * x - 5.0, 2.0, 3.0));
-    v.push(make("f06",
-        |x| 2.0 * x * (-5f64).exp() + 1.0 - 2.0 * (-5.0 * x).exp(), 0.0, 1.0));
-    v.push(make("f07",
-        |x| 2.0 * x * (-10f64).exp() + 1.0 - 2.0 * (-10.0 * x).exp(), 0.0, 1.0));
-    v.push(make("f08",
-        |x| 2.0 * x * (-20f64).exp() + 1.0 - 2.0 * (-20.0 * x).exp(), 0.0, 1.0));
-    v.push(make("f09",
-        |x| (1.0 + (1.0_f64 - 5.0).powi(2)) * x * x - (1.0 - 5.0 * x).powi(2),
-        0.0, 1.0));
-    v.push(make("f10",
-        |x| (1.0 + (1.0_f64 - 10.0).powi(2)) * x * x - (1.0 - 10.0 * x).powi(2),
-        0.0, 1.0));
-    v.push(make("f11",
-        |x| (1.0 + (1.0_f64 - 20.0).powi(2)) * x * x - (1.0 - 20.0 * x).powi(2),
-        0.0, 1.0));
+    v.push(make("f06", |x| 2.0 * x * (-5f64).exp() + 1.0 - 2.0 * (-5.0 * x).exp(), 0.0, 1.0));
+    v.push(make("f07", |x| 2.0 * x * (-10f64).exp() + 1.0 - 2.0 * (-10.0 * x).exp(), 0.0, 1.0));
+    v.push(make("f08", |x| 2.0 * x * (-20f64).exp() + 1.0 - 2.0 * (-20.0 * x).exp(), 0.0, 1.0));
+    v.push(make("f09", |x| (1.0 + (1.0_f64 - 5.0).powi(2)) * x * x - (1.0 - 5.0 * x).powi(2), 0.0, 1.0));
+    v.push(make("f10", |x| (1.0 + (1.0_f64 - 10.0).powi(2)) * x * x - (1.0 - 10.0 * x).powi(2), 0.0, 1.0));
+    v.push(make("f11", |x| (1.0 + (1.0_f64 - 20.0).powi(2)) * x * x - (1.0 - 20.0 * x).powi(2), 0.0, 1.0));
     v.push(make("f12", |x| x * x - (1.0 - x).powi(5), 0.0, 1.0));
     v.push(make("f13", |x| x * x - (1.0 - x).powi(10), 0.0, 1.0));
     v.push(make("f14", |x| x * x - (1.0 - x).powi(20), 0.0, 1.0));
-    v.push(make("f15",
-        |x| (1.0 + (1.0_f64 - 5.0).powi(4)) * x - (1.0 - 5.0 * x).powi(4),
-        0.0, 1.0));
-    v.push(make("f16",
-        |x| (1.0 + (1.0_f64 - 10.0).powi(4)) * x - (1.0 - 10.0 * x).powi(4),
-        0.0, 1.0));
-    v.push(make("f17",
-        |x| (1.0 + (1.0_f64 - 20.0).powi(4)) * x - (1.0 - 20.0 * x).powi(4),
-        0.0, 1.0));
+    v.push(make("f15", |x| (1.0 + (1.0_f64 - 5.0).powi(4)) * x - (1.0 - 5.0 * x).powi(4), 0.0, 1.0));
+    v.push(make("f16", |x| (1.0 + (1.0_f64 - 10.0).powi(4)) * x - (1.0 - 10.0 * x).powi(4), 0.0, 1.0));
+    v.push(make("f17", |x| (1.0 + (1.0_f64 - 20.0).powi(4)) * x - (1.0 - 20.0 * x).powi(4), 0.0, 1.0));
     v.push(make("f18", |x| (-5.0 * x).exp() * (x - 1.0) + x.powi(5), 0.0, 1.0));
     v.push(make("f19", |x| (-10.0 * x).exp() * (x - 1.0) + x.powi(10), 0.0, 1.0));
     v.push(make("f20", |x| (-20.0 * x).exp() * (x - 1.0) + x.powi(20), 0.0, 1.0));
     v.push(make("f21", |x| x * x + (x / 5.0).sin() - 0.25, 0.0, 1.0));
     v.push(make("f22", |x| x * x + (x / 10.0).sin() - 0.25, 0.0, 1.0));
     v.push(make("f23", |x| x * x + (x / 20.0).sin() - 0.25, 0.0, 1.0));
-    v.push(make("f24",
-        |x| (x + 2.0) * (x + 1.0) * (x - 3.0).powi(3), 2.6, 4.6));
+    v.push(make("f24", |x| (x + 2.0) * (x + 1.0) * (x - 3.0).powi(3), 2.6, 4.6));
     v.push(make("f25", |x| (x - 4.0).powi(5) * x.ln(), 3.6, 5.6));
     v.push(make("f26", |x| (x.sin() - x / 4.0).powi(3), 2.0, 4.0));
     v.push(make("f27", |x| {
@@ -133,8 +115,7 @@ fn all_problems() -> Vec<Problem> {
     }, 1.0, 3.0));
     v.push(make("f28", |x| ((x - 7.143).powi(3)).sin(), 7.0, 8.0));
     v.push(make("f29", |x| ((x - 3.0).powi(5)).exp() - 1.0, 2.6, 4.6));
-    v.push(make("f30",
-        |x| ((x - 3.0).powi(5)).exp() - (x - 1.0).exp(), 4.0, 5.0));
+    v.push(make("f30", |x| ((x - 3.0).powi(5)).exp() - (x - 1.0).exp(), 4.0, 5.0));
     v.push(make("f31", |x| PI - 1.0 / x, 0.05, 5.0));
     v.push(make("f32", |x| 4.0 - x.tan(), 0.0, 1.5));
     v.push(make("f33", |x| x.cos() - x.powi(3), 0.0, 4.0));
@@ -149,44 +130,31 @@ fn all_problems() -> Vec<Problem> {
         let s = if x <= 2.0 / 3.0 { 1.0 } else { -1.0 };
         (x - 2.0 / 3.0).abs().powf(0.2) * s
     }, -11.0, 9.0));
-    v.push(make("f37",
-        |x| (x - 7.0 / 9.0).powi(3) + (x - 7.0 / 9.0) * 1e-3, -11.0, 9.0));
-    v.push(make("f38",
-        |x| if x <= 1.0 / 3.0 { -0.5 } else { 0.5 }, -11.0, 9.0));
-    v.push(make("f39",
-        |x| if x <= 1.0 / 3.0 { -1e-3 } else { 1.0 - 1e-3 }, -11.0, 9.0));
-    v.push(make("f40",
-        |x| if x == 0.0 { 0.0 } else { 1.0 / (x - 2.0 / 3.0) }, -11.0, 9.0));
+    v.push(make("f37", |x| (x - 7.0 / 9.0).powi(3) + (x - 7.0 / 9.0) * 1e-3, -11.0, 9.0));
+    v.push(make("f38", |x| if x <= 1.0 / 3.0 { -0.5 } else { 0.5 }, -11.0, 9.0));
+    v.push(make("f39", |x| if x <= 1.0 / 3.0 { -1e-3 } else { 1.0 - 1e-3 }, -11.0, 9.0));
+    v.push(make("f40", |x| if x == 0.0 { 0.0 } else { 1.0 / (x - 2.0 / 3.0) }, -11.0, 9.0));
 
     // ----- Swift–Lindfield (problems1, continued) -----
-    v.push(make("f41",
-        |x| 2.0 * x * (-5f64).exp() - 2.0 * (-5.0 * x).exp() + 1.0, 0.0, 10.0));
-    v.push(make("f42",
-        |x| (x * x - x - 6.0) * (x * x - 3.0 * x + 2.0), 0.0, PI));
+    v.push(make("f41", |x| 2.0 * x * (-5f64).exp() - 2.0 * (-5.0 * x).exp() + 1.0, 0.0, 10.0));
+    v.push(make("f42", |x| (x * x - x - 6.0) * (x * x - 3.0 * x + 2.0), 0.0, PI));
     v.push(make("f43", |x| x.powi(3), -1.0, 1.5));
     v.push(make("f44", |x| x.powi(5), -1.0, 1.5));
     v.push(make("f45", |x| x.powi(7), -1.0, 1.5));
-    v.push(make("f46",
-        |x| ((-5.0 * x).exp() - x - 0.5) / x.powi(5), 0.09, 0.7));
-    v.push(make("f47",
-        |x| 1.0 / x.sqrt() - 2.0 * (5e3 * x.sqrt()).ln() + 0.8,
-        0.0005, 0.5));
-    v.push(make("f48",
-        |x| 1.0 / x.sqrt() - 2.0 * (5e7 * x.sqrt()).ln() + 0.8,
-        0.0005, 0.5));
+    v.push(make("f46", |x| ((-5.0 * x).exp() - x - 0.5) / x.powi(5), 0.09, 0.7));
+    v.push(make("f47", |x| 1.0 / x.sqrt() - 2.0 * (5e3 * x.sqrt()).ln() + 0.8, 0.0005, 0.5));
+    v.push(make("f48", |x| 1.0 / x.sqrt() - 2.0 * (5e7 * x.sqrt()).ln() + 0.8, 0.0005, 0.5));
     v.push(make("f49", |x| {
         if x <= 0.0 { -x.powi(3) - x - 1.0 } else { x.cbrt() - x - 1.0 }
     }, -1.0, 1.0));
     v.push(make("f50", |x| x.powi(3) - 2.0 * x - x + 3.0, -3.0, 2.0));
     v.push(make("f51", |x| x.ln(), 0.5, 5.0));
-    v.push(make("f52",
-        |x| (10.0 - x) * (-10.0 * x).exp() - x.powi(10) + 1.0, 0.5, 8.0));
+    v.push(make("f52", |x| (10.0 - x) * (-10.0 * x).exp() - x.powi(10) + 1.0, 0.5, 8.0));
     v.push(make("f53", |x| x.sin().exp() - x - 1.0, 1.0, 4.0));
     v.push(make("f54", |x| 2.0 * x.sin() - 1.0, 0.1, PI / 3.0));
     v.push(make("f55", |x| (x - 1.0) * (-x).exp(), 0.0, 1.5));
     v.push(make("f56", |x| (x - 1.0).powi(3) - 1.0, 1.5, 3.0));
-    v.push(make("f57",
-        |x| (x * x + 7.0 * x - 30.0).exp() - 1.0, 2.6, 3.5));
+    v.push(make("f57", |x| (x * x + 7.0 * x - 30.0).exp() - 1.0, 2.6, 3.5));
     v.push(make("f58", |x| x.atan() - 1.0, 1.0, 8.0));
     v.push(make("f59", |x| x.exp() - 2.0 * x - 1.0, 0.2, 3.0));
     v.push(make("f60", |x| (-x).exp() - x - x.sin(), 0.0, 2.0));
@@ -201,16 +169,11 @@ fn all_problems() -> Vec<Problem> {
     v.push(make("f67", |x| x + x.powi(10) - 1.0, -1.0, 1.0));
     v.push(make("f68", |x| PI.powf(x) - E, -1.0, 1.0));
     v.push(make("f69", |x| (x - 10.0 / 9.0).abs().ln(), -1.0, 1.0));
-    v.push(make("f70",
-        // sign(x)*|x|^(1/3) is exactly cbrt(x); both are 0 at x=0
-        |x| 1.0 / 3.0 + x.cbrt() + x.powi(3), -1.0, 1.0));
-    v.push(make("f71",
-        |x| (x + 2.0 / 3.0) / (x + 101.0 / 100.0), -1.0, 1.0));
+    v.push(make("f70", |x| 1.0 / 3.0 + x.cbrt() + x.powi(3), -1.0, 1.0));
+    v.push(make("f71", |x| (x + 2.0 / 3.0) / (x + 101.0 / 100.0), -1.0, 1.0));
     v.push(make("f72", |x| (x * 1e6 - 1.0).powi(3), -1.0, 1.0));
-    v.push(make("f73",
-        |x| x.exp() * (x * 1e6 - 1.0).powi(3), -1.0, 1.0));
-    v.push(make("f74",
-        |x| (x - 1.0 / 3.0).powi(2) * (x - 1.0 / 3.0).atan(), -1.0, 1.0));
+    v.push(make("f73", |x| x.exp() * (x * 1e6 - 1.0).powi(3), -1.0, 1.0));
+    v.push(make("f74", |x| (x - 1.0 / 3.0).powi(2) * (x - 1.0 / 3.0).atan(), -1.0, 1.0));
     v.push(make("f75", |x| {
         let t = 3.0 * x - 1.0;
         sgn(t) * (1.0 - (1.0 - t * t / 81.0).sqrt())
@@ -221,40 +184,29 @@ fn all_problems() -> Vec<Problem> {
     v.push(make("f77", |x| {
         if x != 1.0 / 21.0 { 1.0 / (21.0 * x - 1.0) } else { 0.0 }
     }, -1.0, 1.0));
-    v.push(make("f78",
-        |x| x * x / 4.0 + (x / 2.0).ceil() - 0.5, -1.0, 1.0));
+    v.push(make("f78", |x| x * x / 4.0 + (x / 2.0).ceil() - 0.5, -1.0, 1.0));
     v.push(make("f79", |x| (10.0 * x - 1.0).ceil() + 0.5, -1.0, 1.0));
-    v.push(make("f80",
-        |x| x + (x * 1e6).sin() / 10.0 + 1e-3, -1.0, 1.0));
+    v.push(make("f80", |x| x + (x * 1e6).sin() / 10.0 + 1e-3, -1.0, 1.0));
     v.push(make("f81", |x| {
         if x > -1.0 { 1.0 + (1.0 / (x + 1.0)).sin() } else { -1.0 }
     }, -1.0, 1.0));
-    v.push(make("f82",
-        |x| 202.0 * x - 2.0 * ((2.0 * x + 1e-2) / 2e-2).floor() - 0.1,
-        -1.0, 1.0));
+    v.push(make("f82", |x| 202.0 * x - 2.0 * ((2.0 * x + 1e-2) / 2e-2).floor() - 0.1, -1.0, 1.0));
     v.push(make("f83", |x| {
         let t = 202.0 * x - 2.0 * ((2.0 * x + 1e-2) / 2e-2).floor() - 0.1;
         t * t * t
     }, -1.0, 1.0));
 
     // ----- SciML (problems3) -----
-    v.push(make("f84",
-        |x| (x - 1.0) * (x - 2.0) * (x - 3.0) * (x - 4.0) * (x - 5.0) - 0.05,
-        0.5, 5.5));
-    v.push(make("f85",
-        |x| x.sin() - 0.5 * x - 0.3, -10.0, 10.0));
-    v.push(make("f86",
-        |x| x.exp() - 1.0 - x - x * x / 2.0 - 0.005, -2.0, 2.0));
+    v.push(make("f84", |x| (x - 1.0) * (x - 2.0) * (x - 3.0) * (x - 4.0) * (x - 5.0) - 0.05, 0.5, 5.5));
+    v.push(make("f85", |x| x.sin() - 0.5 * x - 0.3, -10.0, 10.0));
+    v.push(make("f86", |x| x.exp() - 1.0 - x - x * x / 2.0 - 0.005, -2.0, 2.0));
     v.push(make("f87", |x| 1.0 / (x - 0.5) - 2.0 - 0.05, 0.6, 2.0));
     v.push(make("f88", |x| x.ln() - x + 2.0 - 0.05, 0.1, 3.0));
-    v.push(make("f89",
-        |x| (20.0 * x).sin() + 0.1 * x - 0.1, -4.0, 5.0));
-    v.push(make("f90",
-        |x| x.powi(3) - 2.0 * x.powi(2) + x - 0.025, -1.0, 2.0));
-    v.push(make("f91",
-        |x| x * (1.0 / x).sin() - 0.1 - 0.01, 0.01, 1.0));
+    v.push(make("f89", |x| (20.0 * x).sin() + 0.1 * x - 0.1, -4.0, 5.0));
+    v.push(make("f90", |x| x.powi(3) - 2.0 * x.powi(2) + x - 0.025, -1.0, 2.0));
+    v.push(make("f91", |x| x * (1.0 / x).sin() - 0.1 - 0.01, 0.01, 1.0));
     v.push(make("f92", |x| x.powi(3) - 0.001, -10.0, 10.0));
-
+    v.push(make("f93", |x| x.powi(7) - 0.001, -10.0, 10.0));
     v
 }
 

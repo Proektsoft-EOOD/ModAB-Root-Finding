@@ -179,6 +179,7 @@ problems3 = [
     Problem("f90", lambda x: x**3 - 2 * x**2 + x - 0.025, -1.0, 2.0),
     Problem("f91", lambda x: x * math.sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", lambda x: x**3 - 0.001, -10, 10),
+    Problem("f93", lambda x: x**7 - 0.001, -10, 10)
 ]
 
 all_problems = problems1 + problems2 + problems3
@@ -297,13 +298,13 @@ def run():
 
     print("Function evaluations")
     print("===")
-    header = f"{'Func':>4}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers)
+    header = f"{'Func':>6}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers) +  "|"
     print(header)
-    print("------ | ------: | ------: | ------: | ------: | ------: | ------: |")
+    print("----- | ------: | ------: | ------: | ------: | ------: | ------: |")
     count_data = []
     totals = [0] * len(solvers)
     for p in all_problems:
-        line = f"{p.name:>4}| "
+        line = f"{p.name:>6}| "
         row = []
         for j, (name, solver) in enumerate(solvers):
             cf = CountedFunc(p.f)
@@ -319,7 +320,7 @@ def run():
         print(line)
 
     # Totals row
-    line = f"{'SUM':>4}| "
+    line = f"{'SUM':>6}| "
     for t in totals:
         line += f"{t:>{cnt_w}}| "
     print(line)
@@ -330,13 +331,13 @@ def run():
     print("Execution times  (ms per problem, 100 iterations)")
     print("===")
     iterations = 200
-    header = f"{'Func':>4}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers)
+    header = f"{'Func':>6}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers) +  "|"
     print(header)
-    print("-- | -- | -- | -- | -- | -- ")
+    print("----- | ------: | ------: | ------: | ------: | ------: | ------: |")
     time_data = []
     total_time = [0.0] * len(solvers)
     for p in all_problems:
-        line = f"{p.name:>4}| "
+        line = f"{p.name:>6}| "
         row = []
         for j, (name, solver) in enumerate(solvers):
             start = time.perf_counter()
@@ -353,7 +354,7 @@ def run():
         print(line)
 
     # Totals row
-    line = f"{'SUM':>4}| "
+    line = f"{'SUM':>6}| "
     for t in total_time:
         line += f"{t:>{cnt_w}.2f}| "
     print(line)

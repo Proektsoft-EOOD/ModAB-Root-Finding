@@ -148,7 +148,7 @@ public class ModABTest {
         problems.add(new Problem("f90", x -> Math.pow(x, 3) - 2 * x * x + x - 0.025, -1.0, 2.0));
         problems.add(new Problem("f91", x -> x * Math.sin(1 / x) - 0.1 - 0.01, 0.01, 1.0));
         problems.add(new Problem("f92", x -> Math.pow(x, 3) - 0.001, -10, 10));
-
+        problems.add(new Problem("f93", x -> Math.pow(x, 7) - 0.001, -10, 10));
         return problems;
     }
 
@@ -197,9 +197,5 @@ public class ModABTest {
         System.out.println("----------------------------------------------------------------------");
         System.out.printf("Total: %d tests, %d passed, %d failed%n", passed + failed, passed, failed);
         System.out.printf("Total evaluations: %d%n", totalEvals);
-    }
-
-    public static void main(String[] args) {
-        runTests();
     }
 }

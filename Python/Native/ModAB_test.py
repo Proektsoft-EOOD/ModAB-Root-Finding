@@ -122,6 +122,7 @@ problems3 = [
     Problem("f90", lambda x: x**3 - 2 * x**2 + x - 0.025, -1.0, 2.0),
     Problem("f91", lambda x: x * math.sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", lambda x: x**3 - 0.001, -10, 10),
+    Problem("f93", lambda x: x**7 - 0.001, -10, 10),
 ]
 
 all_problems = problems1 + problems2 + problems3

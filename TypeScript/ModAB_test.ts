@@ -117,6 +117,7 @@ const problems3: Problem[] = [
     { name: "f90", f: (x) => x ** 3 - 2 * x ** 2 + x - 0.025, a: -1.0, b: 2.0 },
     { name: "f91", f: (x) => x * Math.sin(1 / x) - 0.1 - 0.01, a: 0.01, b: 1.0 },
     { name: "f92", f: (x) => x ** 3 - 0.001, a: -10, b: 10 },
+    { name: "f93", f: (x) => x ** 7 - 0.001, a: -10, b: 10 },
 ];
 
 const allProblems: Problem[] = [...problems1, ...problems2, ...problems3];
