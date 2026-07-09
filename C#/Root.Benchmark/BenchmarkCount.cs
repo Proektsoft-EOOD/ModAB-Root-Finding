@@ -494,7 +494,6 @@ namespace Root.Benchmark
         internal static void Run()
         {
             var problems = (new[] { problems1, problems2, problems3 }).SelectMany(x => x).ToArray();
-            problems = [problems3[^1]];
             const double tol = 1e-14;
             for (int i = 0; i < 3; ++i)
             {

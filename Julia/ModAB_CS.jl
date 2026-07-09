@@ -10,6 +10,7 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
     if sign(y1) == sign(y2)
         return NaN
     end
+    f1, f2 = y1, y2
     epsx = xtol * (x2 - x1)
     side = 0
     bisection = true
@@ -19,13 +20,13 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
     for i in 1:maxIter
         local x3 = bisection ? (x1 + x2) / 2 : (x1 * y2 - y1 * x2) / (y2 - y1)
         if x2 - x1 <= epsx # x-convergence check
-            return x3
+            return bisection ? x3 : clamp(x3, x1, x2)
         end
         local y3
         if bisection
             y3 = f(x3) - y  # Function value at midpoint
-            ym = (y1 + y2) / 2 # Ordinate of chord at midpoint
-            r = 1 - abs(ym / (y2 - y1)) # Symmetry factor
+            ym = (f1 + f2) / 2 # Ordinate of chord at midpoint
+            r = 1 - abs(ym / (f2 - f1)) # Symmetry factor
             k = r * r # Deviation factor
             # Check if the function is close enough to linear
             if abs(ym - y3) < k * (abs(y3) + abs(ym))
@@ -34,9 +35,9 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
             end
         else
             if x3 <= x1
-                x3, y3 = x1, y1
+                x3, y3 = x1, f1
             elseif x3 >= x2
-                x3 , y3 = x2, y2
+                x3 , y3 = x2, f2
             else
                 y3 = f(x3) - y
             end    
@@ -54,7 +55,7 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
             elseif !bisection
                 side = 1
             end
-            x1, y1 = x3, y3
+            x1, y1, f1 = x3, y3, y3
         else
             if side == -1
                 m = 1 - y3 / y2
@@ -62,7 +63,7 @@ function modab_CS(f, x1::Real, x2::Real, y::Real=0.0; xtol::Float64=1e-14, ytol:
             elseif !bisection
                 side = -1
             end
-            x2, y2 = x3, y3
+            x2, y2, f2 = x3, y3, y3
         end
         if x2 - x1 > threshold # AB failed to shrink the interval enough
             bisection = true
