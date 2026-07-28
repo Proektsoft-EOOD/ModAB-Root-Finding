@@ -70,11 +70,11 @@ jobs:
           java-version: '21'
 
       - name: Compile
-        run: javac ModAB.java ModABTest.java
+        run: javac Main.java
         working-directory: Java
 
       - name: Run tests
-        run: java ModABTest
+        run: java Main
         working-directory: Java
 
   build-typescript:
