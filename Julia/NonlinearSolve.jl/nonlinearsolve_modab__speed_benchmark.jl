@@ -123,6 +123,8 @@ const problems3 = [
     Problem("f89", x -> sin(20x) + 0.1x - 0.1, -4.0, 5.0),
     Problem("f90", x -> x^3 - 2x^2 + x - 0.025, -1.0, 2.0),
     Problem("f91", x -> x * sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
+    Problem("f92", x -> x^3 - 0.001, -10, 10),
+    Problem("f93", x -> x^7 - 0.001, -10, 10),
 ]
 
 const all_problems = vcat(problems1, problems2, problems3)
@@ -150,7 +152,6 @@ const algorithms = [
     ("alefeld", Alefeld()),
     ("    ITP", ITP()),
     ("  modAB", ModAB()),
-    ("modAB_new", ModAB_new()),
 ]
 
 # Benchmark runner
