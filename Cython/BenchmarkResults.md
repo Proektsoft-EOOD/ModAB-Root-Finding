@@ -1,4 +1,4 @@
-Benchmark: modab_cy vs pymodab vs cybrentq
+Benchmark: cymodab vs pymodab vs cybrentq
 ===
 
 Results (root values)
