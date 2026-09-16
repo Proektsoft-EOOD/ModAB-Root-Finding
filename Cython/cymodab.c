@@ -1502,18 +1502,6 @@ static const char* const __pyx_f[] = {
   "cymodab.pyx",
 };
 /* #### Code section: utility_code_proto_before_types ### */
-/* ForceInitThreads.proto */
-#ifndef __PYX_FORCE_INIT_THREADS
-  #define __PYX_FORCE_INIT_THREADS 0
-#endif
-
-/* NoFastGil.proto */
-#define __Pyx_PyGILState_Ensure PyGILState_Ensure
-#define __Pyx_PyGILState_Release PyGILState_Release
-#define __Pyx_FastGIL_Remember()
-#define __Pyx_FastGIL_Forget()
-#define __Pyx_FastGilFuncInit()
-
 /* Atomics.proto (used by UnpackUnboundCMethod) */
 #include <pythread.h>
 #ifndef CYTHON_ATOMICS
@@ -1695,7 +1683,7 @@ struct __pyx_opt_args_7cymodab_modAB_root;
  * 
  * ctypedef double (*func_type)(double) nogil             # <<<<<<<<<<<<<<
  * 
- * cdef inline double c_max(double a, double b) nogil:
+ * cdef inline double c_max(double a, double b) noexcept nogil:
 */
 typedef double (*__pyx_t_7cymodab_func_type)(double);
 
@@ -1788,9 +1776,6 @@ struct __pyx_opt_args_7cymodab_modAB_root {
     } while (0)
 #define __Pyx_CLEAR(r)    do { PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);} while(0)
 #define __Pyx_XCLEAR(r)   do { if((r) != NULL) {PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);}} while(0)
-
-/* ErrOccurredWithGIL.proto */
-static CYTHON_INLINE int __Pyx_ErrOccurredWithGIL(void);
 
 /* PyObjectCall.proto (used by PyObjectFastCall) */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -2647,7 +2632,7 @@ return 0;
 /* "cymodab.pyx":11
  * ctypedef double (*func_type)(double) nogil
  * 
- * cdef inline double c_max(double a, double b) nogil:             # <<<<<<<<<<<<<<
+ * cdef inline double c_max(double a, double b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     return a if a > b else b
  * 
 */
@@ -2659,10 +2644,10 @@ static CYTHON_INLINE double __pyx_f_7cymodab_c_max(double __pyx_v_a, double __py
 
   /* "cymodab.pyx":12
  * 
- * cdef inline double c_max(double a, double b) nogil:
+ * cdef inline double c_max(double a, double b) noexcept nogil:
  *     return a if a > b else b             # <<<<<<<<<<<<<<
  * 
- * cdef inline double c_min(double a, double b) nogil:
+ * cdef inline double c_min(double a, double b) noexcept nogil:
 */
   __pyx_t_2 = (__pyx_v_a > __pyx_v_b);
 
@@ -2682,7 +2667,7 @@ static CYTHON_INLINE double __pyx_f_7cymodab_c_max(double __pyx_v_a, double __py
   /* "cymodab.pyx":11
  * ctypedef double (*func_type)(double) nogil
  * 
- * cdef inline double c_max(double a, double b) nogil:             # <<<<<<<<<<<<<<
+ * cdef inline double c_max(double a, double b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     return a if a > b else b
  * 
 */
@@ -2695,7 +2680,7 @@ static CYTHON_INLINE double __pyx_f_7cymodab_c_max(double __pyx_v_a, double __py
 /* "cymodab.pyx":14
  *     return a if a > b else b
  * 
- * cdef inline double c_min(double a, double b) nogil:             # <<<<<<<<<<<<<<
+ * cdef inline double c_min(double a, double b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     return a if a < b else b
  * 
 */
@@ -2707,10 +2692,10 @@ static CYTHON_INLINE double __pyx_f_7cymodab_c_min(double __pyx_v_a, double __py
 
   /* "cymodab.pyx":15
  * 
- * cdef inline double c_min(double a, double b) nogil:
+ * cdef inline double c_min(double a, double b) noexcept nogil:
  *     return a if a < b else b             # <<<<<<<<<<<<<<
  * 
- * cdef inline double c_clamp(double x, double xmin, double xmax) nogil:
+ * cdef inline double c_clamp(double x, double xmin, double xmax) noexcept nogil:
 */
   __pyx_t_2 = (__pyx_v_a < __pyx_v_b);
 
@@ -2730,7 +2715,7 @@ static CYTHON_INLINE double __pyx_f_7cymodab_c_min(double __pyx_v_a, double __py
   /* "cymodab.pyx":14
  *     return a if a > b else b
  * 
- * cdef inline double c_min(double a, double b) nogil:             # <<<<<<<<<<<<<<
+ * cdef inline double c_min(double a, double b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     return a if a < b else b
  * 
 */
@@ -2743,49 +2728,36 @@ static CYTHON_INLINE double __pyx_f_7cymodab_c_min(double __pyx_v_a, double __py
 /* "cymodab.pyx":17
  *     return a if a < b else b
  * 
- * cdef inline double c_clamp(double x, double xmin, double xmax) nogil:             # <<<<<<<<<<<<<<
+ * cdef inline double c_clamp(double x, double xmin, double xmax) noexcept nogil:             # <<<<<<<<<<<<<<
  *     return c_max(xmin, c_min(x, xmax))
  * 
 */
 
 static CYTHON_INLINE double __pyx_f_7cymodab_c_clamp(double __pyx_v_x, double __pyx_v_xmin, double __pyx_v_xmax) {
   double __pyx_r;
-  double __pyx_t_1;
-  double __pyx_t_2;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  PyGILState_STATE __pyx_gilstate_save;
 
   /* "cymodab.pyx":18
  * 
- * cdef inline double c_clamp(double x, double xmin, double xmax) nogil:
+ * cdef inline double c_clamp(double x, double xmin, double xmax) noexcept nogil:
  *     return c_max(xmin, c_min(x, xmax))             # <<<<<<<<<<<<<<
  * 
  * cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
 */
-  __pyx_t_1 = __pyx_f_7cymodab_c_min(__pyx_v_x, __pyx_v_xmax); if (unlikely(__pyx_t_1 == ((double)-1) && __Pyx_ErrOccurredWithGIL())) __PYX_ERR(0, 18, __pyx_L1_error)
-  __pyx_t_2 = __pyx_f_7cymodab_c_max(__pyx_v_xmin, __pyx_t_1); if (unlikely(__pyx_t_2 == ((double)-1) && __Pyx_ErrOccurredWithGIL())) __PYX_ERR(0, 18, __pyx_L1_error)
-
   {
-    __pyx_r = __pyx_t_2;
+
+    __pyx_r = __pyx_f_7cymodab_c_max(__pyx_v_xmin, __pyx_f_7cymodab_c_min(__pyx_v_x, __pyx_v_xmax));
   }
   goto __pyx_L0;
 
   /* "cymodab.pyx":17
  *     return a if a < b else b
  * 
- * cdef inline double c_clamp(double x, double xmin, double xmax) nogil:             # <<<<<<<<<<<<<<
+ * cdef inline double c_clamp(double x, double xmin, double xmax) noexcept nogil:             # <<<<<<<<<<<<<<
  *     return c_max(xmin, c_min(x, xmax))
  * 
 */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
-  __Pyx_AddTraceback("cymodab.c_clamp", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = -1;
-  __Pyx_PyGILState_Release(__pyx_gilstate_save);
   __pyx_L0:;
   return __pyx_r;
 }
@@ -2904,9 +2876,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
  *     y1 = f(x1) - y
  *     if fabs(y1) <= epsy:
 */
-  __pyx_t_3 = __pyx_f_7cymodab_c_max(fabs(__pyx_v_y), 1.0); if (unlikely(__pyx_t_3 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 42, __pyx_L1_error)
-  __pyx_v_epsy = (__pyx_v_ytol * __pyx_t_3);
-
+  __pyx_v_epsy = (__pyx_v_ytol * __pyx_f_7cymodab_c_max(fabs(__pyx_v_y), 1.0));
 
   /* "cymodab.pyx":43
  * 
@@ -3205,9 +3175,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
  *         if x2 - x1 <= epsx:  # x-convergence check
  *             if bisection:
 */
-    __pyx_t_3 = __pyx_f_7cymodab_c_max(fabs(__pyx_v_x3), 1.0); if (unlikely(__pyx_t_3 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L1_error)
-    __pyx_v_epsx = (__pyx_v_xtol * __pyx_t_3);
-
+    __pyx_v_epsx = (__pyx_v_xtol * __pyx_f_7cymodab_c_max(fabs(__pyx_v_x3), 1.0));
 
     /* "cymodab.pyx":67
  * 
@@ -3263,9 +3231,9 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
  *         if bisection:
 */
       /*else*/ {
-        __pyx_t_3 = __pyx_f_7cymodab_c_clamp(__pyx_v_x3, __pyx_v_x1, __pyx_v_x2); if (unlikely(__pyx_t_3 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 71, __pyx_L1_error)
         {
-          __pyx_r = __pyx_t_3;
+
+          __pyx_r = __pyx_f_7cymodab_c_clamp(__pyx_v_x3, __pyx_v_x1, __pyx_v_x2);
         }
         goto __pyx_L0;
       }
@@ -4904,15 +4872,6 @@ end:
     return (__Pyx_RefNannyAPIStruct *)r;
 }
 #endif
-
-/* ErrOccurredWithGIL */
-static CYTHON_INLINE int __Pyx_ErrOccurredWithGIL(void) {
-  int err;
-  PyGILState_STATE _save = PyGILState_Ensure();
-  err = !!PyErr_Occurred();
-  PyGILState_Release(_save);
-  return err;
-}
 
 /* PyObjectCall (used by PyObjectFastCall) */
 #if CYTHON_COMPILING_IN_CPYTHON

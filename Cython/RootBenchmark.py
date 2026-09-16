@@ -244,7 +244,7 @@ def run():
     cnt_w = 10  # column width for count / time tables
 
     print("=" * 60)
-    print("Benchmark: modab_cy vs pymodab vs cybrentq")
+    print("Benchmark: cymodab vs pymodab vs cybrentq")
     print("=" * 60)
     print()
 

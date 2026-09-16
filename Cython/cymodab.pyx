@@ -8,13 +8,13 @@ from libc.math cimport fabs, NAN, isnan
 
 ctypedef double (*func_type)(double) nogil
 
-cdef inline double c_max(double a, double b) nogil:
+cdef inline double c_max(double a, double b) noexcept nogil:
     return a if a > b else b
 
-cdef inline double c_min(double a, double b) nogil:
+cdef inline double c_min(double a, double b) noexcept nogil:
     return a if a < b else b
 
-cdef inline double c_clamp(double x, double xmin, double xmax) nogil:
+cdef inline double c_clamp(double x, double xmin, double xmax) noexcept nogil:
     return c_max(xmin, c_min(x, xmax))
 
 cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
