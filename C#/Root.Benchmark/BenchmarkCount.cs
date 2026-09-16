@@ -1,560 +1,193 @@
 ﻿using Proektsoft.Root;
+using System.Diagnostics;
 namespace Root.Benchmark
 {
     internal class BenchmarkCount
     {
-        private static double P(double x) => x + 1.11111;
-
-        // Test examples from various publications as specified bellow
-        internal static readonly Problem[] problems1 =
-        {
-            //Sérgio Galdino. A family of regula falsi root-finding methods
-            new() {
-                Name = "f01",
-                F = (x) => Math.Pow(x, 3) - 1,
-                a = 0.5, b = 1.5
-            },
-            new() {
-                Name = "f02",
-                F = (x) => Math.Pow(x, 2)*(Math.Pow(x, 2)/3 + Math.Sqrt(2)*Math.Sin(x)) - Math.Sqrt(3)/18,
-                a = 0.1, b = 1
-            },
-            new() {
-                Name = "f03",
-                F = (x) => 11*Math.Pow(x, 11) - 1,
-                a = 0.1, b = 1
-            },
-            new() {
-                Name = "f04",
-                F = (x) => Math.Pow(x, 3) + 1,
-                a = -1.8, b = 0
-            },
-            new() {       
-                Name = "f05",
-                F = (x) => Math.Pow(x, 3) - 2*x - 5,
-                a = 2, b = 3
-            },
-            new() {
-                Name = "f06",
-                F = (x) => 2*x*Math.Exp(-5) + 1 - 2*Math.Exp(-5*x),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f07",
-                F = (x) => 2*x*Math.Exp(-10) + 1 - 2*Math.Exp(-10*x),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f08",
-                F = (x) => 2*x*Math.Exp(-20) + 1 - 2*Math.Exp(-20*x),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f09",
-                F = (x) => (1 + Math.Pow(1 - 5, 2))*Math.Pow(x, 2) - Math.Pow(1 - 5*x, 2),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f10",
-                F = (x) => (1 + Math.Pow(1 - 10, 2))*Math.Pow(x, 2) - Math.Pow(1 - 10*x, 2),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f11",
-                F = (x) => (1 + Math.Pow(1 - 20, 2))*Math.Pow(x, 2) - Math.Pow(1 - 20*x, 2),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f12",
-                F = (x) => Math.Pow(x, 2) - Math.Pow(1 - x, 5),
-                a = 0, b = 1
-            },
-            new(){
-                Name = "f13",
-                F = (x) => Math.Pow(x, 2) - Math.Pow(1 - x, 10),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f14",
-                F = (x) => Math.Pow(x, 2) - Math.Pow(1 - x, 20),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f15",
-                F = (x) => (1 + Math.Pow(1 - 5, 4))*x -Math.Pow(1 - 5*x, 4),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f16",
-                F = (x) => (1 + Math.Pow(1 - 10, 4))*x - Math.Pow(1 - 10*x, 4),
-                a = 0,b = 1
-            },
-            new() {
-                Name = "f17",
-                F = (x) => (1 + Math.Pow(1 - 20, 4))*x - Math.Pow(1 - 20*x, 4),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f18", 
-                F = (x) => Math.Exp(-5*x)*(x - 1) + Math.Pow(x, 5),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f19",
-                F = (x) => Math.Exp(-10*x)*(x - 1) + Math.Pow(x, 10),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f20",
-                F = (x) => Math.Exp(-20*x)*(x - 1) + Math.Pow(x, 20),
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f21",
-                F = (x) => Math.Pow(x, 2) + Math.Sin(x/5) - 1d/4d,
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f22",
-                F = (x) => Math.Pow(x, 2) + Math.Sin(x/10) - 1d/4d,
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f23",
-                F = (x) => Math.Pow(x, 2) + Math.Sin(x/20) - 1d/4d,
-                a = 0, b = 1
-            },
-            new() {
-                Name = "f24",
-                F = (x) => (x + 2)*(x + 1)*Math.Pow(x - 3, 3),
-                a = 2.6, b = 4.6
-            },
-            new() {
-                Name = "f25",
-                F = (x) => Math.Pow(x - 4, 5) * Math.Log(x),
-                a = 3.6, b = 5.6
-            },
-            new() {
-                Name = "f26",
-                F = (x) => Math.Pow(Math.Sin(x) - x/4, 3),
-                a = 2, b = 4
-            },
-            new() {
-                Name = "f27",
-                F = (x) => (81 - P(x)*(108 - P(x)*(54 - P(x)*(12 - P(x)))))*Math.Sign(P(x) - 3),
-                a = 1, b = 3
-            },
-            new() {
-                Name = "f28",
-                F = (x) => Math.Sin(Math.Pow(x - 7.143, 3)),
-                a = 7, b = 8
-            },
-            new() {
-                Name = "f29",
-                F = (x) => Math.Exp(Math.Pow(x - 3, 5)) - 1,
-                a = 2.6, b = 4.6
-            },
-            new() {
-                Name = "f30",
-                F = (x) => Math.Exp(Math.Pow(x - 3, 5)) - Math.Exp(x - 1),
-                a = 4, b = 5
-            },
-            //My functions
-            new() {
-                Name = "f31",
-                F = (x) => Math.PI - 1/x,
-                a = 0.05, b = 5
-            },
-            new() {
-                Name = "f32",
-                F = (x) => 4 - Math.Tan(x),
-                a = 0, b = 1.5
-            },
-            //Steven A. Stage. Comments on An Improvement to the Brent’s Method 
-            new() {
-                Name = "f33",
-                F = (x) => Math.Cos(x) - Math.Pow(x, 3),
-                a = 0, b = 4
-            },
-            new() {
-                Name = "f34",
-                F = (x) => Math.Cos(x) - x,
-                a = -11, b = 9
-            },
-            new() {
-                Name = "f35",
-                F = (x) => Math.Sqrt(Math.Abs(x - 2d/3d))*(x <= 2d/3d ? 1 : -1) - 0.1,
-                a = -11, b = 9
-            },
-            new() {
-                Name = "f36",
-                F = (x) => Math.Pow(Math.Abs(x - 2d/3d), 0.2)*(x <= 2d/3d ? 1 : -1),
-                a = -11, b = 9
-            },
-            new() {
-                Name = "f37",
-                F = (x) => Math.Pow(x - 7d/9d, 3) + (x - 7d/9d) * 1e-3,
-                a = -11, b = 9
-            },
-            new() {
-                Name = "f38",
-                F = (x) => x <= 1d/3d ? -0.5 : 0.5,
-                a = -11, b = 9
-            },
-            new() {
-                Name = "f39",
-                F = (x) => x <= 1d/3d ? -1e-3 : 1 - 1e-3,
-                a = -11, b = 9
-            },
-            new() {
-                Name = "f40",
-                F = (x) => x == 0 ? 0 : 1 / (x - 2d/3d),
-                a = -11, b = 9
-            },
-            //A. Swift and G.R. Lindfield. Comparison of a Continuation Method with Brents Method for the Numerical Solution of a Single Nonlinear Equation
-            new() {
-                Name = "f41",
-                F = (x) => 2*x*Math.Exp(-5) - 2*Math.Exp(-5*x) + 1,
-                a = 0, b = 10
-            },
-            new() {
-                Name = "f42",
-                F = (x) => (Math.Pow(x, 2) - x - 6)*(Math.Pow(x, 2) - 3*x + 2),
-                a = 0, b = Math.PI
-            },
-            new() {
-                Name = "f43",
-                F = (x) => Math.Pow(x, 3),
-                a = -1, b = 1.5
-            },
-            new() {
-                Name = "f44",
-                F = (x) => Math.Pow(x, 5),
-                a = -1, b = 1.5
-            },
-            new() {
-                Name = "f45",
-                F = (x) => Math.Pow(x, 7),
-                a = -1, b = 1.5
-            },
-            new() {
-                Name = "f46",
-                F = (x) => (Math.Exp(-5*x) - x - 0.5)/Math.Pow(x, 5),
-                a = 0.09, b = 0.7
-            },
-            new() {
-                Name = "f47",
-                F = (x) => 1/Math.Sqrt(x) - 2*Math.Log(5e3*Math.Sqrt(x)) + 0.8,
-                a = 0.0005, b = 0.5
-            },
-            new() {
-                Name = "f48",
-                F = (x) => 1/Math.Sqrt(x) - 2*Math.Log(5e7*Math.Sqrt(x)) + 0.8,
-                a = 0.0005, b = 0.5
-            },
-            new() {
-                Name = "f49",
-                F = (x) => x <= 0 ? -Math.Pow(x, 3) - x - 1 : Math.Pow(x, 1.0/3.0) - x - 1,
-                a = -1, b = 1
-            },
-            new() {
-                Name = "f50",
-                F = (x) => Math.Pow(x, 3) - 2*x - x + 3,
-                a = -3, b = 2
-            },
-            new() {
-                Name = "f51",
-                F = (x) => Math.Log(x),
-                a = 0.5, b = 5
-            },
-            new() {
-                Name = "f52",
-                F = (x) => (10 - x)*Math.Exp(-10*x) - Math.Pow(x, 10) + 1,
-                a = 0.5, b = 8
-            },
-            new() {
-                Name = "f53",
-                F = (x) => Math.Exp(Math.Sin(x)) - x - 1,
-                a = 1.0, b = 4
-            },
-            new() {
-                Name = "f54",
-                F = (x) => 2*Math.Sin(x) - 1,
-                a = 0.1, b = Math.PI/3
-            },
-            new() {
-                Name = "f55",
-                F = (x) => (x - 1)*Math.Exp(-x),
-                a = 0.0, b = 1.5
-            },
-            new() {
-                Name = "f56",
-                F = (x) => Math.Pow(x - 1, 3) - 1,
-                a = 1.5, b = 3
-            },
-            new() {
-                Name = "f57",
-                F = (x) => Math.Exp(Math.Pow(x, 2) + 7*x - 30) - 1,
-                a = 2.6, b = 3.5
-            },
-            new() {
-                Name = "f58",
-                F = (x) => Math.Atan(x) - 1,
-                a = 1.0, b = 8
-            },
-            new() {
-                Name = "f59",
-                F = (x) => Math.Exp(x) - 2*x - 1,
-                a = 0.2, b = 3
-            },
-            new() {
-                Name = "f60",
-                F = (x) => Math.Exp(-x) - x - Math.Sin(x),
-                a = 0.0, b = 2
-            },
-            new() {
-                Name = "f61",
-                F = (x) => Math.Pow(x, 2) - Math.Pow(Math.Sin(x),2)  - 1,
-                a = -1, b = 2
-            },
-            new() {
-                Name = "f62",
-                F = (x) => Math.Sin(x) - x/2,
-                a = Math.PI/2, b = Math.PI
-            }
-        };
-
-        // Test examples from the publication
-        // Oliveira I. F. D., Takahashi R. H. C.
-        // An Enhancement of the Bisection Method Average Performance Preserving Minmax Optimality
-
-        internal static readonly Problem[] problems2 =
-        {
-            new() { //Lambert
-                Name = "f63",
-                F = (x) => x * Math.Exp(x) - 1d,
-                a = -1d, b = 1d
-            },
-            new() { //Trigonometric 1
-                Name = "f64",
-                F = (x) => Math.Tan(x - 1d/10d),
-                a = -1d, b = 1d
-            },
-            new() { //Trigonometric 2
-                Name = "f65",
-                F = (x) => Math.Sin(x) + 0.5,
-                a = -1d, b = 1d
-            },
-            new() { //Polynomial 1
-                Name = "f66",
-                F = (x) => 4 * Math.Pow(x, 5d) + x * x + 1d,
-                a = -1d, b = 1d
-            },
-            new() { //Polynomial 2
-                Name = "f67",
-                F = (x) => x + Math.Pow(x, 10d) - 1d,
-                a = -1d, b = 1d
-            },
-            new() { //Exponential
-                Name = "f68",
-                F = (x) => Math.Pow(Math.PI, x) - Math.E,
-                a = -1d, b = 1d
-            },
-            new() { //Logarithmic
-                Name = "f69",
-                F = (x) => Math.Log(Math.Abs(x - 10d/9d)),
-                a = -1d, b = 1d
-            },
-            new() { //Posynomial
-                Name = "f70",
-                F = (x) => 1d/3d + Math.Sign(x) * Math.Cbrt(Math.Abs(x)) + Math.Pow(x, 3d),
-                a = -1d, b = 1d
-            },
-            new() { //Poly.Frac.
-                Name = "f71",
-                F = (x) => (x + 2d/3d)/(x + 101d/100d),
-                a = -1d, b = 1d
-            },
-            new() { //Polynomial 3
-                Name = "f72",
-                F = (x) => Math.Pow(x * 1e6 - 1d, 3d),
-                a = -1d, b = 1d
-            },
-            new() { //Exp. Poly.
-                Name = "f73",
-                F = (x) => Math.Exp(x) * Math.Pow(x * 1e6 - 1d, 3d),
-                a = -1d, b = 1d
-            },
-            new() { //Tan. Poly.
-                Name = "f74",
-                F = (x) => Math.Pow(x - 1d/3d, 2d) * Math.Atan(x - 1d/3d),
-                a = -1d, b = 1d
-            },
-            new() { //Circles
-                Name = "f75",
-                F = (x) => Math.Sign(3d*x - 1d) * (1d - Math.Sqrt(1d - Math.Pow(3d*x - 1d, 2d)/81d)),
-                a = -1d, b = 1d
-            },
-            new() { //Step Function
-                Name = "f76",
-                F = (x)  => x > (1d - 1e6) / 1e6 ? (1d + 1e6) / 1e6 : 0d - 1d,
-                a = -1d, b = 1d
-            },
-            new() { //Geometric
-                Name = "f77",
-                F = (x) => x != 1d/21d ? 1/(21d*x - 1d) : 0d,
-                a = -1d, b = 1d
-            },
-            new() { //Trunc.Poly.
-                Name = "f78",
-                F = (x) => x * x / 4d + Math.Ceiling(x/2d) - 0.5,
-                a = -1d, b = 1d
-            },
-            new() { //Staircase
-                Name = "f79",
-                F = (x) => Math.Ceiling(10d*x - 1d) + 0.5,
-                a = -1d, b = 1d
-            },
-            new() { //Noisy Line
-                Name = "f80",
-                F = (x) => x + Math.Sin(x*1e6)/10d + 1e-3,
-                a = -1d, b = 1d
-            },
-            new() { //Warsaw
-                Name = "f81",
-                F = (x) => x > -1 ? 1 + Math.Sin(1d/(x + 1d)) : 0d - 1d,
-                a = -1d, b = 1d
-            },
-            new() { //Sawtooth
-                Name = "f82",
-                F = (x) => 202d*x - 2*Math.Floor((2d*x + 1e-2)/2e-2) - 0.1,
-                a = -1d, b = 1d
-            },
-            new() { //Sawtooth Cube
-                Name = "f83",
-                F = (x) => Math.Pow(202d*x - 2d*Math.Floor((2d*x + 1e-2)/2e-2) - 0.1, 3d),
-                a = -1d, b = 1d
-            },
-        };
-
-        //SciML Benchmarks test suite
-        internal static readonly Problem[] problems3 =
-        {
-            new() { // Polynomial with multiple roots  
-                Name = "f84",
-                F = (x) => (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5) - 0.05,
-                a = 0.5, b = 5.5
-            },
-            new() { // Function 2: Trigonometric with multiple roots
-                Name = "f85",
-                F = (x) => Math.Sin(x) - 0.5*x - 0.3,
-                a = -10.0, b = 10.0
-            },
-            new() { // Function 3: Exponential function (sensitive near zero)
-                Name = "f86",
-                F = (x) =>  Math.Exp(x) - 1 - x - x*x/2 - 0.005,
-                a = -2.0, b = 2.0
-            },
-            new() { // Function 4: Rational function with pole
-                Name = "f87",
-                F = (x) =>  1/(x - 0.5) - 2 - 0.05,
-                a = 0.6, b = 2.0,
-            },
-            new() { // Function 5: Logarithmic function
-                Name = "f88",
-                F = (x) => Math.Log(x) - x + 2 - 0.05,
-                a = 0.1, b = 3.0,
-            },
-            new() { // Function 6: High oscillation function
-                Name = "f89",
-                F = (x) =>  Math.Sin(20*x) + 0.1*x - 0.1,
-                a = -4.0, b = 5.0,
-            },
-            new() { // Function 7: Function with very flat region
-                Name = "f90",
-                F = (x) =>  x*x*x - 2*x*x + x - 0.025,
-                a = -1.0, b = 2.0,
-            },
-            new() { // Function 8: Bessel-like function
-                Name = "f91",
-                F = (x) =>  x*Math.Sin(1/x) - 0.1 - 0.01,
-                a = 0.01, b = 1.0
-            },
-            new() { // Near symmetric function
-                Name = "f92",
-                F = (x) => x*x*x - 0.001,
-                a = -10, b = 10
-            },
-            new() { // Near symmetric function
-                Name = "f93",
-                F = (x) => Math.Pow(x, 7) - 0.001,
-                a = -10, b = 10
-            },
-        };
         internal static void Run()
         {
-            var problems = (new[] { problems1, problems2, problems3 }).SelectMany(x => x).ToArray();
+            Problem[] problems =
+            [.. BenchmarkProblems.Set1,
+             .. BenchmarkProblems.Set2,
+             .. BenchmarkProblems.Set3]; 
             const double tol = 1e-14;
-            for (int i = 0; i < 3; ++i)
+            const int methodCount = 9;
+            var problemCount = problems.Length;
+            var results = new Result[problemCount, methodCount];
+            var sum = new int[methodCount];
+            var average = new double[methodCount];
+            var logSum = new double[methodCount];
+            var mean = new double[methodCount];
+            var variance = new double[methodCount];
+            var stddev = new double[methodCount];
+            var median = new double[methodCount];
+            var max = new int[methodCount];
+            var bestAt = new int[methodCount];
+            var worstAt = new int[methodCount];
+            var successCount = new int[methodCount];
+            var invalidCount = new int[methodCount];
+            var falseConvergenceCount = new int[methodCount];
+            var maxCount = new int[methodCount];
+            for (int i = 0; i < problemCount; ++i)
             {
-                switch (i)
+                var p = problems[i];
+                Solver.ReturnCode returnCode;
+                for (int j = 0; j < methodCount; ++j)
                 {
-                    case 0: Console.WriteLine("Results"); break;
-                    case 1: Console.WriteLine("Function values"); break;
-                    case 2: Console.WriteLine("Evaluation count"); break;
+                    var root = j switch
+                    {
+                        0 => Solver.Bisection(p.F, p.a, p.b, out returnCode, tol, tol),
+                        1 => Solver.FalsePosition(p.F, p.a, p.b, out returnCode, tol, tol),
+                        2 => Solver.Illinois(p.F, p.a, p.b, out returnCode, tol, tol),
+                        3 => Solver.AndersonBjork(p.F, p.a, p.b, out returnCode, tol, tol),
+                        4 => Solver.ITP(p.F, p.a, p.b, out returnCode, tol, tol),
+                        5 => Solver.Ridders(p.F, p.a, p.b, out returnCode, tol, tol),
+                        6 => Solver.Brent(p.F, p.a, p.b, out returnCode, tol, tol),
+                        7 => Solver.ModAB(p.F, p.a, p.b, out returnCode, tol, tol),
+                        8 => Solver.ModABCorr(p.F, p.a, p.b, out returnCode, tol, tol),
+                        _ => throw new NotImplementedException()
+                    };
+                    var evals = Solver.EvaluationCount;
+                    if (p.Roots.Length == 0)
+                        returnCode = Solver.ReturnCode.Invalid;
+                    else if (returnCode == Solver.ReturnCode.Success && !p.IsRoot(root, tol))
+                    {
+                        returnCode = Solver.ReturnCode.FalseConvergence;
+                        evals = Solver.MaxIterations + 2;
+                    }
+                    results[i, j] = new Result 
+                    { 
+                        Root = root, 
+                        FunctionValue = double.IsNaN(root) ? double.NaN : p.F(root), 
+                        EvaluationCount = evals,
+                        ReturnCode = returnCode
+                    };
+                    if (returnCode == Solver.ReturnCode.Success) 
+                        successCount[j]++;
+                    else if (returnCode == Solver.ReturnCode.Invalid) 
+                        invalidCount[j]++;
+                    else if (returnCode == Solver.ReturnCode.FalseConvergence) 
+                        falseConvergenceCount[j]++;
+                    else if (returnCode == Solver.ReturnCode.MaxIterationsExceeded) 
+                        maxCount[j]++;
+
+                    if (returnCode != Solver.ReturnCode.Invalid)
+                    {
+                        sum[j] += evals;
+                        logSum[j] += Math.Log(evals);
+                        if (evals > max[j])
+                            max[j] = evals;
+                    }
                 }
-                Console.WriteLine("Func;   bs;    fp;   ill;    ab;   ITP;   rid;    br;  modAB");
-                const int methodCount = 8;
-                var sum = new int[methodCount];
-                var max = new int[methodCount];
-                var mean = new double[methodCount];
-                for (int j = 0; j < methodCount; ++j) mean[j] = 1.0;
-                foreach (Problem p in problems)
+                // A method that did not succeed is charged the iteration limit, so that it can
+                // never come out "best" on a problem it failed to solve. The same penalised
+                // value must be used on both sides of the comparison below
+                static int Cost(Result r) =>
+                    r.ReturnCode == Solver.ReturnCode.Success ? r.EvaluationCount : Solver.MaxIterations;
+                var resultRow = Enumerable.Range(0, methodCount).Select(j => results[i, j]).ToArray();
+                var rowMinCount = resultRow.Min(Cost);
+                var rowMaxCount = resultRow.Max(Cost);
+                for (int j = 0; j < methodCount; ++j)
                 {
-                    Console.Write(p.Name + "; ");
+                    if (resultRow[j].ReturnCode != Solver.ReturnCode.Invalid)
+                    {
+                        var count = Cost(resultRow[j]);
+                        if (count == rowMinCount) bestAt[j]++;
+                        if (count == rowMaxCount) worstAt[j]++;
+                    }
+                }
+            }
+            Console.WriteLine(
+@"## Benchmark results (C#)
+
+List of algorithms:  
+- bs 	 – Bisection  
+- fp	 – False-position  
+- ill	 – Illinois  	
+- AB	 – Anderson-Björck  
+- ITP	 – Interpolate. truncate. project  
+- Rid	 – Ridders  
+- Brе	 – Brent  
+- modAB	 – Modified Anderson-Björck April 2026 MDPI Algorithms + fixes
+- modABCorr – Modified Anderson-Björck Corrected Sept 2026"
+                );
+            for (int k = 0; k < 4; ++k)
+            {
+                switch (k)
+                {
+                    case 0: Console.WriteLine("\r\n### Results\r\n"); break;
+                    case 1: Console.WriteLine("\r\n### Function values\r\n"); break;
+                    case 2: Console.WriteLine("\r\n### Return codes\r\n"); break;
+                    case 3: Console.WriteLine("\r\n### Evaluation count\r\n"); break;
+                }
+                Console.WriteLine("   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr");
+                Console.WriteLine(" ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------");
+                for (int i = 0; i < problemCount; ++i)
+                {
+                    Problem p = problems[i];
+                    Console.Write(p.Name.PadLeft(7) + " | ");
                     for (int j = 0; j < methodCount; ++j)
                     {
-                        var result = j switch
-                        {
-                            0 => Solver.Bisection(p.F, p.a, p.b, tol, tol),
-                            1 => Solver.FalsePosition(p.F, p.a, p.b, tol, tol),
-                            2 => Solver.Illinois(p.F, p.a, p.b, tol, tol),
-                            3 => Solver.AndersonBjork(p.F, p.a, p.b, tol, tol),
-                            4 => Solver.ITP(p.F, p.a, p.b, tol, tol),
-                            5 => Solver.Ridders(p.F, p.a, p.b, tol, tol),
-                            6 => Solver.Brent(p.F, p.a, p.b, tol, tol),
-                            7 => Solver.ModAB(p.F, p.a, p.b, tol, tol),
-                            _ => throw new NotImplementedException()
-                        };
-                        if (i == 0)
-                            Console.Write(result+ "; ");
-                        else if (i == 1)
-                            Console.Write(double.IsNaN(result) ? "NaN; " : p.F(result) + "; ");
+                        var result = results[i, j];
+                        if (k == 0)
+                            Console.Write(double.IsNaN(result.Root) ? "NaN | " : result.Root);
+                        else if (k == 1)
+                            Console.Write(double.IsNaN(result.FunctionValue) ? "NaN | " : result.FunctionValue);
+                        else if(k == 2)
+                            Console.Write($"    {result.ReturnCode.ToString()[0]}");
                         else
-                        {
-                            var count = Solver.EvaluationCount;
-                            sum[j] += count;
-                            mean[j] *= count;
-                            if (count > max[j]) max[j] = count;
-                            var s = count.ToString().PadLeft(5);
-                            Console.Write(s + "; ");
-                        }
+                            Console.Write(result.EvaluationCount.ToString().PadLeft(5));
+
+                        if (j < methodCount - 1) Console.Write(" | ");
                     }
                     Console.WriteLine("");
                 }
-                if (i == 2)
-                {
-                    var s = string.Join("; ", sum.Select(n => n.ToString().PadLeft(5)));
-                    Console.WriteLine($"Sum ;{s}");
-                    s = string.Join("; ", sum.Select(n => ((double)n / problems.Length).ToString("f1").PadLeft(5)));
-                    Console.WriteLine($"Ave ;{s}");
-                    s = string.Join("; ", max.Select(n => n.ToString().PadLeft(5)));
-                    Console.WriteLine($"Max ;{s}");
-                    s = string.Join("; ", mean.Select(n => (Math.Pow(n, 1.0 / problems.Length).ToString("f1").PadLeft(5))));
-                    Console.WriteLine($"Mean ;{s}");
-                    Console.WriteLine("");
-                }
             }
+            for (int j = 0; j < methodCount; ++j)
+            {
+                var count = problemCount - invalidCount[j];
+                average[j] = (double)sum[j] / count;
+                mean[j] = Math.Exp(logSum[j] / count); // geometric mean
+                variance[j] = 0.0;
+                for (int i = 0; i < problemCount; ++i)
+                {
+                    var result = results[i, j];
+                    if (result.ReturnCode != Solver.ReturnCode.Invalid)
+                    {
+                        var diff = result.EvaluationCount - average[j];
+                        variance[j] += diff * diff;
+                    }
+                }
+                stddev[j] = Math.Sqrt(variance[j] / count);
+                // The median must be taken over column j only - results.Cast<Result>() would
+                // flatten the whole problemCount x methodCount matrix
+                var sorted = Enumerable.Range(0, problemCount)
+                    .Select(i => results[i, j])
+                    .Where(r => r.ReturnCode != Solver.ReturnCode.Invalid)
+                    .Select(r => r.EvaluationCount)
+                    .OrderBy(n => n)
+                    .ToArray();
+                median[j] = sorted.Length == 0 ? double.NaN
+                    : sorted.Length % 2 == 1 ? sorted[sorted.Length / 2]
+                    : 0.5 * (sorted[sorted.Length / 2 - 1] + sorted[sorted.Length / 2]);
+            }
+            static void WriteRow<T>(string label, IEnumerable<T> values, string format = null) =>
+                Console.WriteLine($"{label,7} | " + string.Join(" | ",
+                    values.Select(v => (format == null ? v.ToString() : ((IFormattable)v).ToString(format, null)).PadLeft(5))));
+
+            WriteRow("Sum", sum);
+            WriteRow("Ave", average, "f1");
+            WriteRow("Mean", mean, "f1");
+            WriteRow("StdDev", stddev, "f1");
+            WriteRow("Median", median, "f1");
+            WriteRow("Max", max);
+            WriteRow("BestAt", bestAt);
+            WriteRow("WorstAt", worstAt);
+            WriteRow("Succ", successCount);
+            WriteRow("Invalid", invalidCount);
+            WriteRow("False", falseConvergenceCount);
+            WriteRow("MaxIter", maxCount);
+            Console.WriteLine("\r\nPress any key to continue...");
             Console.ReadKey();
         }
     }

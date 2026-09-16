@@ -2,7 +2,7 @@
 {
     public static partial class Solver
     {
-        // Finds the root of "F(x) = 0" within the interval [x1, x2]
+        // Finds the root of "f(x) = 0" within the interval [x1, x2]
         // with the specified precisions - absolute: aTol and relative: rTol,
         // using an improved version of the modified Anderson Bjork's method:
         //     Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
@@ -12,33 +12,36 @@
         //     1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
         //     2. The original function values y1 and y2 (without A&B corrections) 
         //        are stored for later use in bisection fallback
-        // F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))
-        public static double ModAB(Func<double, double> F, double x1, double x2,
+        // f(x) must be continuous and sign(f(x1)) ≠ sign(f(x2))
+        public static double ModAB(Func<double, double> f, 
+            double x1, double x2,
+            out ReturnCode returnCode,
             double aTol = 1e-14, double rTol = 1e-14)
         {
-            if (!Initialize(x1, x2, F, out Node p1, out Node p2))
+            if (!Initialize(f, x1, x2, aTol, rTol, out Node p1, out Node p2, out var F))
+            {
+                returnCode = ReturnCode.Invalid;
                 return double.NaN;
-
+            }
             var bisection = true; // Initialize the method to bisection
             var side = 0; // Store the side that moved last: -1 for left, 1 for right, 0 for none
             var threshold = p2.X - p1.X; // Threshold to reset to bisection
             double y1 = p1.Y, y2 = p2.Y;
             const double C = 16; // Safety factor of 4 iterations behind the threshold
+            returnCode = ReturnCode.Success;
             for (int i = 1; i <= MaxIterations; ++i)
             {
-                var x3 = bisection ? Node.Mid(p1, p2) : Node.Sec(p1, p2);
+                var x3 = bisection ? Node.SafeMidpoint(p1, p2) : Node.SafeSecant(p1, p2);
                 // Check for X-convergence and return the result
-                var eps2 = aTol + rTol * Math.Abs(x3);
-                if (p2.X - p1.X <= eps2)
-                {
-                    EvaluationCount = i + 1;
-                    return bisection ? x3 : Math.Clamp(x3, p1.X, p2.X);
-                }
+                var xTol = aTol + rTol * Math.Abs(x3);
+                if (p2.X - p1.X <= xTol)
+                    return x3;
+
                 Node p3;
                 if (bisection)
                 {
                     p3 = new Node(x3, F);
-                    var ym = 0.5 * (y1 + y2);
+                    var ym = 0.5 * y1 + 0.5 * y2;
                     var r = 1 - Math.Abs(ym / (y2 - y1)); // Symmetry factor
                     var k = r * r; // Deviation factor - quadratic
                     // Check if function is close enough to straight line and switch to false-position
@@ -64,11 +67,14 @@
                 }
                 // Check for Y-convergence and return the result
                 if (p3.Y == 0)
-                {
-                    EvaluationCount = i + 2;
                     return x3;
+
+                if (double.IsNaN(p3.Y))
+                {
+                    returnCode = ReturnCode.Invalid;
+                    return double.NaN;
                 }
-                if (Math.Sign(p1.Y) == Math.Sign(p3.Y))
+                if (SameNonzeroSign(p1.Y, p3.Y))
                 {
                     if (side == 1) // Apply Anderson-Bjork correction to the right side
                     {
@@ -100,7 +106,7 @@
                     side = 0;
                 }
             }
-            EvaluationCount = MaxIterations + 2;
+            returnCode = ReturnCode.MaxIterationsExceeded;
             return double.NaN; // When failed to converge within maxIterations
         }
     }

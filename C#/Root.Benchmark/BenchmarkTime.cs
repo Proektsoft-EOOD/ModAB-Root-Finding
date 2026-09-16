@@ -5,67 +5,72 @@ namespace Root.Benchmark
     public class BenchmarkTime
     {
         const double tol = 1e-14;
-        private static Problem[] _problems = (
-            new[] {
-                BenchmarkCount.problems1,
-                BenchmarkCount.problems2,
-                BenchmarkCount.problems3 
-            }).SelectMany(x => x).ToArray();
-
+        private static Problem[] _problems =
+            [.. BenchmarkProblems.Set1, 
+             .. BenchmarkProblems.Set2, 
+             .. BenchmarkProblems.Set3];
+        
         [Benchmark]
         public void Bisection()
         {
             foreach (Problem p in _problems)
-                Solver.Bisection(p.F, p.a, p.b, tol, tol);
+                Solver.Bisection(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]
         public void FalsePosition()
         {
             foreach (Problem p in _problems)
-                Solver.FalsePosition(p.F, p.a, p.b, tol, tol);
+                Solver.FalsePosition(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]
         public void Illinois()
         {
             foreach (Problem p in _problems)
-                Solver.Illinois(p.F, p.a, p.b, tol, tol);
+                Solver.Illinois(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]
         public void AndersonBjork()
         {
             foreach (Problem p in _problems)
-                Solver.AndersonBjork(p.F, p.a, p.b, tol, tol);
+                Solver.AndersonBjork(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]
         public void ITP()
         {
             foreach (Problem p in _problems)
-                Solver.ITP(p.F, p.a, p.b, tol, tol);
+                Solver.ITP(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]
         public void Ridders()
         {
             foreach (Problem p in _problems)
-                Solver.Ridders(p.F, p.a, p.b, tol, tol);
+                Solver.Ridders(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]
         public void Brent()
         {
             foreach (Problem p in _problems)
-                Solver.Brent(p.F, p.a, p.b, tol, tol);
+                Solver.Brent(p.F, p.a, p.b, out _, tol, tol);
         }
-
+        
         [Benchmark]
         public void ModAB()
         {
             foreach (Problem p in _problems) 
-                Solver.ModAB(p.F, p.a, p.b, tol, tol);
+                Solver.ModAB(p.F, p.a, p.b, out _, tol, tol);
+        }
+
+        [Benchmark]
+        public void ModABCorr()
+        {
+            foreach (Problem p in _problems)
+                Solver.ModABCorr(p.F, p.a, p.b, out _, tol, tol);
         }
     }
 }

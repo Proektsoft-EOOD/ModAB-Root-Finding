@@ -2,25 +2,31 @@
 {
     public static partial class Solver
     {
-        // Finds the root of "F(x) = 0" within the interval [x1, x2]
+        // Finds the root of "f(x) = 0" within the interval [x1, x2]
         // with the specified precisions - absolute: aTol and relative: rTol,
         // using Brent's method:
         // R. P. Brent, An algorithm with guaranteed convergence for finding a zero of a function,
         // The Computer Journal, Volume 14, Issue 4, 1971, Pages 422–425
         // https://doi.org/10.1093/comjnl/14.4.422 
-        // F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))
+        // f(x) must be continuous and sign(f(x1)) ≠ sign(f(x2))
 
-        public static double Brent(Func<double, double> F, double x1, double x2,
+        public static double Brent(Func<double, double> f, 
+            double x1, double x2,
+            out ReturnCode returnCode,
             double aTol = 1e-14, double rTol = 1e-14)
         {
-            if (!Initialize(x1, x2, F, out Node p1, out Node p2))
+            if (!Initialize(f, x1, x2, aTol, rTol, out Node p1, out Node p2, out var F))
+            {
+                returnCode = ReturnCode.Invalid;
                 return double.NaN;
+            }
 
             Node p3 = p2;
-            double d = 0.0, e = 0.0, min1, min2;
+            double d = 0d, e = 0d, min1, min2;
+            returnCode = ReturnCode.Success;
             for (int i = 1; i <= MaxIterations; ++i)
             {
-                if (Math.Sign(p2.Y) == Math.Sign(p3.Y))
+                if (SameNonzeroSign(p2.Y, p3.Y))
                 {
                     p3 = p1; //Rename a, b, c and adjust bounding interval
                     e = d = p2.X - p1.X;
@@ -32,15 +38,13 @@
                     p3 = p1;
                 }
                 double xm = (p3.X - p2.X) / 2;
-                var eps = (aTol + rTol * Math.Abs(p2.X)) / 2.0;
-                if (p2.Y == 0.0|| Math.Abs(xm) <= eps)  //Convergence check.
-                {
-                    EvaluationCount = i + 1;
+                var xTol = (aTol + rTol * Math.Abs(p2.X)) / 2.0;
+                if (p2.Y == 0.0|| Math.Abs(xm) <= xTol)  // Convergence check.
                     return p2.X;
-                }
-                if (Math.Abs(e) >= eps && Math.Abs(p1.Y) > Math.Abs(p2.Y))
+                
+                if (Math.Abs(e) >= xTol && Math.Abs(p1.Y) > Math.Abs(p2.Y))
                 {
-                    double s = p2.Y / p1.Y; //Attempt inverse quadratic interpolation.
+                    double s = p2.Y / p1.Y; // Attempt inverse quadratic interpolation.
                     double p, q, r;
                     if (p1.X == p3.X)
                     {
@@ -55,36 +59,36 @@
                         q = (q - 1.0) * (r - 1.0) * (s - 1.0);
                     }
                     if (p > 0.0)
-                        q = -q; //Check whether in bounds.
+                        q = -q; // Check whether in bounds.
 
                     p = Math.Abs(p);
-                    min1 = 3.0 * xm * q - Math.Abs(eps * q);
+                    min1 = 3.0 * xm * q - Math.Abs(xTol * q);
                     min2 = Math.Abs(e * q);
                     if (2.0 * p < (min1 < min2 ? min1 : min2))
                     {
-                        e = d; //Accept interpolation.
+                        e = d; // Accept interpolation.
                         d = p / q;
                     }
-                    else //Interpolation failed, use bisection.
+                    else // Interpolation failed, use bisection.
                     {
                         d = xm;
                         e = d;
                     }
                 }
-                else //Bounds decreasing too slowly, use bisection.
+                else // Bounds decreasing too slowly, use bisection.
                 {
                     d = xm;
                     e = d;
                 }
-                p1 = p2; //Move last best guess to a.
-                if (Math.Abs(d) > eps) //Evaluate new trial root.
+                p1 = p2; // Move last best guess to a.
+                if (Math.Abs(d) > xTol) //Evaluate new trial root.
                     p2.X += d;
                 else
-                    p2.X += Math.Abs(eps) * Math.Sign(xm);
+                    p2.X += Math.Abs(xTol) * Math.Sign(xm);
 
                 p2.Y = F(p2.X);
             }
-            EvaluationCount = MaxIterations + 2;
+            returnCode = ReturnCode.MaxIterationsExceeded;
             return double.NaN;
         }
     }

@@ -8,5 +8,14 @@
         internal Func<double, double> F;
         internal double a;
         internal double b;
+        internal double[] Roots;
+        internal bool IsRoot(double x, double tol = 1e-14)
+        {
+            for (int i = 0, len = Roots.Length; i < len; i++)
+                if (Math.Abs(x - Roots[i]) <= tol)
+                    return true;
+
+            return F(x) == 0;
+        }
     }
 }
