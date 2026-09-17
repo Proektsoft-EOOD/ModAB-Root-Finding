@@ -1,6 +1,6 @@
-Benchmark: cymodab vs pymodab vs cybrentq
+Benchmark: cymodab vs pymodab vs cybrentq*
 ===
-
+* cybrentq by Gledis Caushaj: https://github.com/gledi-ai/cybrentq
 Results (root values)
 ===
 Func|               cybrentq|                pymodab|                cymodab|
