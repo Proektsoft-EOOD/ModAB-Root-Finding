@@ -1,0 +1,98 @@
+name: Build PyModAB Wheels
+
+# Wheels are built for release tags (pymodab-v1.0.7), on pull requests that
+# touch the package, and on demand. Push and tag filters cannot be combined,
+# so main pushes do not build wheels; use a tag or run the workflow manually.
+on:
+  push:
+    tags: ['pymodab-v*']
+  pull_request:
+    paths:
+      - 'Python/PyModAB/**'
+      - '.github/workflows/pymodab-wheels.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: Python/PyModAB
+
+jobs:
+  wheels:
+    name: ${{ matrix.os }} ${{ matrix.archs }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            archs: x86_64
+          - os: ubuntu-24.04-arm
+            archs: aarch64
+          - os: windows-latest
+            archs: AMD64
+          - os: macos-13
+            archs: x86_64
+          - os: macos-14
+            archs: arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      # One abi3 wheel per platform; build settings live in pyproject.toml
+      - uses: pypa/cibuildwheel@v4.2.1
+        with:
+          package-dir: Python/PyModAB
+          output-dir: Python/PyModAB/wheelhouse
+        env:
+          CIBW_ARCHS: ${{ matrix.archs }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.archs }}
+          path: Python/PyModAB/wheelhouse/*.whl
+
+  sdist:
+    name: sdist and pure wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install build
+
+      - name: Build sdist
+        run: python -m build --sdist --outdir dist
+
+      # ctypes-only wheel, used on platforms without a native wheel
+      - name: Build pure wheel
+        run: python -m build --wheel --outdir dist
+        env:
+          PYMODAB_PURE: '1'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: |
+            Python/PyModAB/dist/*.tar.gz
+            Python/PyModAB/dist/*.whl
+
+  release:
+    name: Attach to GitHub release
+    needs: [wheels, sdist]
+    if: startsWith(github.ref, 'refs/tags/pymodab-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create release with all distributions
+        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes "PyModAB distributions built by cibuildwheel."
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}

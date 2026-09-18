@@ -45,7 +45,12 @@ class BdistWheel(bdist_wheel):
 
 
 ext_modules = []
-if not PURE and sysconfig.get_config_var("Py_GIL_DISABLED") != 1:
+# The Limited API is only available on CPython builds with the GIL
+if (
+    not PURE
+    and sys.implementation.name == "cpython"
+    and sysconfig.get_config_var("Py_GIL_DISABLED") != 1
+):
     ext_modules.append(
         Extension(
             "pymodab._modab",

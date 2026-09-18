@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymodab"
-version = "1.0.6"
+version = "1.0.7"
 description = "Fast and robust root-finding library using the Modified Anderson-Bjork method"
 readme = "README.md"
 license = "MIT"
@@ -44,3 +44,10 @@ pymodab = ["*.dll", "*.so", "*.dylib", "*.lib", "py.typed"]
 
 [tool.setuptools.exclude-package-data]
 pymodab = ["*.c"]
+
+[tool.cibuildwheel]
+# One abi3 wheel per platform, usable by CPython 3.8 and later
+build = "cp39-*"   # built with 3.9, tagged cp38-abi3 by setup.py
+skip = "*-win32 *_i686"
+build-frontend = "build"
+test-command = "python -c \"import math, pymodab; assert pymodab.NATIVE, 'native extension missing'; assert abs(pymodab.find_root(lambda x: math.cos(x) - x, 0, 1) - 0.7390851332151607) < 1e-15\""
