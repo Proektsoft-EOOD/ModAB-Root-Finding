@@ -52,5 +52,5 @@ skip = "*-win32 *_i686"
 build-frontend = "build"
 test-command = "python -c \"import math, pymodab; assert pymodab.NATIVE, 'native extension missing'; assert abs(pymodab.find_root(lambda x: math.cos(x) - x, 0, 1) - 0.7390851332151607) < 1e-15\""
 
-# The x86_64 macOS wheel is cross-compiled on an arm64 runner and cannot run there
-test-skip = "*-macosx_x86_64"
+# A universal2 wheel can only be tested on the runner's own architecture
+test-skip = "*-macosx_universal2:x86_64"

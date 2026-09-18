@@ -27,29 +27,18 @@ FALLBACK_LIBS = {
 }
 
 
-def fallback_libs_for(plat_name):
-    """The fallback libraries that belong in a wheel for plat_name."""
-    plat = plat_name.lower()
-    if plat.startswith("win"):
-        return {"ModAB.dll", "ModAB.lib"}
-    if "macos" in plat:
-        return {"libModAB_arm64.dylib"} if "arm64" in plat else {"libModAB_x64.dylib"}
-    if "linux" in plat:
-        return {"libModAB.so"}
-    return set()
-
-
 class BuildExt(build_ext):
     def run(self):
         super().run()
-        # Once the extension is built, the fallback libraries of the other
-        # platforms are dead weight. They also break wheel repair tools, which
-        # reject a foreign architecture inside the wheel.
+        # A wheel with the extension needs no ctypes libraries: they are dead
+        # weight, and the wheel repair tools reject the foreign architectures
+        # among them (an arm64 dylib cannot sit in an x86_64 macOS wheel).
+        # The sdist and the pure wheel keep all of them.
         if self.extensions and all(os.path.exists(p) for p in self.get_outputs()):
-            keep = fallback_libs_for(self.plat_name)
-            for lib in sorted(FALLBACK_LIBS - keep):
+            for lib in sorted(FALLBACK_LIBS):
                 path = os.path.join(self.build_lib, "pymodab", lib)
                 if os.path.exists(path):
+                    self.announce(f"removing ctypes fallback library {lib}", level=2)
                     os.remove(path)
 
     def build_extensions(self):

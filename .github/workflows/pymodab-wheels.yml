@@ -33,12 +33,11 @@ jobs:
           - label: windows-amd64
             os: windows-latest
             archs: AMD64
-          # Both macOS wheels are built on the arm64 runner: the x86_64 one is
-          # cross-compiled (and so not tested), because the Intel runners queue
-          # for a long time
+          # One universal2 wheel covers both Apple Silicon and Intel Macs; the
+          # Intel runners queue for a long time, so build it on arm64
           - label: macos
             os: macos-14
-            archs: arm64 x86_64
+            archs: universal2
     steps:
       - uses: actions/checkout@v4
 
