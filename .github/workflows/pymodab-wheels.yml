@@ -96,8 +96,11 @@ jobs:
           path: dist
           merge-multiple: true
 
+      # Replace any earlier release for this tag, so stale files do not linger
       - name: Create release with all distributions
-        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes "PyModAB distributions built by cibuildwheel."
+        run: |
+          gh release delete "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --yes || true
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes "PyModAB distributions built by cibuildwheel."
         working-directory: .
         env:
           GH_TOKEN: ${{ github.token }}
