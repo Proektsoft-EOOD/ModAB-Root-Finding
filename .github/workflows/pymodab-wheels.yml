@@ -18,22 +18,27 @@ defaults:
 
 jobs:
   wheels:
-    name: ${{ matrix.os }} ${{ matrix.archs }}
+    name: ${{ matrix.label }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - label: linux-x86_64
+            os: ubuntu-latest
             archs: x86_64
-          - os: ubuntu-24.04-arm
+          - label: linux-aarch64
+            os: ubuntu-24.04-arm
             archs: aarch64
-          - os: windows-latest
+          - label: windows-amd64
+            os: windows-latest
             archs: AMD64
-          - os: macos-13
-            archs: x86_64
-          - os: macos-14
-            archs: arm64
+          # Both macOS wheels are built on the arm64 runner: the x86_64 one is
+          # cross-compiled (and so not tested), because the Intel runners queue
+          # for a long time
+          - label: macos
+            os: macos-14
+            archs: arm64 x86_64
     steps:
       - uses: actions/checkout@v4
 
@@ -47,7 +52,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.archs }}
+          name: wheels-${{ matrix.label }}
           path: Python/PyModAB/wheelhouse/*.whl
 
   sdist:
