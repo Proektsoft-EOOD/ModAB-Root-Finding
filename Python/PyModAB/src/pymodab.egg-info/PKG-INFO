@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: pymodab
-Version: 1.0.6
+Version: 1.0.7
 Summary: Fast and robust root-finding library using the Modified Anderson-Bjork method
 Author: Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 License-Expression: MIT
