@@ -66,12 +66,13 @@ jobs:
 
       - run: pip install build
 
+      # Built into a fresh directory: dist/ holds older released files
       - name: Build sdist
-        run: python -m build --sdist --outdir dist
+        run: python -m build --sdist --outdir dist-ci
 
       # ctypes-only wheel, used on platforms without a native wheel
       - name: Build pure wheel
-        run: python -m build --wheel --outdir dist
+        run: python -m build --wheel --outdir dist-ci
         env:
           PYMODAB_PURE: '1'
 
@@ -79,8 +80,8 @@ jobs:
         with:
           name: sdist
           path: |
-            Python/PyModAB/dist/*.tar.gz
-            Python/PyModAB/dist/*.whl
+            Python/PyModAB/dist-ci/*.tar.gz
+            Python/PyModAB/dist-ci/*.whl
 
   release:
     name: Attach to GitHub release

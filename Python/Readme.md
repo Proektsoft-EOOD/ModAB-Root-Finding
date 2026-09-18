@@ -115,7 +115,7 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 - the previous implementation with ctypes  
-modAB: pymodab version 1.0.6 - the latest implementation as native C extension  
+modAB: pymodab version 1.0.7 - the latest implementation as native C extension  
 
 The complete source code to reproduce the above benchmarks is available in [RootBenchmark.py](RootBenchmark.py).  
 Detailed benchmark results are listed in [BenchmarkResults.md](BenchmarkResults.md).  

@@ -48,7 +48,7 @@ Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
 **Returns:** The root, or `NaN` if not found. Exceptions raised by `f` are propagated to the caller.
 
-Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. If the extension is not available for your platform, pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
+Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. Version 1.0.7 ships it as a wheel for Windows, Linux (x86_64 and aarch64, glibc and musl) and macOS (Intel and Apple Silicon); one wheel serves every CPython from 3.8 up. On any other platform pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
 
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
@@ -131,4 +131,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 - the previous implementation with ctypes  
-modAB: pymodab version 1.0.6 - the latest implementation as native C extension  
+modAB: pymodab version 1.0.7 - the latest implementation as native C extension  
