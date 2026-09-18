@@ -51,3 +51,9 @@ build = "cp39-*"   # built with 3.9, tagged cp38-abi3 by setup.py
 skip = "*-win32 *_i686"
 build-frontend = "build"
 test-command = "python -c \"import math, pymodab; assert pymodab.NATIVE, 'native extension missing'; assert abs(pymodab.find_root(lambda x: math.cos(x) - x, 0, 1) - 0.7390851332151607) < 1e-15\""
+
+[tool.cibuildwheel.macos]
+# The package also ships the prebuilt ctypes libraries of the other platforms,
+# so skip delocate's --require-archs check; it would reject the x86_64 dylib in
+# an arm64 wheel and the arm64 dylib in an x86_64 one.
+repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"
