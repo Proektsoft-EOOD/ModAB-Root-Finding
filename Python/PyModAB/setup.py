@@ -20,8 +20,38 @@ from setuptools.command.bdist_wheel import bdist_wheel
 LIMITED_API = 0x03080000
 PURE = os.environ.get("PYMODAB_PURE", "") not in ("", "0")
 
+# Prebuilt libraries for the ctypes fallback, shipped for every platform
+FALLBACK_LIBS = {
+    "ModAB.dll", "ModAB.lib", "ModAB.pdb",
+    "libModAB.so", "libModAB_x64.dylib", "libModAB_arm64.dylib",
+}
+
+
+def fallback_libs_for(plat_name):
+    """The fallback libraries that belong in a wheel for plat_name."""
+    plat = plat_name.lower()
+    if plat.startswith("win"):
+        return {"ModAB.dll", "ModAB.lib"}
+    if "macos" in plat:
+        return {"libModAB_arm64.dylib"} if "arm64" in plat else {"libModAB_x64.dylib"}
+    if "linux" in plat:
+        return {"libModAB.so"}
+    return set()
+
 
 class BuildExt(build_ext):
+    def run(self):
+        super().run()
+        # Once the extension is built, the fallback libraries of the other
+        # platforms are dead weight. They also break wheel repair tools, which
+        # reject a foreign architecture inside the wheel.
+        if self.extensions and all(os.path.exists(p) for p in self.get_outputs()):
+            keep = fallback_libs_for(self.plat_name)
+            for lib in sorted(FALLBACK_LIBS - keep):
+                path = os.path.join(self.build_lib, "pymodab", lib)
+                if os.path.exists(path):
+                    os.remove(path)
+
     def build_extensions(self):
         if self.compiler.compiler_type != "msvc":
             for ext in self.extensions:
