@@ -1,5 +1,8 @@
 """
 Python wrapper for the ModAB C library.
+
+Uses the native extension module pymodab._modab when it is available, and falls
+back to calling the bundled shared library through ctypes otherwise.
 """
 
 import ctypes
@@ -7,7 +10,7 @@ import os
 import platform
 import sys
 from ctypes import c_double, c_int, CFUNCTYPE
-from typing import Callable
+from typing import Callable, Union
 
 # Define the callback function type for the C library
 FUNC_TYPE = CFUNCTYPE(c_double, c_double)
@@ -53,12 +56,9 @@ def _load_library():
 
     return lib
 
-# Load the library once at module import
-_lib = _load_library()
 
-
-def find_root(
-    f: Callable[[float], float],
+def _ctypes_find_root(
+    f: Union[Callable[[float], float], int],
     x1: float,
     x2: float,
     atol: float = 1e-14,
@@ -74,8 +74,10 @@ def find_root(
 
     Parameters
     ----------
-    f : callable
-        A continuous function of one variable.
+    f : callable or int
+        A continuous function of one variable, or the address (int) of a
+        compiled C function ``double f(double)``, e.g. ``numba.cfunc(...).address``.
+        A compiled function is called directly, without any Python overhead.
     x1 : float
         Left endpoint of the bracket interval.
     x2 : float
@@ -97,6 +99,7 @@ def find_root(
     -----
     The function f must be continuous on [x1, x2] and f(x1) * f(x2) < 0
     (i.e., the function must have opposite signs at the endpoints).
+    Exceptions raised by f are propagated to the caller (native extension only).
 
     Examples
     --------
@@ -111,7 +114,7 @@ def find_root(
     return _lib.modAB_find_root(c_func, x1, x2, atol, rtol, max_iter)
 
 
-def get_evaluation_count() -> int:
+def _ctypes_get_evaluation_count() -> int:
     """
     Get the number of function evaluations from the last root-finding call.
 
@@ -129,3 +132,21 @@ def get_evaluation_count() -> int:
     Evaluations: 11
     """
     return _lib.get_evaluation_count()
+
+
+try:
+    from . import _modab
+except ImportError:
+    _modab = None
+
+NATIVE = _modab is not None
+"""True if the native extension is used, False if the ctypes fallback is."""
+
+if NATIVE:
+    # Bind the C functions directly, so no Python code runs per call
+    find_root = _modab.find_root
+    get_evaluation_count = _modab.get_evaluation_count
+else:
+    _lib = _load_library()
+    find_root = _ctypes_find_root
+    get_evaluation_count = _ctypes_get_evaluation_count

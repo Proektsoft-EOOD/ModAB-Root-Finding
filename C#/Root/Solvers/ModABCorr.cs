@@ -7,8 +7,7 @@ namespace Proektsoft.Root
         /// <summary>
         /// Finds a zero of <paramref name="f"/> in
         /// [<paramref name="x1"/>, <paramref name="x2"/>] by the
-        /// safeguarded improved modified Anderson-Björck method.
-        /// L. Tomov and N. Ganchovski
+        /// simplified corrected improved modified Anderson-Björck method.
         /// </summary>
         /// <remarks>
         /// Exact-arithmetic assumptions used by the convergence proof:
@@ -25,17 +24,11 @@ namespace Proektsoft.Root
         /// </remarks>
         public static double ModABCorr(
             Func<double, double> f,
-            double x1,
-            double x2,
+            double x1, double x2,
             out ReturnCode returnCode,
-            double aTol = 1e-14,
-            double rTol = 1e-14)
+            double aTol = 1e-14, double rTol = 1e-14)
         {
-            if (!Initialize(
-                    f, x1, x2, aTol, rTol,
-                    out Node p1,
-                    out Node p2,
-                    out var F))
+            if (!Initialize(f, x1, x2, aTol, rTol, out Node p1, out Node p2, out var F))
             {
                 returnCode = ReturnCode.Invalid;
                 return double.NaN;
@@ -45,9 +38,7 @@ namespace Proektsoft.Root
             // p2.Y may be corrected auxiliary ordinates used only to construct
             // the next secant. Keeping these two roles separate is the central
             // post-publication correction and is required by the proof.
-            double y1 = p1.Y;
-            double y2 = p2.Y;
-
+            double y1 = p1.Y, y2 = p2.Y;
             returnCode = ReturnCode.Success;
 
             // Exact binary64 zero is a valid early exit for the computed
@@ -80,9 +71,7 @@ namespace Proektsoft.Root
             var uncheckedABSteps = 0;
             var fallbackThreshold = 0.0;
 
-            for (var iteration = 1;
-                 iteration <= MaxIterations;
-                 ++iteration)
+            for (var i = 1; i <= MaxIterations; ++i)
             {
                 var x3 = isAB
                     ? Node.SafeSecant(p1, p2)
@@ -118,26 +107,21 @@ namespace Proektsoft.Root
                     returnCode = ReturnCode.Invalid;
                     return double.NaN;
                 }
-
+                var switchToAB = false;
                 // The switching controller is evaluated only during a genuine
                 // bisection step and only from TRUE residuals. Infinite values
                 // deliberately disable switching. This prevents the controller
                 // from analysing a surrogate created by previous AB corrections.
-                var switchToAB = false;
                 if (!isAB && double.IsFinite(y3))
                 {
                     var symmetryFactor = EvaluateSymmetryFactor(y1, y2);
                     if (double.IsFinite(symmetryFactor))
                     {
-                        // This form avoids overflow in y1+y2.
+                        // This form avoids overflow in y1 + y2.
                         var ym = 0.5 * y1 + 0.5 * y2;
-                        switchToAB = PassesSwitchingTest(
-                            ym,
-                            y3,
-                            symmetryFactor);
+                        switchToAB = PassesSwitchingTest(ym, y3, symmetryFactor);
                     }
                 }
-
                 // Update the mathematical bracket using y1,y2,y3 only. The
                 // corrected p1.Y and p2.Y values are interpolation state and
                 // must never decide which endpoint is replaced.
@@ -149,15 +133,9 @@ namespace Proektsoft.Root
                     // step as well, the right endpoint has remained fixed twice
                     // and receives the Anderson-Björck correction.
                     if (side == 1)
-                    {
-                        p2.Y = ScalePreservingNonzeroSign(
-                            p2.Y,
-                            GetABFactor(y3, p1.Y));
-                    }
+                        p2.Y = ScalePreservingNonzeroSign(p2.Y, GetABFactor(y3, p1.Y));
                     else if (isAB)
-                    {
                         side = 1;
-                    }
 
                     p1 = p3;
                     y1 = y3;
@@ -168,15 +146,9 @@ namespace Proektsoft.Root
                     // signs and y3 is non-zero, this branch means that y3 has the
                     // sign of the right endpoint.
                     if (side == -1)
-                    {
-                        p1.Y = ScalePreservingNonzeroSign(
-                            p1.Y,
-                            GetABFactor(y3, p2.Y));
-                    }
+                        p1.Y = ScalePreservingNonzeroSign(p1.Y, GetABFactor(y3, p2.Y));
                     else if (isAB)
-                    {
                         side = -1;
-                    }
 
                     p2 = p3;
                     y2 = y3;
@@ -187,9 +159,7 @@ namespace Proektsoft.Root
                     // Skip the first Log2C=5 vacuous threshold tests. During
                     // them T(t)>=Wc and the current width cannot exceed Wc.
                     if (uncheckedABSteps > 0)
-                    {
                         --uncheckedABSteps;
-                    }
                     else if (p2.X - p1.X > fallbackThreshold)
                     {
                         // AB has fallen behind the bisection reference. Return
@@ -209,7 +179,7 @@ namespace Proektsoft.Root
                 }
                 else if (switchToAB)
                 {
-                    // At the first AB phase p1.Y==y1 and p2.Y==y2. After every
+                    // At the first AB phase p1.Y == y1 and p2.Y == y2. After every
                     // fallback they are restored, and bisection never modifies
                     // them. Hence a redundant reset is not needed here.
                     isAB = true;
@@ -244,14 +214,14 @@ namespace Proektsoft.Root
         /// The calculation is homogeneous in the true endpoint residuals.
         /// </summary>
         private static double EvaluateSymmetryFactor(double y1, double y2)
-        {
+        { 
             var a = Math.Abs(y1);
             var b = Math.Abs(y2);
             var scale = Math.Max(a, b);
 
             // Infinite true residuals deliberately disable AB switching and
             // keep the controller in bisection mode.
-            if (!(scale > 0.0) || !double.IsFinite(scale))
+            if (!(scale > 0.0 && double.IsFinite(scale)))
                 return double.PositiveInfinity;
 
             if (scale >= ScaleThreshold)
@@ -259,7 +229,6 @@ namespace Proektsoft.Root
                 a /= scale;
                 b /= scale;
             }
-
             var r = 1.0 - Math.Abs(b - a) / (2.0 * (a + b));
             return r * r;
         }
@@ -268,10 +237,7 @@ namespace Proektsoft.Root
         /// Tests whether the true midpoint value is sufficiently close to the
         /// midpoint value of the chord through the true endpoint residuals.
         /// </summary>
-        private static bool PassesSwitchingTest(
-            double ym,
-            double yf,
-            double symmetryFactor)
+        private static bool PassesSwitchingTest( double ym, double yf, double symmetryFactor)
         {
             var absYm = Math.Abs(ym);
             var absYf = Math.Abs(yf);
@@ -279,7 +245,7 @@ namespace Proektsoft.Root
 
             // The exact-root case was handled before this method was called.
             // Non-finite values are unsuitable for the linearity comparison.
-            if (!(scale > 0.0) || !double.IsFinite(scale))
+            if (!(scale > 0.0 && double.IsFinite(scale)))
                 return false;
 
             if (scale < ScaleThreshold)
@@ -293,8 +259,7 @@ namespace Proektsoft.Root
             var normYm = ym / scale;
             var normYf = yf / scale;
             return Math.Abs(normYm - normYf) <
-                   symmetryFactor *
-                   (Math.Abs(normYf) + Math.Abs(normYm));
+                   symmetryFactor * (Math.Abs(normYf) + Math.Abs(normYm));
         }
 
         /// <summary>

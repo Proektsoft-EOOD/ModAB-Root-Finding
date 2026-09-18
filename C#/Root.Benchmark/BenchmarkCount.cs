@@ -7,9 +7,7 @@ namespace Root.Benchmark
         internal static void Run()
         {
             Problem[] problems =
-            [.. BenchmarkProblems.Set1,
-             .. BenchmarkProblems.Set2,
-             .. BenchmarkProblems.Set3]; 
+            [.. BenchmarkProblems.Set1, .. BenchmarkProblems.Set2, .. BenchmarkProblems.Set3];
             const double tol = 1e-14;
             const int methodCount = 9;
             var problemCount = problems.Length;

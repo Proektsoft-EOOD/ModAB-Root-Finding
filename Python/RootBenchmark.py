@@ -2,7 +2,10 @@ import math
 import time
 import sys
 sys.path.insert(0, r"c:\Users\proek\Documents\GitHub\ModAB-Root-Finding\Python\PyModAB\src")
+import pymodab
 from pymodab import find_root as pymodab_find_root
+from pymodab import modab as pymodab_impl
+from cybrentq import brentq as cy_brentq
 from dataclasses import dataclass
 from typing import Callable
 import numpy as np
@@ -54,6 +57,24 @@ scipy_brentq = make_scipy_solver(brentq,    "sp_brentq")
 scipy_brenth = make_scipy_solver(brenth,    "sp_brenth")
 scipy_ridder = make_scipy_solver(sp_ridder, "sp_ridder")
 scipy_chandrupatla = wrap_find_root()
+
+def cybrentq_solver(f, a, b, precision=1e-14):
+    """Wrapper for cybrentq.brentq that matches the benchmark signature."""
+    try:
+        return cy_brentq(f, a, b, xtol=precision, rtol=precision, maxiter=100, disp=False)
+    except (ValueError, RuntimeError):
+        return float('nan')
+
+# ctypes wrapper of pymodab (the only implementation up to version 1.0.5)
+if not hasattr(pymodab_impl, "_lib"):
+    pymodab_impl._lib = pymodab_impl._load_library()
+
+def mod_ab_ctypes(f, a, b, precision=1e-14):
+    """Wrapper for the ctypes pymodab.find_root that matches the benchmark signature."""
+    try:
+        return pymodab_impl._ctypes_find_root(f, a, b, atol=precision, rtol=precision)
+    except (ValueError, RuntimeError):
+        return float('nan')
 
 def mod_ab(f, a, b, precision=1e-14):
     """Wrapper for pymodab.find_root that matches the benchmark signature."""
@@ -191,8 +212,13 @@ solvers = [
     ("brenth", scipy_brenth),
     ("ridder", scipy_ridder),
     ("chandr", scipy_chandrupatla),
-    (" modAB", mod_ab),
+    ("cybrentq", cybrentq_solver),
+    ("modAB_ct", mod_ab_ctypes),
+    ("modAB", mod_ab),
 ]
+
+if not pymodab.NATIVE:
+    print("WARNING: pymodab native extension not found, modAB uses ctypes\n")
 
 MODAB_IDX = len(solvers) - 1  # index of modAB in the solvers list
 
@@ -255,12 +281,13 @@ def run():
     eps = 1e-14
     col_w = 22  # column width for results / function-value tables
     cnt_w = 8   # column width for count / time tables
+    separator = "----- |" + " ------: |" * len(solvers)
 
     print("Results (root values)")
     print("===")
     header = f"{'Func':>4}| " + "| ".join(f"{name:>{col_w}}" for name, _ in solvers)
     print(header)
-    print("------ | ------: | ------: | ------: | ------: | ------: | ------: |")
+    print(separator)
     for p in all_problems:
         line = f"{p.name:>4}| "
         for name, solver in solvers:
@@ -277,7 +304,7 @@ def run():
     print("===")
     header = f"{'Func':>4}| " + "| ".join(f"{name:>{col_w}}" for name, _ in solvers)
     print(header)
-    print("------ | ------: | ------: | ------: | ------: | ------: | ------: |")
+    print(separator)
     fval_data = []
     for p in all_problems:
         line = f"{p.name:>4}| "
@@ -300,7 +327,7 @@ def run():
     print("===")
     header = f"{'Func':>6}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers) +  "|"
     print(header)
-    print("----- | ------: | ------: | ------: | ------: | ------: | ------: |")
+    print(separator)
     count_data = []
     totals = [0] * len(solvers)
     for p in all_problems:
@@ -328,12 +355,12 @@ def run():
     # Stats block for eval counts
     _print_stats_block(count_data, cnt_w, [n for n, _ in solvers], integer_vals=True)
 
-    print("Execution times  (ms per problem, 100 iterations)")
-    print("===")
     iterations = 200
+    print(f"Execution times  (ms per problem, {iterations} iterations)")
+    print("===")
     header = f"{'Func':>6}| " + "| ".join(f"{name:>{cnt_w}}" for name, _ in solvers) +  "|"
     print(header)
-    print("----- | ------: | ------: | ------: | ------: | ------: | ------: |")
+    print(separator)
     time_data = []
     total_time = [0.0] * len(solvers)
     for p in all_problems:

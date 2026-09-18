@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=70.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymodab"
-version = "1.0.5"
+version = "1.0.6"
 description = "Fast and robust root-finding library using the Modified Anderson-Bjork method"
 readme = "README.md"
 license = "MIT"
@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: C",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
@@ -40,3 +41,6 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 pymodab = ["*.dll", "*.so", "*.dylib", "*.lib", "py.typed"]
+
+[tool.setuptools.exclude-package-data]
+pymodab = ["*.c"]

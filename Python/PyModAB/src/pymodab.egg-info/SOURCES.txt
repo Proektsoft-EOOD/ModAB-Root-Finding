@@ -2,9 +2,11 @@ LICENSE
 MANIFEST.in
 README.md
 pyproject.toml
+setup.py
 src/pymodab/ModAB.dll
 src/pymodab/ModAB.lib
 src/pymodab/__init__.py
+src/pymodab/_modab.c
 src/pymodab/libModAB.so
 src/pymodab/libModAB_arm64.dylib
 src/pymodab/libModAB_x64.dylib

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: pymodab
-Version: 1.0.5
+Version: 1.0.6
 Summary: Fast and robust root-finding library using the Modified Anderson-Bjork method
 Author: Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 License-Expression: MIT
@@ -20,6 +20,7 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
 Classifier: Programming Language :: Python :: 3.13
+Classifier: Programming Language :: Python :: 3.14
 Classifier: Programming Language :: C
 Classifier: Topic :: Scientific/Engineering :: Mathematics
 Requires-Python: >=3.8
@@ -69,13 +70,29 @@ print(f"Error:       {root**2 - 2}")
 Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
 **Parameters:**
-- `f`: A continuous function of one variable
+- `f`: A continuous function of one variable, or the address (`int`) of a compiled C function `double f(double)`
 - `x1`, `x2`: Bracket interval endpoints (must satisfy `f(x1) * f(x2) < 0`)
 - `atol`: Absolute tolerance (default: 1e-14)
 - `rtol`: Relative tolerance (default: 1e-14)
 - `max_iter`: Maximum iterations (default: 200)
 
-**Returns:** The root, or `NaN` if not found.
+**Returns:** The root, or `NaN` if not found. Exceptions raised by `f` are propagated to the caller.
+
+Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. If the extension is not available for your platform, pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
+
+For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
+
+```python
+import math
+from numba import cfunc
+from pymodab import find_root
+
+@cfunc("float64(float64)")
+def f(x):
+    return math.cos(x) - x
+
+root = find_root(f.address, 0, 1)
+```
 
 #### `get_evaluation_count()`
 
