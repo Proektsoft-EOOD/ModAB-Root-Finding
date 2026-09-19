@@ -117,5 +117,6 @@ cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrent
 modAB_ct: pymodab version 1.0.5 - the previous implementation with ctypes  
 modAB: pymodab version 1.0.7 - the latest implementation as native C extension  
 
-The complete source code to reproduce the above benchmarks is available in [RootBenchmark.py](RootBenchmark.py).  
-Detailed benchmark results are listed in [BenchmarkResults.md](BenchmarkResults.md).  
+The complete source code to reproduce the above benchmarks is available in [RootBenchmarkSciPy.py](RootBenchmarkSciPy.py).  
+Detailed benchmark results are listed in [BenchmarkResultsSciPy.md](BenchmarkResultsSciPy.md).  
+A similar benchmark against the [PyRoot](https://github.com/SimpleArt/pyroot) library is available in [RootBenchmarkPyRoot.py](RootBenchmarkPyRoot.py), with results in [BenchmarkResultsPyRoot.md](BenchmarkResultsPyRoot.md).  
