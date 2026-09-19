@@ -118,12 +118,12 @@ List of algorithms:
                     case 2: Console.WriteLine("\r\n### Return codes\r\n"); break;
                     case 3: Console.WriteLine("\r\n### Evaluation count\r\n"); break;
                 }
-                Console.WriteLine("   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr");
-                Console.WriteLine(" ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------");
+                Console.WriteLine("|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr");
+                Console.WriteLine("| ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------");
                 for (int i = 0; i < problemCount; ++i)
                 {
                     Problem p = problems[i];
-                    Console.Write(p.Name.PadLeft(7) + " | ");
+                    Console.Write($"|{p.Name.PadLeft(7)} | ");
                     for (int j = 0; j < methodCount; ++j)
                     {
                         var result = results[i, j];
@@ -170,7 +170,7 @@ List of algorithms:
                     : 0.5 * (sorted[sorted.Length / 2 - 1] + sorted[sorted.Length / 2]);
             }
             static void WriteRow<T>(string label, IEnumerable<T> values, string format = null) =>
-                Console.WriteLine($"{label,7} | " + string.Join(" | ",
+                Console.WriteLine($"|{label,7} | " + string.Join(" | ",
                     values.Select(v => (format == null ? v.ToString() : ((IFormattable)v).ToString(format, null)).PadLeft(5))));
 
             WriteRow("Sum", sum);

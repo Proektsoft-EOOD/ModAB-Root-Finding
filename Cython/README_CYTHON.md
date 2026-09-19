@@ -26,7 +26,7 @@ print(f"Root: {root}")  # Should be approximately sqrt(2) ≈ 1.414
 ## Optimizations Applied
 
 1. **C-level types**: All variables use `double` and `int` C types
-2. **Fast math**: Compiled with `-O3 -march=native -ffast-math` for maximum performance
+2. **IEEE-strict optimization**: Compiled with `/O2 /fp:precise` (MSVC) or `-O3 -ffp-contract=off` (GCC/Clang). Fast-math is not used: the solver relies on NaN/inf semantics, and reassociation changes the iterates
 3. **No Python overhead**:
    - Uses `libc.math.fabs` instead of Python's `abs()`
    - Uses `NAN` constant from C math library

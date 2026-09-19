@@ -8,6 +8,9 @@ from libc.math cimport fabs, NAN, isnan
 
 ctypedef double (*func_type)(double) nogil
 
+cdef enum:
+    MAX_RESIDUAL_STEPS = 3  # Cap on consecutive residual-only AB steps
+
 cdef inline double c_max(double a, double b) noexcept nogil:
     return a if a > b else b
 
@@ -32,8 +35,8 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
            are stored for later use in bisection fallback
     F(x) must be continuous and sign(F(x1)) ≠ sign(F(x2))
     """
-    cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, dy, r, k, m, threshold
-    cdef int side, bisection, _
+    cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, dy, r, k, m, threshold, ymin
+    cdef int side, bisection, _, residual_steps
     cdef bint same_sign
 
     if x2 < x1:
@@ -56,7 +59,11 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     side = 0
     bisection = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
-
+    # Consecutive AB steps that failed the width test but were kept because they
+    # halved the best residual. Capping them preserves the worst-case bound:
+    # near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
+    residual_steps = 0
+    ymin = 0.0
     for _ in range(maxiter):
         if bisection:
             x3 = (x1 + x2) * 0.5
@@ -78,7 +85,8 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
             k = r * r  # Deviation factor
             if fabs(ym - y3) < k * (fabs(y3) + fabs(ym)):
                 bisection = 0
-                threshold = (x2 - x1) * 16.0  # Safety factor: 4 bisection iterations = 2^4
+                threshold = (x2 - x1) * 2.0  # Safety factor: skips two AB steps before the first fallback
+                residual_steps = 0
         else:
             if x3 <= x1:
                 x3 = x1
@@ -93,6 +101,12 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
 
         if fabs(y3) <= epsy:  # y-convergence check
             return x3
+
+        # Best true residual of the bracket BEFORE y3 replaces an endpoint.
+        # Must be taken here: after the update, min(|f1|,|f2|) <= |y3| and
+        # the stagnation test would always pass.
+        if not bisection:
+            ymin = c_min(fabs(f1), fabs(f2))
 
         same_sign = (y1 > 0.0) == (y3 > 0.0)
         if same_sign:  # Same sign check
@@ -120,8 +134,16 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
             y2 = y3
             f2 = y3  # Also store the unmodified y2 value to be used for bisection fallback
 
-        if x2 - x1 > threshold:  # AB failed to shrink the interval enough
-            bisection = 1
-            side = 0
+        # Fallback if AB fails to reduce the bracket width, unless it still halves
+        # the best residual (at most MAX_RESIDUAL_STEPS times in a row)
+        if not bisection:
+            if x2 - x1 > threshold:
+                if abs(y3) < 0.5 * ymin and residual_steps < MAX_RESIDUAL_STEPS:
+                    residual_steps += 1
+                else:
+                    bisection = True
+                    side = 0
+            else:
+                residual_steps = 0
 
     return NAN
