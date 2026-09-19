@@ -64,6 +64,13 @@ class Problem:
 def P(x):
     return x + 1.11111
 
+
+def V(x):
+    # Vertical tangent at the root x = 0.75; -inf at x = 0 as Math.Cbrt(-3/0.0) in C#
+    if x == 0:
+        return -math.inf
+    return math.cbrt((4 * x - 3) / x)
+
 # Test problems
 problems1 = [
     # Sérgio Galdino. A family of regula falsi root-finding methods
@@ -168,7 +175,14 @@ problems3 = [
     Problem("f90", lambda x: x**3 - 2 * x**2 + x - 0.025, -1.0, 2.0),
     Problem("f91", lambda x: x * math.sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", lambda x: x**3 - 0.001, -10, 10),
-    Problem("f93", lambda x: x**7 - 0.001, -10, 10)
+    Problem("f93", lambda x: x**5 - 0.001, -10, 10),
+    Problem("f94", lambda x: x**7 - 0.001, -10, 10),
+    Problem("f95", lambda x: x**9 - 0.001, -10, 10),
+    Problem("f96", lambda x: x**11 - 0.001, -10, 10),
+    Problem("f97", lambda x: x**13 - 0.001, -10, 10),
+    Problem("f98", lambda x: x**15 - 0.001, -10, 10),
+    Problem("f99", lambda x: x**17 - 0.001, -10, 10),
+    Problem("f100", V, 0, math.e)
 ]
 
 all_problems = problems1 + problems2 + problems3

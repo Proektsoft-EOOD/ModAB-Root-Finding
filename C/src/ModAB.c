@@ -21,6 +21,12 @@ static inline bool same_sign(double a, double b) {
     return (a > 0) == (b > 0);
 }
 
+// Evaluates f(x) and counts the call, so the count is exact on every exit path
+static inline double eval(double (*f)(double), double x) {
+    ++evaluation_count;
+    return f(x);
+}
+
 static inline double clamp(double d, double min, double max) {
   return d < min ? min : (d > max ? max : d);
 }
@@ -44,11 +50,11 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
         double temp = x1; x1 = x2; x2 = temp;
     }
 
-    double y1 = f(x1);
+    double y1 = eval(f, x1);
     if (y1 == 0.0)
         return x1;
 
-    double y2 = f(x2);
+    double y2 = eval(f, x2);
     if (y2 == 0.0)
         return x2;
 
@@ -58,21 +64,25 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     bool bisection = true;
     int side = 0; // -1 for left, 1 for right, 0 for none
     double threshold = x2 - x1;
-    double f1 = y1, f2 = y2;
-    const double C = 16.0; // Safety factor
+    double f1 = y1, f2 = y2, ymin = 0.0;
+    const double C = 2.0; // Safety factor
+    // Consecutive AB steps that failed the width test but were kept because
+    // they halved the best residual. Capping them preserves the worst-case bound:
+    // near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
+    const int maxResidualSteps = 3;
+    int residualSteps = 0;
 
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? 0.5 * (x1 + x2) : (x1 * y2 - y1 * x2) / (y2 - y1);
         // Check for x-convergence
         double eps = aTol + rTol * fabs(x3);
         if (x2 - x1 <= eps) {
-            evaluation_count = i + 1; // Saves one function evaluation if satisfied
             return bisection ? x3 : clamp(x3, x1, x2);
         }
         
         double y3;
         if (bisection) {
-            y3 = f(x3);
+            y3 = eval(f, x3);
             double ym = 0.5 * (f1 + f2);
             double r = 1.0 - fabs(ym / (f2 - f1)); // Symmetry factor
             double k = r * r; // Deviation factor
@@ -80,6 +90,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             if (fabs(ym - y3) < k * (fabs(y3) + fabs(ym))) {
                 bisection = false;
                 threshold = (x2 - x1) * C;
+                residualSteps = 0;
             }
         } else {
             // Clamp secant point to interval to handle floating-point errors
@@ -88,17 +99,19 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             } else if (x3 >= x2) {
                 x3 = x2; y3 = f2;
             } else {
-                y3 = f(x3);
+                y3 = eval(f, x3);
             }
             threshold *= 0.5;
         }
 
         // Check for y-convergence
-        if (y3 == 0.0) {
-            evaluation_count = i + 2;
+        if (y3 == 0.0)
             return x3;
-        }
 
+        // Best true residual of the bracket BEFORE y3 replaces an endpoint.
+        // Must be taken here: after the update, min(|f1|,|f2|) <= |y3| and
+        // the stagnation test would always pass.
+        if (!bisection) {ymin = fmin(fabs(f1), fabs(f2));}     
         if (same_sign(y1, y3)) {
             if (side == 1) { // Anderson-Bjork correction
                 double m = 1.0 - y3 / y1;
@@ -117,11 +130,21 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             x2 = x3; f2 = y2 = y3;
         }
 
-        if (x2 - x1 > threshold) {
-            bisection = true;
-            side = 0;
+        // Fallback if AB fails to reduce the bracket width, unless it still halves
+        // the best residual (at most maxResidualSteps times in a row)
+        if (!bisection) {
+            if(x2 - x1 > threshold) {
+                if (fabs(y3) < 0.5 * ymin && residualSteps < maxResidualSteps) {
+                    ++residualSteps;
+                } else {
+                    bisection = true;
+                    side = 0;
+                }
+            }
+            else {
+                residualSteps = 0;
+            }
         }
     }
-    evaluation_count = maxIter + 2;
     return NAN;
 }

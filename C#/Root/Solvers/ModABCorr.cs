@@ -57,19 +57,15 @@ namespace Proektsoft.Root
             //   -1 = right endpoint moved;
             //    0 = no preceding AB step in the current AB phase.
             var side = 0;
-
-            // The simplified fallback controller is exactly the dyadic rule
-            //
-            //     T(t) = 32 * Wc / 2^t,
-            //
-            // where Wc is the width at entry to an AB phase. The first five
-            // threshold tests are vacuous because T(t) >= Wc while the bracket
-            // width is non-increasing. The first non-trivial test is therefore
-            // T(6) = Wc/2. This is C=32, so the corrected convergence theorem
-            // uses q=ceil(log2(32))+2=7.
-            const int Log2C = 5;
-            var uncheckedABSteps = 0;
             var fallbackThreshold = 0.0;
+
+            // Consecutive AB steps that failed the width test but were kept
+            // because they halved the best residual. Capping them preserves
+            // the dyadic worst-case bound: near a root of multiplicity m,
+            // halving |f| shrinks the distance only by 2^(-1/m).
+            const int MaxResidualSteps = 3;
+            var residualSteps = 0;
+            const double C = 2.0;
 
             for (var i = 1; i <= MaxIterations; ++i)
             {
@@ -122,6 +118,10 @@ namespace Proektsoft.Root
                         switchToAB = PassesSwitchingTest(ym, y3, symmetryFactor);
                     }
                 }
+                // Best true residual of the bracket BEFORE y3 replaces an endpoint.
+                // Must be taken here: after the update, min(|y1|,|y2|) <= |y3| and
+                // the stagnation test would always pass.
+                var yMin = Math.Min(Math.Abs(y1), Math.Abs(y2));
                 // Update the mathematical bracket using y1,y2,y3 only. The
                 // corrected p1.Y and p2.Y values are interpolation state and
                 // must never decide which endpoint is replaced.
@@ -156,11 +156,24 @@ namespace Proektsoft.Root
 
                 if (isAB)
                 {
-                    // Skip the first Log2C=5 vacuous threshold tests. During
-                    // them T(t)>=Wc and the current width cannot exceed Wc.
-                    if (uncheckedABSteps > 0)
-                        --uncheckedABSteps;
-                    else if (p2.X - p1.X > fallbackThreshold)
+                    // Fallback if AB fails to reduce the bracket width, unless
+                    // it still halves the best residual (at most MaxResidualSteps
+                    // times in a row)
+                    var fallBack = false;
+                    if (isAB)
+                    {
+                        if (p2.X - p1.X > fallbackThreshold)
+                        {
+                            if (Math.Abs(y3) < 0.5 * yMin && residualSteps < MaxResidualSteps)
+                                ++residualSteps;
+                            else
+                                fallBack = true;
+                        }
+                        else
+                            residualSteps = 0;
+                    }
+
+                    if (fallBack)
                     {
                         // AB has fallen behind the bisection reference. Return
                         // to bisection and discard phase-dependent interpolation
@@ -183,12 +196,8 @@ namespace Proektsoft.Root
                     // fallback they are restored, and bisection never modifies
                     // them. Hence a redundant reset is not needed here.
                     isAB = true;
-                    uncheckedABSteps = Log2C;
-
-                    // First non-trivial threshold for C=32:
-                    // T(Log2C+1)=Wc/2, with Wc measured AFTER the switching
-                    // bisection has updated the bracket.
-                    fallbackThreshold = 0.5 * (p2.X - p1.X);
+                    residualSteps = 0;
+                    fallbackThreshold = C * (p2.X - p1.X);
                 }
             }
 

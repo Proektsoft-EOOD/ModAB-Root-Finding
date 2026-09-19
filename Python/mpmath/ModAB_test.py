@@ -11,10 +11,29 @@ class Problem:
     f: Callable[[float], float]
     a: float
     b: float
+    # Known exact root, if given. Graded by |x - root| instead of |f(x)|, for
+    # functions where |f| near the root says little about accuracy.
+    root: object = None
+
+
+def error_of(p, root, fval):
+    """Error measure used to grade a result: |x - root| if the root is known, else |f(x)|."""
+    if p.root is not None:
+        return float(abs(root - p.root))
+    return abs(fval)
 
 
 def P(x):
     return x + 1.11111
+
+
+def V(x):
+    # Vertical tangent at the root x = 0.75; -inf at x = 0 as Math.Cbrt(-3/0.0) in C#.
+    # mp.cbrt returns the complex principal root for negative arguments, so take the real one.
+    if x == 0:
+        return -mp.inf
+    t = (4 * x - 3) / x
+    return mp.cbrt(t) if t >= 0 else -mp.cbrt(-t)
 
 
 # Test problems from RootBenchmark.py
@@ -123,6 +142,14 @@ problems3 = [
     Problem("f90", lambda x: x**3 - 2 * x**2 + x - mpf('0.025'), -1.0, 2.0),
     Problem("f91", lambda x: x * mp.sin(1 / x) - mpf('0.1') - mpf('0.01'), 0.01, 1.0),
     Problem("f92", lambda x: x**3 - mpf('0.001'), -10, 10),
+    Problem("f93", lambda x: x**5 - mpf('0.001'), -10, 10),
+    Problem("f94", lambda x: x**7 - mpf('0.001'), -10, 10),
+    Problem("f95", lambda x: x**9 - mpf('0.001'), -10, 10),
+    Problem("f96", lambda x: x**11 - mpf('0.001'), -10, 10),
+    Problem("f97", lambda x: x**13 - mpf('0.001'), -10, 10),
+    Problem("f98", lambda x: x**15 - mpf('0.001'), -10, 10),
+    Problem("f99", lambda x: x**17 - mpf('0.001'), -10, 10),
+    Problem("f100", V, 0, math.e, root=mpf("0.75")),  # |f| ~ |x - 0.75|^(1/3)
 ]
 
 all_problems = problems1 + problems2 + problems3
@@ -157,12 +184,13 @@ def run_single_solver(solver_name, problems, tol=1e-20):
         try:
             root = findroot(cf, (mpf(p.a), mpf(p.b)), solver=solver_name, tol=tol, verify=False, maxsteps=400)
             fval = float(p.f(root))
+            err = error_of(p, root, fval)
 
             if math.isnan(float(root)):
                 status = "FAIL"
-            elif abs(fval) < 1e-18:
+            elif err < 1e-18:
                 status = "PASS"
-            elif abs(fval) < 1e-12:
+            elif err < 1e-12:
                 status = "WEAK"
             else:
                 status = "FAIL"
@@ -291,14 +319,15 @@ def run_detailed_test(solver_name='modAB'):
         try:
             root = findroot(cf, (mpf(p.a), mpf(p.b)), solver=solver_name, verify=False, maxsteps=400)
             fval = float(p.f(root))
+            err = error_of(p, root, fval)
 
             if math.isnan(float(root)):
                 status = "F"
                 failed += 1
-            elif abs(fval) < 1e-18:
+            elif err < 1e-18:
                 status = " "
                 passed += 1
-            elif abs(fval) < 1e-12:
+            elif err < 1e-12:
                 status = "W"
                 passed += 1
             else:

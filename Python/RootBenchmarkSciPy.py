@@ -65,14 +65,37 @@ def cybrentq_solver(f, a, b, precision=1e-14):
     except (ValueError, RuntimeError):
         return float('nan')
 
-# ctypes wrapper of pymodab (the only implementation up to version 1.0.5)
-if not hasattr(pymodab_impl, "_lib"):
-    pymodab_impl._lib = pymodab_impl._load_library()
+# ctypes wrapper of pymodab 1.0.5 from PyPI (the only implementation up to that version),
+# installed with: pip install --user pymodab==1.0.5
+# It is loaded from its install directory under its own module name, so that it does not
+# clash with the pymodab imported from PyModAB/src above. The 1.0.5 module has no NATIVE
+# attribute, which tells it apart from a newer install in the same search path.
+def _load_pymodab_105():
+    import importlib.util
+    import os
+    import site
+    import sysconfig
+
+    for base in (site.getusersitepackages(), sysconfig.get_paths()["purelib"]):
+        path = os.path.join(base, "pymodab", "modab.py")
+        if not os.path.exists(path):
+            continue
+        spec = importlib.util.spec_from_file_location("pymodab_105", path)
+        module = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(module)
+        except Exception:
+            continue  # a newer pymodab: loaded outside its package, it cannot import itself
+        if not hasattr(module, "NATIVE"):  # 1.0.5: pure ctypes, find_root calls the library
+            return module
+    raise ImportError("pymodab 1.0.5 not found - run: pip install --user pymodab==1.0.5")
+
+pymodab_105 = _load_pymodab_105()
 
 def mod_ab_ctypes(f, a, b, precision=1e-14):
-    """Wrapper for the ctypes pymodab.find_root that matches the benchmark signature."""
+    """Wrapper for the pymodab 1.0.5 ctypes find_root that matches the benchmark signature."""
     try:
-        return pymodab_impl._ctypes_find_root(f, a, b, atol=precision, rtol=precision)
+        return pymodab_105.find_root(f, a, b, atol=precision, rtol=precision)
     except (ValueError, RuntimeError):
         return float('nan')
 
@@ -95,6 +118,13 @@ class Problem:
 
 def P(x):
     return x + 1.11111
+
+
+def V(x):
+    # Vertical tangent at the root x = 0.75; -inf at x = 0 as Math.Cbrt(-3/0.0) in C#
+    if x == 0:
+        return -math.inf
+    return math.cbrt((4 * x - 3) / x)
 
 # Test problems
 problems1 = [
@@ -200,7 +230,14 @@ problems3 = [
     Problem("f90", lambda x: x**3 - 2 * x**2 + x - 0.025, -1.0, 2.0),
     Problem("f91", lambda x: x * math.sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", lambda x: x**3 - 0.001, -10, 10),
-    Problem("f93", lambda x: x**7 - 0.001, -10, 10)
+    Problem("f93", lambda x: x**5 - 0.001, -10, 10),
+    Problem("f94", lambda x: x**7 - 0.001, -10, 10),
+    Problem("f95", lambda x: x**9 - 0.001, -10, 10),
+    Problem("f96", lambda x: x**11 - 0.001, -10, 10),
+    Problem("f97", lambda x: x**13 - 0.001, -10, 10),
+    Problem("f98", lambda x: x**15 - 0.001, -10, 10),
+    Problem("f99", lambda x: x**17 - 0.001, -10, 10),
+    Problem("f100", V, 0, math.e)
 ]
 
 all_problems = problems1 + problems2 + problems3

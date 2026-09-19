@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: pymodab
-Version: 1.0.7
+Version: 1.0.8
 Summary: Fast and robust root-finding library using the Modified Anderson-Bjork method
 Author: Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 License-Expression: MIT
@@ -78,7 +78,9 @@ Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
 **Returns:** The root, or `NaN` if not found. Exceptions raised by `f` are propagated to the caller.
 
-Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. If the extension is not available for your platform, pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
+Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. Version 1.0.7 ships it as a wheel for Windows, Linux (x86_64 and aarch64, glibc and musl) and macOS (Intel and Apple Silicon); one wheel serves every CPython from 3.8 up. On any other platform pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
+
+Version 1.0.8 improves the fallback from secant to bisection steps: a secant step that does not shrink the bracket fast enough is still kept if it at least halves the best residual, up to three times in a row. This avoids needless bisection steps when the secant converges from one side, and falls back sooner when it stalls. `get_evaluation_count()` now returns the exact number of calls to `f`.
 
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
@@ -132,33 +134,33 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4464|     2571|     2534|     3177|     1891|     2571|     1746|     1746| 
-   AVG|       48|       28|       27|       34|       20|       28|       19|       19| 
-MEDIAN|       49|       12|       12|       16|       12|       12|       12|       12| 
+   SUM|     4832|     2733|     2693|     3357|     2042|     2733|     1915|     1897| 
+   AVG|       48|       27|       27|       34|       20|       27|       19|       19| 
+MEDIAN|       49|       13|       12|       16|       12|       13|       12|       12| 
    MIN|        3|        4|        4|        3|        3|        4|        3|        3| 
    MAX|       53|      102|      102|      202|       58|      102|       55|       55| 
-FACTOR|   2.557x|   1.473x|   1.451x|   1.820x|   1.083x|   1.473x|   1.000x|   1.000x| 
+FACTOR|   2.547x|   1.441x|   1.420x|   1.770x|   1.076x|   1.441x|   1.009x|   1.000x| 
 
-#### Execution times  (ms per problem, 100 iterations)
+#### Execution times  (ms per problem, 200 iterations)
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1359.38|   946.80|   795.71|   928.54| 50164.55|   103.09|   145.35|    75.77| 
+   SUM|  1352.90|   807.49|   773.73|   940.32| 53914.04|   112.49|   161.56|    84.59| 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
-   AVG|  14.6170|  10.1806|   8.5561|   9.9843| 539.4037|   1.1085|   1.5629|   0.8147| 
-MEDIAN|  14.1612|   4.7324|   4.5651|   5.9825| 307.2908|   0.5875|   1.2580|   0.6201| 
-   MIN|   2.1026|   2.5171|   1.7910|   1.4065|  84.3124|   0.2047|   0.5414|   0.1632| 
-   MAX|  55.4387|  78.7136|  32.4967|  52.4362|1574.8965|   5.4855|   4.2678|   2.8956| 
-FACTOR|  17.941x|  12.496x|  10.502x|  12.255x| 662.085x|   1.361x|   1.918x|   1.000x| 
+   AVG|  13.5290|   8.0749|   7.7373|   9.4032| 539.1404|   1.1249|   1.6156|   0.8459| 
+MEDIAN|  13.6538|   4.3919|   4.1557|   5.2412| 332.5527|   0.5879|   1.2744|   0.6669| 
+   MIN|   1.7184|   1.6199|   1.8035|   1.3340|  65.2455|   0.2073|   0.5437|   0.1688| 
+   MAX|  22.6711|  29.8648|  29.9962|  53.0812|1556.1950|   6.3055|   4.4735|   2.8349| 
+FACTOR|  15.994x|   9.546x|   9.147x|  11.116x| 637.373x|   1.330x|   1.910x|   1.000x| 
 
 #### Notes:  
 
-Last Run on: 18.09.2026  
+Last Run on: 20.09.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
 numpy Version: 2.4.6  
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
-modAB_ct: pymodab version 1.0.5 - the previous implementation with ctypes  
-modAB: pymodab version 1.0.6 - the latest implementation as native C extension  
+modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
+modAB: pymodab version 1.0.8 - the latest implementation as native C extension  
