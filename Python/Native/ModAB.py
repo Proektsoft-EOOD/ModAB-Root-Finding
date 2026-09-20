@@ -32,11 +32,10 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     side = 0
     bisection = True
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
+    C = 2 # Threshold safety factor
     # Consecutive AB steps that failed the width test but were kept because they
     # halved the best residual. Capping them preserves the worst-case bound:
     # near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
-    MAX_RESIDUAL_STEPS = 3
-    residual_steps = 0
     ymin = 0
     for _ in range(maxiter):
         x3 = (x1 + x2) * 0.5 if bisection else (x1 * y2 - y1 * x2) / (y2 - y1)
@@ -52,8 +51,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             k = r * r             # Deviation factor
             if abs(ym - y3) < k * (abs(y3) + abs(ym)):
                 bisection = False
-                threshold = (x2 - x1) * 2  # Safety factor: skips two AB steps before the first fallback
-                residual_steps = 0
+                threshold = (x2 - x1) * C  # Safety factor: skips two AB steps before the first fallback
         else:
             if x3 <= x1:
                 x3, y3 = x1, f1
@@ -88,16 +86,9 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 side = -1
             x2, y2, f2 = x3, y3, y3 # Akso store the unmodified y2 value to be used for bisection fallback
 
-        # Fallback if AB fails to reduce the bracket width, unless it still halves
-        # the best residual (at most MAX_RESIDUAL_STEPS times in a row)
-        if not bisection:
-            if x2 - x1 > threshold:
-                if abs(y3) < 0.5 * ymin and residual_steps < MAX_RESIDUAL_STEPS:
-                    residual_steps += 1
-                else:
-                    bisection = True
-                    side = 0
-            else:
-                residual_steps = 0
+        # Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+        if not bisection and x2 - x1 > threshold and abs(y3) > 0.5 * ymin:
+            bisection = True
+            side = 0
 
     return float('nan')

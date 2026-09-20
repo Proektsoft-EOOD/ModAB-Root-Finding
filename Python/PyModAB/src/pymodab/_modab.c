@@ -83,12 +83,6 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
     double threshold = x2 - x1;
     double f1 = y1, f2 = y2, ymin = 0.0;
     const double C = 2.0;
-    // Consecutive AB steps that failed the width test but were kept because
-    // they halved the best residual. Capping them preserves the worst-case bound:
-    // near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
-    const int maxResidualSteps = 3;
-    int residualSteps = 0;
-
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? 0.5 * (x1 + x2) : (x1 * y2 - y1 * x2) / (y2 - y1);
         double eps = aTol + rTol * fabs(x3);
@@ -105,7 +99,6 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
             if (fabs(ym - y3) < k * (fabs(y3) + fabs(ym))) {
                 bisection = 0;
                 threshold = (x2 - x1) * C;
-                residualSteps = 0;
             }
         } else {
             if (x3 <= x1) {
@@ -146,19 +139,10 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
             x2 = x3; f2 = y2 = y3;
         }
 
-        // Fallback if AB fails to reduce the bracket width, unless it still halves
-        // the best residual (at most maxResidualSteps times in a row)
-        if (!bisection) {
-            if (x2 - x1 > threshold) {
-                if (fabs(y3) < 0.5 * ymin && residualSteps < maxResidualSteps) {
-                    ++residualSteps;
-                } else {
-                    bisection = 1;
-                    side = 0;
-                }
-            } else {
-                residualSteps = 0;
-            }
+        // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+        if (!bisection && x2 - x1 > threshold && fabs(y3) > 0.5 * ymin) {
+            bisection = 1;
+            side = 0;
         }
     }
     return NAN;

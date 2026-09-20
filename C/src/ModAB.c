@@ -49,7 +49,6 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     if (x1 > x2) {
         double temp = x1; x1 = x2; x2 = temp;
     }
-
     double y1 = eval(f, x1);
     if (y1 == 0.0)
         return x1;
@@ -63,22 +62,15 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
 
     bool bisection = true;
     int side = 0; // -1 for left, 1 for right, 0 for none
-    double threshold = x2 - x1;
+    double threshold = x2 - x1; // Bisection fallback threshold
     double f1 = y1, f2 = y2, ymin = 0.0;
     const double C = 2.0; // Safety factor
-    // Consecutive AB steps that failed the width test but were kept because
-    // they halved the best residual. Capping them preserves the worst-case bound:
-    // near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
-    const int maxResidualSteps = 3;
-    int residualSteps = 0;
-
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? 0.5 * (x1 + x2) : (x1 * y2 - y1 * x2) / (y2 - y1);
         // Check for x-convergence
         double eps = aTol + rTol * fabs(x3);
-        if (x2 - x1 <= eps) {
+        if (x2 - x1 <= eps)
             return bisection ? x3 : clamp(x3, x1, x2);
-        }
         
         double y3;
         if (bisection) {
@@ -90,7 +82,6 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             if (fabs(ym - y3) < k * (fabs(y3) + fabs(ym))) {
                 bisection = false;
                 threshold = (x2 - x1) * C;
-                residualSteps = 0;
             }
         } else {
             // Clamp secant point to interval to handle floating-point errors
@@ -103,7 +94,6 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             }
             threshold *= 0.5;
         }
-
         // Check for y-convergence
         if (y3 == 0.0)
             return x3;
@@ -111,7 +101,9 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
         // Best true residual of the bracket BEFORE y3 replaces an endpoint.
         // Must be taken here: after the update, min(|f1|,|f2|) <= |y3| and
         // the stagnation test would always pass.
-        if (!bisection) {ymin = fmin(fabs(f1), fabs(f2));}     
+        if (!bisection)
+            ymin = fmin(fabs(f1), fabs(f2));
+            
         if (same_sign(y1, y3)) {
             if (side == 1) { // Anderson-Bjork correction
                 double m = 1.0 - y3 / y1;
@@ -130,20 +122,10 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             x2 = x3; f2 = y2 = y3;
         }
 
-        // Fallback if AB fails to reduce the bracket width, unless it still halves
-        // the best residual (at most maxResidualSteps times in a row)
-        if (!bisection) {
-            if(x2 - x1 > threshold) {
-                if (fabs(y3) < 0.5 * ymin && residualSteps < maxResidualSteps) {
-                    ++residualSteps;
-                } else {
-                    bisection = true;
-                    side = 0;
-                }
-            }
-            else {
-                residualSteps = 0;
-            }
+        // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+        if (!bisection && x2 - x1 > threshold && fabs(y3) > 0.5 * ymin) {
+            bisection = true;
+            side = 0;
         }
     }
     return NAN;
