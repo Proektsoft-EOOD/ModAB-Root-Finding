@@ -50,7 +50,7 @@ Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
 Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. Version 1.0.7 ships it as a wheel for Windows, Linux (x86_64 and aarch64, glibc and musl) and macOS (Intel and Apple Silicon); one wheel serves every CPython from 3.8 up. On any other platform pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
 
-Version 1.0.8 improves the fallback from secant to bisection steps: a secant step that does not shrink the bracket fast enough is still kept if it at least halves the best residual of the bracket. This avoids needless bisection steps when the secant converges from one side, and falls back sooner when it stalls. `get_evaluation_count()` now returns the exact number of calls to `f`.
+Version 1.0.8 improves the fallback from secant to bisection steps: a secant step that does not shrink the bracket fast enough is still kept if it at least halves the best residual of the bracket. This avoids needless bisection steps when the secant converges from one side, and falls back sooner when it stalls. `get_evaluation_count()` now returns the exact number of calls to `f`. Version 1.0.9 ships that work as wheels for every supported platform.
 
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
@@ -115,13 +115,12 @@ FACTOR|   2.547x|   1.441x|   1.420x|   1.770x|   1.076x|   1.441x|   1.009x|   
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1351.21|   807.07|   787.88|   933.13| 53784.09|   113.74|   163.98|    85.48| 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
-   AVG|  13.5121|   8.0707|   7.8788|   9.3313| 537.8409|   1.1374|   1.6398|   0.8548| 
-MEDIAN|  13.6084|   4.0090|   4.1190|   5.2633| 322.7620|   0.6304|   1.2578|   0.6489| 
-   MIN|   1.7064|   1.5499|   1.7578|   1.3562|  66.9817|   0.2363|   0.5673|   0.1710| 
-   MAX|  18.8409|  30.7261|  29.6728|  53.3488| 1530.3598|   5.8249|   4.4991|   2.9119| 
-FACTOR|  15.807x|   9.442x|   9.217x|  10.916x| 629.199x|   1.331x|   1.918x|   1.000x| 
+   SUM|  1354.57|   809.24|   790.70|   947.48| 53762.45|   110.12|   163.98|    85.69| 
+   AVG|  13.5457|   8.0924|   7.9070|   9.4748| 537.6245|   1.1012|   1.6398|   0.8569| 
+MEDIAN|  13.5512|   4.3220|   4.0672|   5.2287| 334.8545|   0.6377|   1.3381|   0.6569| 
+   MIN|   1.3982|   1.6644|   1.8143|   1.4678|  65.1690|   0.2064|   0.5470|   0.1606| 
+   MAX|  24.3726|  30.9711|  34.3799|  53.6214| 1545.0283|   5.6255|   4.8475|   2.8676| 
+FACTOR|  15.807x|   9.443x|   9.227x|  11.057x| 627.384x|   1.285x|   1.914x|   1.000x| 
 
 #### Notes:  
 
@@ -133,4 +132,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB: pymodab version 1.0.8 - the latest implementation as native C extension  
+modAB: pymodab version 1.0.9 - the latest implementation as native C extension  

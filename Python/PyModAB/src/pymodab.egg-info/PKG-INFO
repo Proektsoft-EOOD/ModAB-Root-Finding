@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: pymodab
-Version: 1.0.8
+Version: 1.0.9
 Summary: Fast and robust root-finding library using the Modified Anderson-Bjork method
 Author: Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 License-Expression: MIT
@@ -80,7 +80,7 @@ Find the root of `f(x) = 0` within the interval `[x1, x2]`.
 
 Since version 1.0.6, `find_root` is a native CPython extension that calls `f` directly, which is about 2x faster than the previous ctypes wrapper. Version 1.0.7 ships it as a wheel for Windows, Linux (x86_64 and aarch64, glibc and musl) and macOS (Intel and Apple Silicon); one wheel serves every CPython from 3.8 up. On any other platform pymodab falls back to ctypes automatically; `pymodab.NATIVE` tells which one is used.
 
-Version 1.0.8 improves the fallback from secant to bisection steps: a secant step that does not shrink the bracket fast enough is still kept if it at least halves the best residual, up to three times in a row. This avoids needless bisection steps when the secant converges from one side, and falls back sooner when it stalls. `get_evaluation_count()` now returns the exact number of calls to `f`.
+Version 1.0.8 improves the fallback from secant to bisection steps: a secant step that does not shrink the bracket fast enough is still kept if it at least halves the best residual of the bracket. This avoids needless bisection steps when the secant converges from one side, and falls back sooner when it stalls. `get_evaluation_count()` now returns the exact number of calls to `f`.
 
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
@@ -145,13 +145,12 @@ FACTOR|   2.547x|   1.441x|   1.420x|   1.770x|   1.076x|   1.441x|   1.009x|   
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1313.69|   780.79|   758.26|   908.26| 52391.22|   107.38|   156.39|    83.91| 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
-   AVG|  13.1369|   7.8079|   7.5826|   9.0826| 523.9122|   1.0738|   1.5639|   0.8391| 
-MEDIAN|  13.2611|   3.9732|   3.8331|   5.0113| 320.0253|   0.5897|   1.2359|   0.6279| 
-   MIN|   1.5521|   1.5666|   1.8513|   1.3097|  92.8237|   0.2102|   0.7051|   0.2053| 
-   MAX|  28.8559|  30.3630|  29.9153|  52.3420| 1524.1777|   5.5486|   4.4191|   2.9652| 
-FACTOR|  15.656x|   9.305x|   9.037x|  10.825x| 624.393x|   1.280x|   1.864x|   1.000x| 
+   SUM|  1351.21|   807.07|   787.88|   933.13| 53784.09|   113.74|   163.98|    85.48| 
+   AVG|  13.5121|   8.0707|   7.8788|   9.3313| 537.8409|   1.1374|   1.6398|   0.8548| 
+MEDIAN|  13.6084|   4.0090|   4.1190|   5.2633| 322.7620|   0.6304|   1.2578|   0.6489| 
+   MIN|   1.7064|   1.5499|   1.7578|   1.3562|  66.9817|   0.2363|   0.5673|   0.1710| 
+   MAX|  18.8409|  30.7261|  29.6728|  53.3488| 1530.3598|   5.8249|   4.4991|   2.9119| 
+FACTOR|  15.807x|   9.442x|   9.217x|  10.916x| 629.199x|   1.331x|   1.918x|   1.000x| 
 
 #### Notes:  
 
