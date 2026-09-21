@@ -1,12 +1,12 @@
 //! ModAB Root-Finding Test Suite
 //!
-//! Tests the modified Anderson-Bjork algorithm against 92 benchmark functions
+//! Tests the modified Anderson-Bjork algorithm against 100 benchmark functions
 //! from various academic sources:
 //!   - Sergio Galdino: Regula falsi methods (f01-f33)
 //!   - Steven A. Stage: Brent's method improvements (f34-f40)
 //!   - Swift & Lindfield: Continuation methods (f41-f62)
 //!   - Oliveira & Takahashi: Bisection enhancement (f63-f83)
-//!   - SciML project: Benchmark suite (f84-f92)
+//!   - SciML project: Benchmark suite (f84-f100)
 
 const std = @import("std");
 const modAB = @import("ModAB.zig").modAB;
@@ -59,13 +59,13 @@ fn f_08(x: f64) f64 {
     return 2.0 * x * @exp(-20.0) + 1.0 - 2.0 * @exp(-20.0 * x);
 }
 fn f_09(x: f64) f64 {
-    return (1.0 + std.math.pow(f64, 1.0 - 5.0, 2)) * x * x - std.math.pow(f64, 1.0 - 5.0 * x, 2);
+    return (1.0 + std.math.pow(f64, 1.0 - 5.0, 2)) * (x * x) - std.math.pow(f64, 1.0 - 5.0 * x, 2);
 }
 fn f_10(x: f64) f64 {
-    return (1.0 + std.math.pow(f64, 1.0 - 10.0, 2)) * x * x - std.math.pow(f64, 1.0 - 10.0 * x, 2);
+    return (1.0 + std.math.pow(f64, 1.0 - 10.0, 2)) * (x * x) - std.math.pow(f64, 1.0 - 10.0 * x, 2);
 }
 fn f_11(x: f64) f64 {
-    return (1.0 + std.math.pow(f64, 1.0 - 20.0, 2)) * x * x - std.math.pow(f64, 1.0 - 20.0 * x, 2);
+    return (1.0 + std.math.pow(f64, 1.0 - 20.0, 2)) * (x * x) - std.math.pow(f64, 1.0 - 20.0 * x, 2);
 }
 fn f_12(x: f64) f64 {
     return x * x - std.math.pow(f64, 1.0 - x, 5);
@@ -341,7 +341,29 @@ fn f_92(x: f64) f64 {
     return std.math.pow(f64, x, 3) - 0.001;
 }
 fn f_93(x: f64) f64 {
+    return std.math.pow(f64, x, 5) - 0.001;
+}
+fn f_94(x: f64) f64 {
     return std.math.pow(f64, x, 7) - 0.001;
+}
+fn f_95(x: f64) f64 {
+    return std.math.pow(f64, x, 9) - 0.001;
+}
+fn f_96(x: f64) f64 {
+    return std.math.pow(f64, x, 11) - 0.001;
+}
+fn f_97(x: f64) f64 {
+    return std.math.pow(f64, x, 13) - 0.001;
+}
+fn f_98(x: f64) f64 {
+    return std.math.pow(f64, x, 15) - 0.001;
+}
+fn f_99(x: f64) f64 {
+    return std.math.pow(f64, x, 17) - 0.001;
+}
+// Vertical tangent at the root x = 0.75; f(0) = cbrt(-3/0.0) = -inf
+fn f_100(x: f64) f64 {
+    return std.math.cbrt((4.0 * x - 3.0) / x);
 }
 
 // ============================================================================
@@ -447,6 +469,13 @@ const all_problems = [_]Problem{
     .{ .name = "f_91", .f = f_91, .a = 0.01, .b = 1.0 },
     .{ .name = "f_92", .f = f_92, .a = -10.0, .b = 10.0 },
     .{ .name = "f_93", .f = f_93, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_94", .f = f_94, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_95", .f = f_95, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_96", .f = f_96, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_97", .f = f_97, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_98", .f = f_98, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_99", .f = f_99, .a = -10.0, .b = 10.0 },
+    .{ .name = "f_100", .f = f_100, .a = 0.0, .b = std.math.e },
 };
 
 pub fn main() void {
@@ -460,7 +489,7 @@ pub fn main() void {
     std.debug.print("----------------------------------------------------------------------\n", .{});
 
     for (all_problems) |p| {
-        const root = modAB(p.f, p.a, p.b, 0.0, eps);
+        const root = modAB(p.f, p.a, p.b, 0.0, eps, 0.0, 200);
         const fval = p.f(root);
 
         var status: []const u8 = undefined;

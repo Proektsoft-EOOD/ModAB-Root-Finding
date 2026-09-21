@@ -33,9 +33,8 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     bisection = True
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     C = 2 # Threshold safety factor
-    # Consecutive AB steps that failed the width test but were kept because they
-    # halved the best residual. Capping them preserves the worst-case bound:
-    # near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
+    # Best residual of the bracket, refreshed before each AB step. An AB step that
+    # fails the width test is still kept if it at least halved this residual.
     ymin = 0
     for _ in range(maxiter):
         x3 = (x1 + x2) * 0.5 if bisection else (x1 * y2 - y1 * x2) / (y2 - y1)
@@ -61,15 +60,11 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 y3 = f(x3) - y
                 
             threshold *= 0.5
+            # Best true residual of the bracket BEFORE y3 replaces an endpoint.
+            ymin = min(abs(f1), abs(f2))
 
         if abs(y3) <= epsy: # y-convergence check
             return x3
-
-        # Best true residual of the bracket BEFORE y3 replaces an endpoint.
-        # Must be taken here: after the update, min(|f1|,|f2|) <= |y3| and
-        # the stagnation test would always pass.
-        if not bisection:
-            ymin = min(abs(f1), abs(f2))
 
         if (y1 > 0) == (y3 > 0):  # Same sign check
             if side == 1:

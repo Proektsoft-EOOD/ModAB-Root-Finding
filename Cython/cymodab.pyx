@@ -56,9 +56,6 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     side = 0
     bisection = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
-    # Consecutive AB steps that failed the width test but were kept because they
-    # halved the best residual. Capping them preserves the worst-case bound:
-    # near a root of multiplicity m, halving |f| shrinks the distance only by 2^(-1/m).
     ymin = 0.0
     for _ in range(maxiter):
         if bisection:
@@ -93,18 +90,13 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                 y3 = f(x3) - y
 
             threshold *= 0.5
+            # Best true residual of the bracket BEFORE y3 replaces an endpoint.
+            ymin = c_min(fabs(f1), fabs(f2))
 
         if fabs(y3) <= epsy:  # y-convergence check
             return x3
 
-        # Best true residual of the bracket BEFORE y3 replaces an endpoint.
-        # Must be taken here: after the update, min(|f1|,|f2|) <= |y3| and
-        # the stagnation test would always pass.
-        if not bisection:
-            ymin = c_min(fabs(f1), fabs(f2))
-
-        same_sign = (y1 > 0.0) == (y3 > 0.0)
-        if same_sign:  # Same sign check
+        if (y1 > 0.0) == (y3 > 0.0):  # Same sign check
             if side == 1:
                 m = 1.0 - y3 / y1
                 if m > 0.0:

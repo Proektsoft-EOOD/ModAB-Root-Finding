@@ -1,5 +1,7 @@
+# Uses the local NonlinearSolve.jl checkout (../../../NonlinearSolve.jl) via the
+# Project.toml in the parent directory. Run with:  julia --project=.. <this file>
 using Printf
-using NonlinearSolve.BracketingNonlinearSolve
+using BracketingNonlinearSolve
 using BenchmarkTools
 
 # Function-call counting wrapper
@@ -23,6 +25,8 @@ end
 Problem(name, f, a, b) = Problem(name, f, Float64(a), Float64(b), 0.0)
 
 P(x) = x + 1.11111
+# Vertical tangent at the root x = 0.75; -Inf at x = 0, as Math.Cbrt(-3/0.0) in C#
+V(x) = x == 0 ? -Inf : cbrt((4x - 3) / x)
 
 # Test problems
 const problems1 = [
@@ -124,7 +128,14 @@ const problems3 = [
     Problem("f90", x -> x^3 - 2x^2 + x - 0.025, -1.0, 2.0),
     Problem("f91", x -> x * sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", x -> x^3 - 0.001, -10, 10),
-    Problem("f93", x -> x^7 - 0.001, -10, 10),
+    Problem("f93", x -> x^5 - 0.001, -10, 10),
+    Problem("f94", x -> x^7 - 0.001, -10, 10),
+    Problem("f95", x -> x^9 - 0.001, -10, 10),
+    Problem("f96", x -> x^11 - 0.001, -10, 10),
+    Problem("f97", x -> x^13 - 0.001, -10, 10),
+    Problem("f98", x -> x^15 - 0.001, -10, 10),
+    Problem("f99", x -> x^17 - 0.001, -10, 10),
+    Problem("f100", V, 0, ℯ),
 ]
 
 const all_problems = vcat(problems1, problems2, problems3)
@@ -161,6 +172,7 @@ function run_benchmark()
 
     # Warmup: run each algorithm once to trigger compilation
     println("Warming up...")
+    flush(stdout)
     p1 = all_problems[1]
     g1 = p1.value != 0 ? x -> p1.f(x) - p1.value : p1.f
     prob1 = IntervalNonlinearProblem((x, p) -> g1(x), (p1.a, p1.b))
@@ -176,6 +188,7 @@ function run_benchmark()
     println("Timing (median of @belapsed, solve() only)")
     header = lpad("Func", 4) * "; " * join([lpad(name, col_w) for (name, _) in algorithms], "; ")
     println(header)
+    flush(stdout)
     total_time = zeros(Float64, length(algorithms))
     for p in all_problems
         g = p.value != 0 ? x -> p.f(x) - p.value : p.f
@@ -193,6 +206,7 @@ function run_benchmark()
             end
         end
         println(line)
+        flush(stdout)   # stdout is block-buffered when redirected to a file
     end
 
     # Print totals
@@ -202,6 +216,7 @@ function run_benchmark()
     end
     println(line)
     println()
+    flush(stdout)
 end
 
 run_benchmark()

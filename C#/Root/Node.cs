@@ -20,8 +20,6 @@
             Y = F(x);
         }
 
-        private const double ScaleThreshold = double.MaxValue / 4.0;
-
         /// <summary>
         /// Computes a safeguarded false-position/secant point for an ordered
         /// bracket whose ordinates have opposite non-zero signs.
@@ -56,36 +54,35 @@
         {
             var a = Math.Abs(p1.Y);
             var b = Math.Abs(p2.Y);
-            var scale = Math.Max(a, b);
+            var denominator = a + b;
 
-            // A zero, NaN, or infinite working magnitude does not provide
-            // reliable secant weights. It does NOT indicate a root because the
-            // ordinates may be Anderson-Björck auxiliary values. Bisection is
-            // the safe and mathematically neutral fallback.
-            if (a == 0.0 || b == 0.0 || !double.IsFinite(scale))
+            // A single test on the denominator covers every unusable case: a
+            // NaN ordinate propagates into it, two zero ordinates make it zero,
+            // and an infinite ordinate or an overflowing sum makes it infinite.
+            // A zero magnitude does NOT indicate a root, because the ordinates
+            // may be Anderson-Björck auxiliary values, so bisection is the safe
+            // and mathematically neutral fallback.
+            if (!(denominator > 0.0))
                 return SafeMidpoint(p1, p2);
 
-            // If the magnitudes are large, normalise before forming a+b.
-            // For smaller values, preserving the original arithmetic path keeps
-            // ordinary finite cases bitwise identical to the previous version.
-            if (scale >= ScaleThreshold)
+            if (double.IsInfinity(denominator))
             {
-                a /= scale;
-                b /= scale;
+                // An infinite ordinate carries no usable slope. Otherwise a+b
+                // merely overflowed, and halving both restores it without
+                // changing the ratio that defines the weights.
+                if (double.IsInfinity(a) || double.IsInfinity(b))
+                    return SafeMidpoint(p1, p2);
+
+                a *= 0.5;
+                b *= 0.5;
+                denominator = a + b;
             }
 
-            var denominator = a + b;
-            if (!(denominator > 0.0) || !double.IsFinite(denominator))
-                return SafeMidpoint(p1, p2);
-
+            // The weights lie in [0,1] and sum to 1, so for finite abscissae the
+            // combination cannot overflow and no further finiteness test is needed.
             var w1 = b / denominator;
             var w2 = a / denominator;
             var x = w1 * p1.X + w2 * p2.X;
-
-            // Protect the final weighted sum itself. This also
-            // catches NaN, which ordinary comparisons would silently miss.
-            if (!double.IsFinite(x))
-                return SafeMidpoint(p1, p2);
 
             // In exact arithmetic the convex combination is strictly inside
             // the bracket. The projection only corrects a possible last-bit

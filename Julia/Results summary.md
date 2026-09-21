@@ -1,22 +1,50 @@
-# Count of function evaluations
+# Julia benchmark summary
 
-Func | bisect | brent | ridder | alefeld | ITP  | modAB | modAB_CS
----  | -----: | ----: | -----: | ------: | ---: | ----: | -----:
-SUM  |   4469 |  5478 |   3808 |  94746  | 2335 |  1796 | 1722
-AVE  |   48,6 |  59,5 |   41,4 |  1029,8 | 25,4 |  19,5 | 18,7
-REL  |   260% |  318% |   221% |  5502%  | 136% |  104% | 100%
+All numbers below come from the benchmark scripts in this directory, run against the
+**local `NonlinearSolve.jl` checkout** (`../../NonlinearSolve.jl`) rather than the
+registered package. See `Project.toml` / `setup_env.jl` for the wiring.
 
+100 test problems (`f01`–`f100`), `abstol = 1e-14`, `maxiters = 200`.
 
-# SciML Performance Benchmarks
-Function | Roots.jl | Alefeld | Bisection | Brent | Falsi | ITP | Ridder | ModAB
--- | --: | --: | --: | --: | --: | --: | --: | --:
-Wilkinson-like polynomia | 12 | 6,3 | 5,7 | 2,3 | 34,5 | 2,7 | 3,1 | 1,8
-sin(x) - 0,5x | 18,5 | 12,5 | 9,2 | 5,6 | 14,6 | 4 | 3,6 | 2,6
-exp(x) - 1 - x - x²/2 | 19,7 | 22,9 | 9,2 | 6,2 | 482,3 | 4,2 | 4,7 | 3
-1/(x-0,5) - 2 | 12,9 | 3,9 | 5,7 | 2,6 | 73,5 | 3,7 | 2,2 | 1,7
-log(x) - x + 2 | 19,1 | 16,5 | 11,2 | 4,7 | 26,2 | 5,1 | 4,6 | 3,8
-sin(20x) + 0,1x | 16,4 | 21,1 | 11,7 | 4,9 | 8,5 | 4,5 | 7,8 | 3,9
-x³ - 2x² + x | 12,9 | 5,3 | 5,6 | 2,3 | 81,5 | 3,1 | 2,3 | 1,7
-x·sin(1/x) - 0,1 | 20 | FAIL | 10,5 | 9,4 | 16,3 | 4,2 | 3,3 | 3,8
-Total | 131,5 | 88,5 | 68,8 | 38 | 737,4 | 31,5 | 31,6 | 22,3
-REL | 590% | 397% | 309% | 170% | 3307% | 141% | 142% | 100%
+## Count of function evaluations — NonlinearSolve.jl solvers
+
+`nonlinearsolve_modab_benchmark.jl` → `BenchmarkResults.txt`
+
+Func | bisect | brent | ridder | alefeld |  ITP | modAB
+---  | -----: | ----: | -----: | ------: | ---: | ----:
+SUM  |   4890 |  6194 |   4026 |   98050 | 2773 |  1944
+AVE  |   48,9 |  61,9 |   40,3 |   980,5 | 27,7 |  19,4
+REL  |   252% |  319% |   207% |   5044% | 143% |  100%
+
+Failures: `alefeld` returns `NaN` on f43, f44, f45, f78, f91 and f100; `brent` on f100.
+`modAB` solves all 100.
+
+## Count of function evaluations — Roots.jl solvers vs. modAB
+
+`roots_modab_benchmark.jl` → `BenchmarkResultsRoots.txt`
+
+Func | bisect | brent | ridder | alefeld |  ITP |  A42 | modAB
+---  | -----: | ----: | -----: | ------: | ---: | ---: | ----:
+SUM  |   4786 |  1944 |   3238 |    1826 | 2515 | 2069 |  1944
+AVE  |   47,9 |  19,4 |   32,4 |    18,3 | 25,1 | 20,7 |  19,4
+REL  |   246% |  100% |   167% |     94% | 129% | 106% |  100%
+
+Failures: `ridder` returns `NaN` on f72 and f73; on f100 `alefeld` and `A42` return `NaN`,
+while `brent`, `ridder` and `ITP` return the right endpoint `ℯ`, which is not a root.
+`modAB` solves all 100.
+
+## Wall-clock time — NonlinearSolve.jl solvers
+
+`NonlinearSolve.jl/nonlinearsolve_modab__speed_benchmark.jl` → `NonlinearSolve.jl/Benchmark Results.txt`
+
+Median of `@belapsed` over `solve()` only, with the problem constructed outside the
+timing loop.
+
+Func | bisect   | brent   | ridder  | alefeld   |   ITP   |  modAB
+---- | -------: | ------: | ------: | --------: | ------: | ------:
+SUM  | 107,5 μs | 97,7 μs | 61,5 μs | 364,2 μs* | 88,2 μs | 34,6 μs
+AVE  |  1075 ns |  977 ns |  615 ns |  3642 ns* |  882 ns |  346 ns
+REL  |     311% |    282% |    178% |    1053%* |    255% |    100%
+
+\* `alefeld` errors on f43, f44, f45, f78, f91 and f100, so its total covers only the
+94 problems it solved and understates the true cost. Every other solver completed all 100.

@@ -48,9 +48,9 @@ public class ModABTest {
         problems.add(new Problem("f06", x -> 2 * x * Math.exp(-5) + 1 - 2 * Math.exp(-5 * x), 0, 1));
         problems.add(new Problem("f07", x -> 2 * x * Math.exp(-10) + 1 - 2 * Math.exp(-10 * x), 0, 1));
         problems.add(new Problem("f08", x -> 2 * x * Math.exp(-20) + 1 - 2 * Math.exp(-20 * x), 0, 1));
-        problems.add(new Problem("f09", x -> (1 + Math.pow(1 - 5, 2)) * x * x - Math.pow(1 - 5 * x, 2), 0, 1));
-        problems.add(new Problem("f10", x -> (1 + Math.pow(1 - 10, 2)) * x * x - Math.pow(1 - 10 * x, 2), 0, 1));
-        problems.add(new Problem("f11", x -> (1 + Math.pow(1 - 20, 2)) * x * x - Math.pow(1 - 20 * x, 2), 0, 1));
+        problems.add(new Problem("f09", x -> (1 + Math.pow(1 - 5, 2)) * (x * x) - Math.pow(1 - 5 * x, 2), 0, 1));
+        problems.add(new Problem("f10", x -> (1 + Math.pow(1 - 10, 2)) * (x * x) - Math.pow(1 - 10 * x, 2), 0, 1));
+        problems.add(new Problem("f11", x -> (1 + Math.pow(1 - 20, 2)) * (x * x) - Math.pow(1 - 20 * x, 2), 0, 1));
         problems.add(new Problem("f12", x -> x * x - Math.pow(1 - x, 5), 0, 1));
         problems.add(new Problem("f13", x -> x * x - Math.pow(1 - x, 10), 0, 1));
         problems.add(new Problem("f14", x -> x * x - Math.pow(1 - x, 20), 0, 1));
@@ -148,7 +148,15 @@ public class ModABTest {
         problems.add(new Problem("f90", x -> Math.pow(x, 3) - 2 * x * x + x - 0.025, -1.0, 2.0));
         problems.add(new Problem("f91", x -> x * Math.sin(1 / x) - 0.1 - 0.01, 0.01, 1.0));
         problems.add(new Problem("f92", x -> Math.pow(x, 3) - 0.001, -10, 10));
-        problems.add(new Problem("f93", x -> Math.pow(x, 7) - 0.001, -10, 10));
+        problems.add(new Problem("f93", x -> Math.pow(x, 5) - 0.001, -10, 10));
+        problems.add(new Problem("f94", x -> Math.pow(x, 7) - 0.001, -10, 10));
+        problems.add(new Problem("f95", x -> Math.pow(x, 9) - 0.001, -10, 10));
+        problems.add(new Problem("f96", x -> Math.pow(x, 11) - 0.001, -10, 10));
+        problems.add(new Problem("f97", x -> Math.pow(x, 13) - 0.001, -10, 10));
+        problems.add(new Problem("f98", x -> Math.pow(x, 15) - 0.001, -10, 10));
+        problems.add(new Problem("f99", x -> Math.pow(x, 17) - 0.001, -10, 10));
+        // Vertical tangent at the root x = 0.75; f(0) = cbrt(-3/0.0) = -infinity
+        problems.add(new Problem("f100", x -> Math.cbrt((4 * x - 3) / x), 0, Math.E));
         return problems;
     }
 

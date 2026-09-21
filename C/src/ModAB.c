@@ -93,17 +93,12 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 y3 = eval(f, x3);
             }
             threshold *= 0.5;
+            ymin = fmin(fabs(f1), fabs(f2));
         }
         // Check for y-convergence
         if (y3 == 0.0)
             return x3;
 
-        // Best true residual of the bracket BEFORE y3 replaces an endpoint.
-        // Must be taken here: after the update, min(|f1|,|f2|) <= |y3| and
-        // the stagnation test would always pass.
-        if (!bisection)
-            ymin = fmin(fabs(f1), fabs(f2));
-            
         if (same_sign(y1, y3)) {
             if (side == 1) { // Anderson-Bjork correction
                 double m = 1.0 - y3 / y1;

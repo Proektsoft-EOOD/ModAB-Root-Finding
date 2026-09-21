@@ -45,15 +45,15 @@ public class ModAB {
         if ((y1 > 0) == (y2 > 0)) {
             return Double.NaN; // No sign change - no root guaranteed
         }
-        double f1 = y1, f2 = y2;
+        double f1 = y1, f2 = y2, ymin = 0.0;
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
         for (int i = 0; i < maxiter; i++) {
             double x3 = bisection ? (x1 + x2) * 0.5 : (x1 * y2 - y1 * x2) / (y2 - y1);
             double epsx = xtol * Math.max(Math.abs(x3), 1);
-            if (x2 - x1 <= epsx) {
-                return x3;
+            if (x2 - x1 <= epsx) { // x-convergence check
+                return bisection ? x3 : Math.max(x1, Math.min(x3, x2)); // Clamp the secant value
             }
             double y3;
             if (bisection) {
@@ -64,7 +64,7 @@ public class ModAB {
                 double k = r * r;
                 if (Math.abs(ym - y3) < k * (Math.abs(y3) + Math.abs(ym))) {
                     bisection = false;
-                    threshold = (x2 - x1) * 16;
+                    threshold = (x2 - x1) * 2.0;
                 }
             } else {
                 if (x3 <= x1) {
@@ -77,10 +77,13 @@ public class ModAB {
                     y3 = f.applyAsDouble(x3) - y;
                 }
                 threshold *= 0.5;
+                ymin = Math.min(Math.abs(f1), Math.abs(f2));
             }
+
             if (Math.abs(y3) <= epsy) {
                 return x3;
             }
+
             if ((y1 > 0) == (y3 > 0)) {
                 if (side == 1) {
                     double m = 1 - y3 / y1;
@@ -102,7 +105,7 @@ public class ModAB {
                 y2 = y3;
                 f2 = y3;
             }
-            if (x2 - x1 > threshold) {
+            if (!bisection && x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
                 bisection = true;
                 side = 0;
             }

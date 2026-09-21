@@ -33,17 +33,18 @@ namespace Proektsoft.Root
                 returnCode = ReturnCode.Invalid;
                 return double.NaN;
             }
-            // The true endpoint residuals.
-            double y1 = p1.Y, y2 = p2.Y;
             returnCode = ReturnCode.Success;
+
+            // The true endpoint residuals.
+            double y1 = p1.Y;
             if (y1 == 0.0)
                 return p1.X;
 
+            double y2 = p2.Y;
             if (y2 == 0.0)
                 return p2.X;
 
             var isAB = false;
-
             // the endpoint replaced by the preceding AB step:
             //   +1 = left endpoint moved;
             //   -1 = right endpoint moved;
@@ -55,6 +56,7 @@ namespace Proektsoft.Root
             // because they halved the best residual. Capping them preserves
             // the dyadic worst-case bound: near a root of multiplicity m,
             // halving |f| shrinks the distance only by 2^(-1/m).
+            double yMin = 0.0;
             const int MaxResidualSteps = 3;
             var residualSteps = 0;
             const double C = 2.0;
@@ -89,7 +91,9 @@ namespace Proektsoft.Root
                 // bisection step and only from true residuals. Infinite values
                 // deliberately disable switching. This prevents the controller
                 // from analysing a surrogate created by previous AB corrections.
-                if (!isAB && double.IsFinite(y3))
+                if (isAB)
+                    yMin = Math.Min(Math.Abs(y1), Math.Abs(y2));
+                else if (double.IsFinite(y3))
                 {
                     var symmetryFactor = EvaluateSymmetryFactor(y1, y2);
                     if (double.IsFinite(symmetryFactor))
@@ -99,7 +103,6 @@ namespace Proektsoft.Root
                     }
                 }
                 // Best true residual of the bracket before y3 replaces an endpoint.
-                var yMin = Math.Min(Math.Abs(y1), Math.Abs(y2));
                 var p3 = new Node(x3, y3);
                 if (SameNonzeroSign(y1, y3))
                 {
@@ -121,7 +124,6 @@ namespace Proektsoft.Root
                     p2 = p3;
                     y2 = y3;
                 }
-
                 if (isAB)
                 {
                     // Fallback if AB fails to reduce the bracket width, unless it still 
@@ -164,7 +166,6 @@ namespace Proektsoft.Root
                     fallbackThreshold = C * (p2.X - p1.X);
                 }
             }
-
             returnCode = ReturnCode.MaxIterationsExceeded;
             return double.NaN;
         }
@@ -176,8 +177,6 @@ namespace Proektsoft.Root
             return m > 0.0 ? m : 0.5;
         }
 
-        private const double ScaleThreshold = double.MaxValue / 4.0;
-
         /// <summary>
         /// Returns k=r^2 for the symmetry-sensitive switching criterion.
         /// The calculation is homogeneous in the true endpoint residuals.
@@ -186,19 +185,25 @@ namespace Proektsoft.Root
         { 
             var a = Math.Abs(y1);
             var b = Math.Abs(y2);
-            var scale = Math.Max(a, b);
+            var den = a + b;
 
-            // Infinite true residuals deliberately disable AB switching and
-            // keep the controller in bisection mode. Residual are never zero here.
-            if (double.IsInfinity(scale))
-                return double.PositiveInfinity;
-
-            if (scale >= ScaleThreshold)
+            if (double.IsInfinity(den))
             {
-                a /= scale;
-                b /= scale;
+                // Infinite true residuals deliberately disable AB switching and
+                // keep the controller in bisection mode. Residuals are never
+                // zero here, so only an overflowing sum remains, and halving
+                // both restores it without changing the ratio.
+                if (double.IsInfinity(a) || double.IsInfinity(b))
+                    return double.PositiveInfinity;
+
+                a *= 0.5;
+                b *= 0.5;
+                den = a + b;
             }
-            var r = 1.0 - Math.Abs(b - a) / (2.0 * (a + b));
+
+            // |b-a| <= den, so the quotient lies in [0,1] and halving it after
+            // the division avoids forming 2*den, which could overflow.
+            var r = 1.0 - Math.Abs(b - a) / den / 2.0;
             return r * r;
         }
 
@@ -210,19 +215,22 @@ namespace Proektsoft.Root
         {
             var absYm = Math.Abs(ym);
             var absYf = Math.Abs(yf);
-            var scale = Math.Max(absYf, absYm);
+            var sum = absYf + absYm;
 
-            // The exact-root case was handled before this method was called.
-            // Non-finite values are unsuitable for the linearity comparison.
-            // Scale cannot be zero here for nonzero working ordinates
-            if (double.IsInfinity(scale))
+            // Fast path. The exact-root case was handled before this method was
+            // called, and a non-finite ordinate fails the comparison, which
+            // disables switching as intended.
+            if (double.IsFinite(sum))
+                return Math.Abs(ym - yf) < symmetryFactor * sum;
+
+            // Only reached when the sum overflows. Non-finite values are
+            // unsuitable for the linearity comparison.
+            if (!double.IsFinite(ym) || !double.IsFinite(yf))
                 return false;
-
-            if (scale < ScaleThreshold)
-                return Math.Abs(ym - yf) < symmetryFactor * (absYf + absYm);
 
             // Normalize both sides of the homogeneous inequality to avoid
             // overflow in subtraction or addition.
+            var scale = Math.Max(absYf, absYm);
             var normYm = ym / scale;
             var normYf = yf / scale;
             return Math.Abs(normYm - normYf) < symmetryFactor * (Math.Abs(normYf) + Math.Abs(normYm));

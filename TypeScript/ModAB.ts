@@ -36,7 +36,7 @@ export function modABRoot(
         return NaN;
     }
     let side = 0;
-    let f1 = y1, f2 = y2;
+    let f1 = y1, f2 = y2, ymin = 0.0;
     let bisection = true;
     let threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
     for (let i = 0; i < maxiter; i++) {
@@ -54,7 +54,7 @@ export function modABRoot(
             const k = r * r; // Deviation factor
             if (Math.abs(ym - y3) < k * (Math.abs(y3) + Math.abs(ym))) {
                 bisection = false;
-                threshold = (x2 - x1) * 16; // Safety factor: 4 bisection iterations = 2^4
+                threshold = (x2 - x1) * 2; // Safety factor
             }
         } else {
             if (x3 <= x1) {
@@ -67,6 +67,7 @@ export function modABRoot(
                 y3 = f(x3) - y;
             }
             threshold *= 0.5;
+            ymin = Math.min(Math.abs(f1), Math.abs(f2));
         }
         if (Math.abs(y3) <= epsy) { // y-convergence check
             return x3;
@@ -88,7 +89,8 @@ export function modABRoot(
             }
             x2 = x3; f2 = y2 = y3;
         }
-        if (x2 - x1 > threshold) { // AB failed to shrink the interval enough
+        // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+        if (!bisection && x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
             bisection = true;
             side = 0;
         }

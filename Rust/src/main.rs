@@ -90,9 +90,9 @@ fn all_problems() -> Vec<Problem> {
     v.push(make("f06", |x| 2.0 * x * (-5f64).exp() + 1.0 - 2.0 * (-5.0 * x).exp(), 0.0, 1.0));
     v.push(make("f07", |x| 2.0 * x * (-10f64).exp() + 1.0 - 2.0 * (-10.0 * x).exp(), 0.0, 1.0));
     v.push(make("f08", |x| 2.0 * x * (-20f64).exp() + 1.0 - 2.0 * (-20.0 * x).exp(), 0.0, 1.0));
-    v.push(make("f09", |x| (1.0 + (1.0_f64 - 5.0).powi(2)) * x * x - (1.0 - 5.0 * x).powi(2), 0.0, 1.0));
-    v.push(make("f10", |x| (1.0 + (1.0_f64 - 10.0).powi(2)) * x * x - (1.0 - 10.0 * x).powi(2), 0.0, 1.0));
-    v.push(make("f11", |x| (1.0 + (1.0_f64 - 20.0).powi(2)) * x * x - (1.0 - 20.0 * x).powi(2), 0.0, 1.0));
+    v.push(make("f09", |x| (1.0 + (1.0_f64 - 5.0).powi(2)) * (x * x) - (1.0 - 5.0 * x).powi(2), 0.0, 1.0));
+    v.push(make("f10", |x| (1.0 + (1.0_f64 - 10.0).powi(2)) * (x * x) - (1.0 - 10.0 * x).powi(2), 0.0, 1.0));
+    v.push(make("f11", |x| (1.0 + (1.0_f64 - 20.0).powi(2)) * (x * x) - (1.0 - 20.0 * x).powi(2), 0.0, 1.0));
     v.push(make("f12", |x| x * x - (1.0 - x).powi(5), 0.0, 1.0));
     v.push(make("f13", |x| x * x - (1.0 - x).powi(10), 0.0, 1.0));
     v.push(make("f14", |x| x * x - (1.0 - x).powi(20), 0.0, 1.0));
@@ -206,7 +206,15 @@ fn all_problems() -> Vec<Problem> {
     v.push(make("f90", |x| x.powi(3) - 2.0 * x.powi(2) + x - 0.025, -1.0, 2.0));
     v.push(make("f91", |x| x * (1.0 / x).sin() - 0.1 - 0.01, 0.01, 1.0));
     v.push(make("f92", |x| x.powi(3) - 0.001, -10.0, 10.0));
-    v.push(make("f93", |x| x.powi(7) - 0.001, -10.0, 10.0));
+    v.push(make("f93", |x| x.powi(5) - 0.001, -10.0, 10.0));
+    v.push(make("f94", |x| x.powi(7) - 0.001, -10.0, 10.0));
+    v.push(make("f95", |x| x.powi(9) - 0.001, -10.0, 10.0));
+    v.push(make("f96", |x| x.powi(11) - 0.001, -10.0, 10.0));
+    v.push(make("f97", |x| x.powi(13) - 0.001, -10.0, 10.0));
+    v.push(make("f98", |x| x.powi(15) - 0.001, -10.0, 10.0));
+    v.push(make("f99", |x| x.powi(17) - 0.001, -10.0, 10.0));
+    // Vertical tangent at the root x = 0.75; f(0) = cbrt(-3/0.0) = -inf
+    v.push(make("f100", |x| ((4.0 * x - 3.0) / x).cbrt(), 0.0, E));
     v
 }
 

@@ -41,6 +41,7 @@ where
     let mut side: i32 = 0;
     let mut bisection = true;
     let mut threshold = x2 - x1;
+    let mut ymin = 0.0;
     for _ in 0..maxiter {
         let mut x3 = if bisection {
             (x1 + x2) * 0.5
@@ -60,7 +61,7 @@ where
             let k = r * r;
             if (ym - y3).abs() < k * (y3.abs() + ym.abs()) {
                 bisection = false;
-                threshold = (x2 - x1) * 16.0;
+                threshold = (x2 - x1) * 2.0;
             }
         } else {
             if x3 <= x1 {
@@ -71,6 +72,7 @@ where
                 y3 = f(x3) - y;
             }
             threshold *= 0.5;
+            ymin = f1.abs().min(f2.abs());
         }
         if y3.abs() <= epsy {
             return x3;
@@ -92,7 +94,7 @@ where
             }
             (x2, y2, f2) = (x3, y3, y3);
         }
-        if x2 - x1 > threshold {
+        if !bisection && x2 - x1 > threshold && y3.abs() > 0.5 * ymin {
             bisection = true;
             side = 0;
         }

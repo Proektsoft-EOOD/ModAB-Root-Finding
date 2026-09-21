@@ -1,5 +1,6 @@
-using NonlinearSolve
-include("ModAB_CS.jl")
+# Uses the local NonlinearSolve.jl checkout (../../NonlinearSolve.jl) via the
+# Project.toml in this directory. Run with:  julia --project=. <this file>
+using BracketingNonlinearSolve
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function
@@ -33,11 +34,6 @@ alefeld_solver = make_nlsolve_solver(Alefeld(),    "alefeld")
 itp_solver     = make_nlsolve_solver(ITP(),        "ITP")
 modab_solver   = make_nlsolve_solver(ModAB(),      "modab")
 
-# modab_CS wrapper to match solver interface
-function modab_CS_solver(f, left::Real, right::Real, target::Real=0.0; precision::Float64=1e-14)
-    return modab_CS(f, left, right, target; xtol=precision, ytol=0.0, maxIter=200)
-end
-
 # Problem definition
 struct Problem
     name::String
@@ -49,6 +45,8 @@ end
 Problem(name, f, a, b) = Problem(name, f, Float64(a), Float64(b), 0.0)
 
 P(x) = x + 1.11111
+# Vertical tangent at the root x = 0.75; -Inf at x = 0, as Math.Cbrt(-3/0.0) in C#
+V(x) = x == 0 ? -Inf : cbrt((4x - 3) / x)
 
 # Test problems
 const problems1 = [
@@ -150,7 +148,14 @@ const problems3 = [
     Problem("f90", x -> x^3 - 2x^2 + x - 0.025, -1.0, 2.0),
     Problem("f91", x -> x * sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", x -> x^3 - 0.001, -10, 10),
-    Problem("f93", x -> x^7 - 0.001, -10, 10),
+    Problem("f93", x -> x^5 - 0.001, -10, 10),
+    Problem("f94", x -> x^7 - 0.001, -10, 10),
+    Problem("f95", x -> x^9 - 0.001, -10, 10),
+    Problem("f96", x -> x^11 - 0.001, -10, 10),
+    Problem("f97", x -> x^13 - 0.001, -10, 10),
+    Problem("f98", x -> x^15 - 0.001, -10, 10),
+    Problem("f99", x -> x^17 - 0.001, -10, 10),
+    Problem("f100", V, 0, ℯ),
 ]
 
 const all_problems = vcat(problems1, problems2, problems3)
@@ -162,8 +167,7 @@ const solvers = [
     (" ridder", ridder_solver),
     ("alefeld", alefeld_solver),
     ("    ITP", itp_solver),
-    ("  modAB", modab_solver),
-    ("modAB_CS", modab_CS_solver)]   
+    ("  modAB", modab_solver)]
 
 # Benchmark runner
 function run_benchmark()

@@ -2781,7 +2781,7 @@
     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-2`=max iterations reached)
 
-    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ym,m,r,k,threshold
+    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ymin,ym,m,r,k,threshold
     integer :: i  !! iteration counter
     logical :: root_found, bis
     integer :: side !! for tracking the side
@@ -2792,6 +2792,7 @@
     x2 = bx; y2 = fbx; f2 = y2
     bis = .true.
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
+    ymin = 0.0_wp
     do i = 1, me%maxiter
         if (bis) then
             x3 = 0.5_wp*(x1+x2)
@@ -2802,7 +2803,7 @@
             k  = r*r                         ! deviation factor
             if (abs(ym-y3) < k*(abs(ym) + abs(y3))) then
                 bis = .false.
-                threshold = 16.0_wp*(x2-x1)   ! safety factor of 4 bisection iters = 2^4
+                threshold = 2.0_wp*(x2-x1)   ! safety factor
             end if
         else
             x3 = (x1*y2-y1*x2)/(y2-y1)
@@ -2818,6 +2819,8 @@
                 if (me%solution(x3,y3,xzero,fzero)) return
             end if
             threshold = 0.5_wp * threshold
+            ! best residual of the bracket before y3 replaces an endpoint
+            ymin = min(abs(f1),abs(f2))
         end if
 
         ! convergence check:
@@ -2856,7 +2859,7 @@
             y2 = y3
             f2 = y3
         end if
-        if (x2-x1 > threshold) then ! if Anderson-Bjork is not shrinking the interval fast enough
+        if (.not. bis .and. x2-x1>threshold .and. abs(y3) > 0.5_wp*ymin) then ! if Anderson-Bjork is not shrinking the interval fast enough
             bis  = .true. ! reset to bisection.
             side = 0
         end if

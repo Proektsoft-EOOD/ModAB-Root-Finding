@@ -1,6 +1,9 @@
-include("ModAB_CS.jl")
-
+# Compares Roots.jl bracketing solvers against ModAB from the local
+# NonlinearSolve.jl checkout (../../NonlinearSolve.jl), wired up by the
+# Project.toml in this directory. Run with:  julia --project=. <this file>
 using Roots
+import BracketingNonlinearSolve as BNS
+using SciMLBase: IntervalNonlinearProblem, solve
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function
@@ -26,16 +29,26 @@ function make_roots_solver(method, name::String)
     return solver
 end
 
-bisect_solver  = make_roots_solver(Bisection(),        "bisect")
-brent_solver   = make_roots_solver(Brent(),            "brent")
-ridder_solver  = make_roots_solver(Roots.Ridders(),    "ridder")
-alefeld_solver = make_roots_solver(AlefeldPotraShi(),  "alefeld")
-itp_solver     = make_roots_solver(ITP(),              "ITP")
-a42_solver     = make_roots_solver(A42(),              "A42")
+# Fully qualified: Roots.jl does not export Brent/Ridders/ITP, and several of
+# these names also exist in BracketingNonlinearSolve.
+bisect_solver  = make_roots_solver(Roots.Bisection(),       "bisect")
+brent_solver   = make_roots_solver(Roots.Brent(),           "brent")
+ridder_solver  = make_roots_solver(Roots.Ridders(),         "ridder")
+alefeld_solver = make_roots_solver(Roots.AlefeldPotraShi(), "alefeld")
+itp_solver     = make_roots_solver(Roots.ITP(),             "ITP")
+a42_solver     = make_roots_solver(Roots.A42(),             "A42")
 
-# modab_CS wrapper to match solver interface
-function modab_CS_solver(f, left::Real, right::Real, target::Real=0.0; precision::Float64=1e-14)
-    return modab_CS(f, left, right, target; xtol=precision)
+# ModAB from the local NonlinearSolve.jl checkout, wrapped to match the solver interface
+function modab_solver(f, left::Real, right::Real, target::Real=0.0; precision::Float64=1e-14)
+    g = target != 0 ? x -> f(x) - target : f
+    a, b = min(left, right), max(left, right)
+    try
+        prob = IntervalNonlinearProblem((x, p) -> g(x), (a, b))
+        sol = solve(prob, BNS.ModAB(); abstol=precision, maxiters=200)
+        return sol.u
+    catch
+        return NaN
+    end
 end
 
 # Problem definition
@@ -49,6 +62,8 @@ end
 Problem(name, f, a, b) = Problem(name, f, Float64(a), Float64(b), 0.0)
 
 P(x) = x + 1.11111
+# Vertical tangent at the root x = 0.75; -Inf at x = 0, as Math.Cbrt(-3/0.0) in C#
+V(x) = x == 0 ? -Inf : cbrt((4x - 3) / x)
 
 # Test problems
 const problems1 = [
@@ -150,7 +165,14 @@ const problems3 = [
     Problem("f90", x -> x^3 - 2x^2 + x - 0.025, -1.0, 2.0),
     Problem("f91", x -> x * sin(1 / x) - 0.1 - 0.01, 0.01, 1.0),
     Problem("f92", x -> x^3 - 0.001, -10, 10),
-    Problem("f93", x -> x^7 - 0.001, -10, 10),
+    Problem("f93", x -> x^5 - 0.001, -10, 10),
+    Problem("f94", x -> x^7 - 0.001, -10, 10),
+    Problem("f95", x -> x^9 - 0.001, -10, 10),
+    Problem("f96", x -> x^11 - 0.001, -10, 10),
+    Problem("f97", x -> x^13 - 0.001, -10, 10),
+    Problem("f98", x -> x^15 - 0.001, -10, 10),
+    Problem("f99", x -> x^17 - 0.001, -10, 10),
+    Problem("f100", V, 0, ℯ),
 ]
 
 const all_problems = vcat(problems1, problems2, problems3)
@@ -163,7 +185,7 @@ const solvers = [
     ("alefeld", alefeld_solver),
     ("    ITP", itp_solver),
     ("    A42", a42_solver),
-    ("modAB_CS", modab_CS_solver)]
+    ("  modAB", modab_solver)]
 
 # Benchmark runner
 function run_benchmark()
