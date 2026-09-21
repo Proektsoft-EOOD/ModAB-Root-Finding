@@ -88,19 +88,18 @@ namespace Proektsoft.Root
                 }
                 var switchToAB = false;
                 // The switching controller is evaluated only during a genuine
-                // bisection step and only from true residuals. Infinite values
-                // deliberately disable switching. This prevents the controller
-                // from analysing a surrogate created by previous AB corrections.
+                // bisection step and only from true residuals. This prevents the
+                // controller from analysing a surrogate created by previous AB
+                // corrections. Non-finite values deliberately disable switching:
+                // PassesSwitchingTest rejects a non-finite ordinate itself, and a
+                // NaN symmetry factor fails its comparison, so neither needs a
+                // guard here.
                 if (isAB)
                     yMin = Math.Min(Math.Abs(y1), Math.Abs(y2));
-                else if (double.IsFinite(y3))
+                else
                 {
-                    var symmetryFactor = EvaluateSymmetryFactor(y1, y2);
-                    if (double.IsFinite(symmetryFactor))
-                    {
-                        var ym = 0.5 * y1 + 0.5 * y2; // avoids overflow in y1 + y2.
-                        switchToAB = PassesSwitchingTest(ym, y3, symmetryFactor);
-                    }
+                    var ym = 0.5 * y1 + 0.5 * y2; // avoids overflow in y1 + y2.
+                    switchToAB = PassesSwitchingTest(ym, y3, EvaluateSymmetryFactor(y1, y2));
                 }
                 // Best true residual of the bracket before y3 replaces an endpoint.
                 var p3 = new Node(x3, y3);
@@ -190,11 +189,14 @@ namespace Proektsoft.Root
             if (double.IsInfinity(den))
             {
                 // Infinite true residuals deliberately disable AB switching and
-                // keep the controller in bisection mode. Residuals are never
-                // zero here, so only an overflowing sum remains, and halving
-                // both restores it without changing the ratio.
+                // keep the controller in bisection mode. NaN is returned rather
+                // than an infinity because every exit of PassesSwitchingTest is
+                // a "<" comparison, which is false against NaN; an infinity
+                // would instead satisfy it and switch. Residuals are never zero
+                // here, so only an overflowing sum remains, and halving both
+                // restores it without changing the ratio.
                 if (double.IsInfinity(a) || double.IsInfinity(b))
-                    return double.PositiveInfinity;
+                    return double.NaN;
 
                 a *= 0.5;
                 b *= 0.5;
