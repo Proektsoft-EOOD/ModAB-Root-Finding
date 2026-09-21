@@ -124,9 +124,7 @@
             // bisection-capable method can often shrink the bracket until finite
             // values are reached. Each solver decides how aggressively it uses
             // interpolation while such values remain present.
-            return !(double.IsNaN(p1.Y) ||
-                     double.IsNaN(p2.Y) ||
-                     SameNonzeroSign(p1.Y, p2.Y));
+            return !(double.IsNaN(p1.Y) || double.IsNaN(p2.Y) || SameNonzeroSign(p1.Y, p2.Y));
         }
     }
 }
