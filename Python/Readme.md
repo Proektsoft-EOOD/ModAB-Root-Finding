@@ -81,12 +81,12 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 * `toms748` - Alefeld–Potra–Shi method (1995 - TOMS Algorithm 748)
 * `chandr` - Chandrupatla's method (1997) - `scipy.optimize.elementwise.find_root`
 * `cybrentq` - Cython implementation of brentq by Gledis Caushaj
-* `modAB` - Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026)
+* `modAB_SG` - Safeguarded Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski)
 * `modAB_ct` - the old version of pymodab 1.0.5 implemented with ctypes
 
 #### Function evaluations
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| modAB_SG|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
    SUM|     4832|     2733|     2693|     3357|     2042|     2733|     1915|     1895| 
    AVG|       48|       27|       27|       34|       20|       27|       19|       19| 
@@ -97,7 +97,7 @@ FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x|   
 
 #### Execution times  (ms per problem, 200 iterations)
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| modAB_SG|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
    SUM|  1461.96|   865.40|   846.89|  1047.16| 60698.42|   122.77|   174.44|    92.97| 
    AVG|  14.6196|   8.6540|   8.4689|  10.4716| 606.9842|   1.2277|   1.7444|   0.9297| 
@@ -116,7 +116,7 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB: pymodab version 1.0.10 - the latest implementation as native C extension  
+modAB_SG: pymodab version 1.0.10 - the latest implementation of the safeguarded modab as native C extension  
 
 The complete source code to reproduce the above benchmarks is available in [RootBenchmarkSciPy.py](RootBenchmarkSciPy.py).  
 Detailed benchmark results are listed in [BenchmarkResultsSciPy.md](BenchmarkResultsSciPy.md).  

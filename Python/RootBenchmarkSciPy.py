@@ -251,7 +251,7 @@ solvers = [
     ("chandr", scipy_chandrupatla),
     ("cybrentq", cybrentq_solver),
     ("modAB_ct", mod_ab_ctypes),
-    ("modAB", mod_ab),
+    ("modAB_SG", mod_ab),
 ]
 
 if not pymodab.NATIVE:

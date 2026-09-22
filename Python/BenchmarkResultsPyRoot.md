@@ -7,7 +7,7 @@ The modAB algorithm is benchmarked against the bracketed root-finding methods of
 * `brent` - Brent's method (1973) (`method="brent"`)
 * `chandr` - Chandrupatla's method (1997) (`method="chandrupatla"`)
 * `ch_mixed` - Chandrupatla's method mixed with quadratic interpolation, the PyRoot default (`method="chandrupatla mixed"`)
-* `modAB` - Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026)
+* `modAB_SG` - Safeguarded Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski)
 
 All PyRoot methods are called through `pyroot.solver(f, a, b, method=..., x_err=1e-14, r_err=1e-14, refine=0)`.
 The final refinement step is disabled (`refine=0`, default is 15), so that PyRoot stops at the same tolerance as modAB.
@@ -15,7 +15,7 @@ With the default `refine=15`, PyRoot needs 2176 evaluations in total with `ch_mi
 
 Results (root values)
 ===
-Func|                 bisect|                 secant|                 dekker|                  brent|                 chandr|               ch_mixed|                  modAB
+Func|                 bisect|                 secant|                 dekker|                  brent|                 chandr|               ch_mixed|               modAB_SG
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
  f01|                      1|                      1|                      1|                      1|                      1|                      1|                      1| 
  f02|      0.399422291710968|      0.399422291710968|      0.399422291710968|      0.399422291710968|      0.399422291710968|      0.399422291710968|      0.399422291710968| 
@@ -120,7 +120,7 @@ f100|      0.749999999999998|      0.749999999999998|                   0.75|   
 
 Function values  f(root)
 ===
-Func|                 bisect|                 secant|                 dekker|                  brent|                 chandr|               ch_mixed|                  modAB
+Func|                 bisect|                 secant|                 dekker|                  brent|                 chandr|               ch_mixed|               modAB_SG
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
  f01|                      0|                      0|                      0|                      0|                      0|                      0|                      0| 
  f02|  -1.38777878078145e-17|  -1.38777878078145e-17|  -1.38777878078145e-17|  -1.38777878078145e-17|  -1.38777878078145e-17|  -1.38777878078145e-17|  -1.38777878078145e-17| 
@@ -225,7 +225,7 @@ f100|  -2.02385315343038e-05|   -2.2407196337154e-05|                      0|  -
 
 Function evaluations
 ===
-  Func|   bisect|   secant|   dekker|    brent|   chandr| ch_mixed|    modAB|
+  Func|   bisect|   secant|   dekker|    brent|   chandr| ch_mixed| modAB_SG|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
    f01|        3|        3|        3|        3|        3|        3|        3| 
    f02|       49|       14|       15|       11|       11|       10|       12| 
@@ -336,7 +336,7 @@ FACTOR|   2.428x|   1.751x|   1.426x|   1.128x|   0.988x|   0.961x|   1.000x|
 
 Execution times  (ms per problem, 200 iterations)
 ===
-  Func|   bisect|   secant|   dekker|    brent|   chandr| ch_mixed|    modAB|
+  Func|   bisect|   secant|   dekker|    brent|   chandr| ch_mixed| modAB_SG|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
    f01|     1.17|     1.12|     1.13|     1.19|     1.19|     1.43|     0.22| 
    f02|    31.57|     7.09|     8.47|     7.02|     7.32|     7.40|     1.46| 
@@ -452,7 +452,7 @@ Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM
 Windows 11 Home  
 Python Version: 3.14.7  
 PyRoot Version: 0.2.0 - by Jack Nguyen (https://github.com/SimpleArt/pyroot), pure Python  
-modAB: pymodab version 1.0.10 - native C extension built with MSVC 14.51  
+modAB_SG: pymodab version 1.0.10 - the safeguarded modab as native C extension built with MSVC 14.51  
 
 PyRoot 0.3.1, the latest release on PyPI (identical to the GitHub master branch), was not benchmarked, because it does not work correctly:
 its `chandrupatla`, `secant` and `non-simple` methods do not converge on most of the test problems (e.g. f05, x^3 - 2x - 5 on [2, 3], stalls at x = 2.0845 and never terminates),

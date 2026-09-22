@@ -8,12 +8,12 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 * `toms748` - Alefeld–Potra–Shi method (1995 - TOMS Algorithm 748)
 * `chandr` - Chandrupatla's method (1997) - `scipy.optimize.elementwise.find_root`
 * `cybrentq` - Cython implementation of brentq by Gledis Caushaj
-* `modAB` - Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026)
+* `modAB_SG` - Safeguarded Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski)
 * `modAB_ct` - the old version of pymodab 1.0.5 implemented with ctypes
 
 Results (root values)
 ===
-Func|                 bisect|                 brentq|                 brenth|                 ridder|                 chandr|               cybrentq|               modAB_ct|                  modAB
+Func|                 bisect|                 brentq|                 brenth|                 ridder|                 chandr|               cybrentq|               modAB_ct|               modAB_SG
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
  f01|                      1|                      1|                      1|                      1|                      1|                      1|                      1|                      1| 
  f02|      0.399422291710955|      0.399422291710968|      0.399422291710967|      0.399422291710975|      0.399422291710968|      0.399422291710968|      0.399422291710968|      0.399422291710968| 
@@ -118,7 +118,7 @@ f100|      0.749999999999994|      0.749999999999998|      0.749999999999998|   
 
 Function values  f(root)
 ===
-Func|                 bisect|                 brentq|                 brenth|                 ridder|                 chandr|               cybrentq|               modAB_ct|                  modAB
+Func|                 bisect|                 brentq|                 brenth|                 ridder|                 chandr|               cybrentq|               modAB_ct|               modAB_SG
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
  f01|                      0|                      0|                      0|                      0|                      0|                      0|                      0|                      0| 
  f02|  -9.36750677027476e-15|  -9.71445146547012e-17|  -1.11022302462516e-15|   5.14865927669916e-15|  -1.38777878078145e-17|  -9.71445146547012e-17|   2.77555756156289e-17|  -1.38777878078145e-17| 
@@ -223,7 +223,7 @@ f100|  -3.21266662478454e-05|  -2.15916563638701e-05|  -2.15916563638701e-05|  -
 
 Function evaluations
 ===
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| modAB_SG|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
    f01|        3|       10|        9|        3|        3|       10|        3|        3| 
    f02|       48|       13|       12|       16|       11|       13|       12|       12| 
@@ -334,7 +334,7 @@ FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x|   
 
 Execution times  (ms per problem, 200 iterations)
 ===
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| modAB_SG|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
    f01|     1.49|     3.23|     2.89|     4.56|    75.41|     0.32|     0.56|     0.17| 
    f02|    16.69|     5.94|     4.70|     5.96|   315.93|     1.14|     1.74|     1.57| 
@@ -453,4 +453,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB: pymodab version 1.0.10 - native C extension built with MSVC 14.51  
+modAB_SG: pymodab version 1.0.10 - the safeguarded modab as native C extension built with MSVC 14.51  
