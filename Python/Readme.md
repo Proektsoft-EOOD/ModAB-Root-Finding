@@ -86,25 +86,25 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 
 #### Function evaluations
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| modAB_SG|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| $\color{black}\colorbox{palegoldenrod}{modAB\_SG}$|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4832|     2733|     2693|     3357|     2042|     2733|     1915|     1895| 
-   AVG|       48|       27|       27|       34|       20|       27|       19|       19| 
-MEDIAN|       49|       13|       12|       16|       12|       13|       12|       12| 
-   MIN|        3|        4|        4|        3|        3|        4|        3|        3| 
-   MAX|       53|      102|      102|      202|       58|      102|       55|       55| 
-FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x|   1.000x| 
+   SUM|     4832|     2733|     2693|     3357|     2042|     2733|     1915| $\color{black}\colorbox{palegoldenrod}{1895}$| 
+   AVG|       48|       27|       27|       34|       20|       27|       19| $\color{black}\colorbox{palegoldenrod}{19}$| 
+MEDIAN|       49|       13|       12|       16|       12|       13|       12| $\color{black}\colorbox{palegoldenrod}{12}$| 
+   MIN|        3|        4|        4|        3|        3|        4|        3| $\color{black}\colorbox{palegoldenrod}{3}$| 
+   MAX|       53|      102|      102|      202|       58|      102|       55| $\color{black}\colorbox{palegoldenrod}{55}$| 
+FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x| $\color{black}\colorbox{palegoldenrod}{1.000x}$| 
 
 #### Execution times  (ms per problem, 200 iterations)
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| modAB_SG|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| $\color{black}\colorbox{palegoldenrod}{modAB\_SG}$|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1461.96|   865.40|   846.89|  1047.16| 60698.42|   122.77|   174.44|    92.97| 
-   AVG|  14.6196|   8.6540|   8.4689|  10.4716| 606.9842|   1.2277|   1.7444|   0.9297| 
-MEDIAN|  14.4848|   4.6459|   4.5338|   5.9401| 387.4567|   0.6761|   1.3868|   0.7057| 
-   MIN|   1.4859|   1.6424|   1.8570|   1.7509|  75.4128|   0.2147|   0.5570|   0.1720| 
-   MAX|  26.4949|  31.4656|  32.3145|  67.3989|1722.7349|   6.7877|   4.7697|   3.0769| 
-FACTOR|  15.725x|   9.308x|   9.109x|  11.263x| 652.883x|   1.321x|   1.876x|   1.000x| 
+   SUM|  1461.96|   865.40|   846.89|  1047.16| 60698.42|   122.77|   174.44| $\color{black}\colorbox{palegoldenrod}{92.97}$| 
+   AVG|  14.6196|   8.6540|   8.4689|  10.4716| 606.9842|   1.2277|   1.7444| $\color{black}\colorbox{palegoldenrod}{0.9297}$| 
+MEDIAN|  14.4848|   4.6459|   4.5338|   5.9401| 387.4567|   0.6761|   1.3868| $\color{black}\colorbox{palegoldenrod}{0.7057}$| 
+   MIN|   1.4859|   1.6424|   1.8570|   1.7509|  75.4128|   0.2147|   0.5570| $\color{black}\colorbox{palegoldenrod}{0.1720}$| 
+   MAX|  26.4949|  31.4656|  32.3145|  67.3989|1722.7349|   6.7877|   4.7697| $\color{black}\colorbox{palegoldenrod}{3.0769}$| 
+FACTOR|  15.725x|   9.308x|   9.109x|  11.263x| 652.883x|   1.321x|   1.876x| $\color{black}\colorbox{palegoldenrod}{1.000x}$| 
 
 #### Notes:
 

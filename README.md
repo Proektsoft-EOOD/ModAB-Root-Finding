@@ -45,27 +45,27 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 | Ridders       | 104.56 us | 2.007 us | 2.465 us |
 | Brent         | 120.88 us | 2.401 us | 2.246 us |
 | ModAB         |  56.23 us | 0.521 us | 0.462 us |
-| SGModab       |  61.22 us | 0.622 us | 0.581 us |
+| $\color{black}\colorbox{palegoldenrod}{SGModab}$ | $\color{black}\colorbox{palegoldenrod}{61.22 us}$ | $\color{black}\colorbox{palegoldenrod}{0.622 us}$ | $\color{black}\colorbox{palegoldenrod}{0.581 us}$ |
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.5 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.8037/25H2/2025Update/HudsonValley2)  
 Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 ### Number of Evaluations
-|Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | SGModAB
+|Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | $\color{black}\colorbox{palegoldenrod}{SGModAB}$
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- 
-|    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 |  1628
-|    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 |  17.7
-|   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 |  14.6
-| StdDev |   7.7 |  88.2 |  46.6 |  68.1 |  19.1 |  33.7 |  39.3 |  13.4 |  13.3
-| Median |  49.0 | 133.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |  12.0
-|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    55 |    55
-| BestAt |    13 |     6 |     2 |    26 |     7 |     5 |    35 |    44 |    42
-|WorstAt |    38 |    49 |     4 |    12 |     2 |     3 |     0 |     1 |     1
-|   Succ |    92 |    46 |    88 |    80 |    92 |    90 |    92 |    92 |    92
-|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8
-|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |     0
-|MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 |     0
+|    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 | $\color{black}\colorbox{palegoldenrod}{1628}$
+|    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 | $\color{black}\colorbox{palegoldenrod}{17.7}$
+|   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 | $\color{black}\colorbox{palegoldenrod}{14.6}$
+| StdDev |   7.7 |  88.2 |  46.6 |  68.1 |  19.1 |  33.7 |  39.3 |  13.4 | $\color{black}\colorbox{palegoldenrod}{13.3}$
+| Median |  49.0 | 133.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 | $\color{black}\colorbox{palegoldenrod}{12.0}$
+|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    55 | $\color{black}\colorbox{palegoldenrod}{55}$
+| BestAt |    13 |     6 |     2 |    26 |     7 |     5 |    35 |    44 | $\color{black}\colorbox{palegoldenrod}{42}$
+|WorstAt |    38 |    49 |     4 |    12 |     2 |     3 |     0 |     1 | $\color{black}\colorbox{palegoldenrod}{1}$
+|   Succ |    92 |    46 |    88 |    80 |    92 |    90 |    92 |    92 | $\color{black}\colorbox{palegoldenrod}{92}$
+|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 | $\color{black}\colorbox{palegoldenrod}{8}$
+|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 | $\color{black}\colorbox{palegoldenrod}{0}$
+|MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 | $\color{black}\colorbox{palegoldenrod}{0}$
 
 [Detailed results](Benchmark%20results%20Safeguarded.md)
 
