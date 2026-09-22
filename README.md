@@ -53,7 +53,7 @@ Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 ### Number of Evaluations
 |Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | SGModAB
-|-- | -- | -- | -- | -- | -- | -- | -- | --
+| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- 
 |    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 |  1628
 |    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 |  17.7
 |   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 |  14.6
