@@ -42,7 +42,7 @@ namespace Root.Benchmark
                         5 => Solver.Ridders(p.F, p.a, p.b, out returnCode, tol, tol),
                         6 => Solver.Brent(p.F, p.a, p.b, out returnCode, tol, tol),
                         7 => Solver.ModAB(p.F, p.a, p.b, out returnCode, tol, tol),
-                        8 => Solver.ModABCorr(p.F, p.a, p.b, out returnCode, tol, tol),
+                        8 => Solver.SgModAB(p.F, p.a, p.b, out returnCode, tol, tol),
                         _ => throw new NotImplementedException()
                     };
                     var evals = Solver.EvaluationCount;
@@ -107,7 +107,7 @@ List of algorithms:
 - Rid	 – Ridders  
 - Brе	 – Brent  
 - modAB	 – Modified Anderson-Björck April 2026 MDPI Algorithms + fixes
-- modABCorr – Modified Anderson-Björck Corrected Sept 2026"
+- SGModab – Safeguarded Modified Anderson-Björck Corrected Sept 2026"
                 );
             for (int k = 0; k < 4; ++k)
             {
@@ -118,7 +118,7 @@ List of algorithms:
                     case 2: Console.WriteLine("\r\n### Return codes\r\n"); break;
                     case 3: Console.WriteLine("\r\n### Evaluation count\r\n"); break;
                 }
-                Console.WriteLine("|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr");
+                Console.WriteLine("|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | SGModab");
                 Console.WriteLine("| ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------");
                 for (int i = 0; i < problemCount; ++i)
                 {

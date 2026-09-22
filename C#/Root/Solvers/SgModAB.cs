@@ -22,7 +22,7 @@ namespace Proektsoft.Root
         /// returns a midpoint, so the method continues with bisection geometry.
         /// NaN residuals are rejected because they have no usable sign.
         /// </remarks>
-        public static double ModABCorr(
+        public static double SgModAB(
             Func<double, double> f,
             double x1, double x2,
             out ReturnCode returnCode,

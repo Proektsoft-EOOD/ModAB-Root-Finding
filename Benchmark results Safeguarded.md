@@ -1,19 +1,19 @@
 ## Benchmark results (C#)
 
-List of algorithms:  
-- bs 	 – Bisection  
-- fp	 – False-position  
-- ill	 – Illinois  	
-- AB	 – Anderson-Björck  
-- ITP	 – Interpolate. truncate. project  
-- Rid	 – Ridders  
-- Brе	 – Brent  
-- modAB	 – Modified Anderson-Björck April 2026 MDPI Algorithms + fixes
-- modABCorr – Modified Anderson-Björck Corrected Sept 2026
+List of algorithms:
+- bs     - Bisection
+- fp     - False-position
+- ill    - Illinois
+- AB     - Anderson-Bjorck
+- ITP    - Interpolate. truncate. project
+- Rid    - Ridders
+- Brе    - Brent
+- modAB  - Modified Anderson-Bjorck April 2026 MDPI Algorithms + fixes
+- SGModab - Safeguarded Modified Anderson-Bjorck Corrected Sept 2026
 
 ### Results
 
-|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr
+|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | SGModab
 | ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------
 |    f01 | 1 | 0.9999999999999962 | 1 | 1 | 1 | 1 | 1 | 1 | 1
 |    f02 | 0.3994222917109682 | 0.3994222917109571 | 0.39942229171096816 | 0.39942229171096816 | 0.3994222917109682 | 0.39942229171097166 | 0.39942229171096805 | 0.39942229171096816 | 0.39942229171096816
@@ -118,7 +118,7 @@ List of algorithms:
 
 ### Function values
 
-|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr
+|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | SGModab
 | ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------
 |    f01 | 0 | -1.1324274851176597E-14 | 0 | 0 | 0 | 0 | 0 | 0 | 0
 |    f02 | 2.7755575615628914E-17 | -8.076872504148014E-15 | -1.3877787807814457E-17 | -1.3877787807814457E-17 | 2.7755575615628914E-17 | 2.5396351688300456E-15 | -9.71445146547012E-17 | -1.3877787807814457E-17 | -1.3877787807814457E-17
@@ -223,7 +223,7 @@ List of algorithms:
 
 ### Return codes
 
-|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr
+|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | SGModab
 | ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------
 |    f01 |     S |     S |     S |     S |     S |     S |     S |     S |     S
 |    f02 |     S |     F |     S |     S |     S |     S |     S |     S |     S
@@ -328,7 +328,7 @@ List of algorithms:
 
 ### Evaluation count
 
-|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | modABCorr
+|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | SGModab
 | ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------
 |    f01 |     3 |    34 |    11 |     9 |    10 |     3 |    10 |     3 |     3
 |    f02 |    48 |   202 |    13 |    13 |    11 |    54 |    13 |    12 |    12
@@ -443,23 +443,24 @@ List of algorithms:
 |  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |     0
 |MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 |     0
 
-// * Summary *
-
-BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.9457/25H2/2025Update/HudsonValley2)
-Intel Core i7-1065G7 CPU 1.30GHz (Max: 1.50GHz), 1 CPU, 8 logical and 4 physical cores
-.NET SDK 10.0.401
-  [Host]     : .NET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v4
-  DefaultJob : .NET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v4
-
+### Wallclock times
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     | 101.10 us | 1.755 us | 1.370 us |
-| FalsePosition | 389.09 us | 3.649 us | 3.235 us |
-| Illinois      | 160.06 us | 2.945 us | 2.459 us |
-| AndersonBjork | 232.43 us | 3.294 us | 3.661 us |
-| ITP           | 269.57 us | 5.234 us | 6.619 us |
-| Ridders       | 111.18 us | 1.411 us | 1.320 us |
-| Brent         | 126.31 us | 1.467 us | 1.373 us |
-| ModAB         |  61.73 us | 0.871 us | 0.814 us |
-| ModABCorr     |  69.82 us | 1.050 us | 0.820 us |
+| Bisection     |  92.29 us | 1.567 us | 1.609 us |
+| FalsePosition | 359.90 us | 2.654 us | 2.353 us |
+| Illinois      | 147.32 us | 0.889 us | 0.788 us |
+| AndersonBjork | 212.05 us | 1.408 us | 1.317 us |
+| ITP           | 234.97 us | 2.432 us | 2.275 us |
+| Ridders       | 104.56 us | 2.007 us | 2.465 us |
+| Brent         | 120.88 us | 2.401 us | 2.246 us |
+| ModAB         |  56.23 us | 0.521 us | 0.462 us |
+| SGModab       |  61.22 us | 0.622 us | 0.581 us |
+
+Benchmark Process Environment Information:  
+BenchmarkDotNet v0.15.8  
+DOTNET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v4  
+Windows 11 (10.0.26200.8037/25H2/2025Update/HudsonValley2)  
+Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
+16GB RAM
+AVX512 BITALG+VBMI2+VNNI+VPOPCNTDQ,AVX512 IFMA+VBMI,AVX512 F+BW+CD+DQ+VL,AVX2+BMI1+BMI2+F16C+FMA+LZCNT+MOVBE,AVX,SSE3+SSSE3+SSE4.1+SSE4.2+POPCNT,X86Base+SSE+SSE2,AES+PCLMUL VectorSize=256  

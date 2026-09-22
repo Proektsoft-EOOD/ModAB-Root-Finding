@@ -37,34 +37,37 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 ### Times
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     |  87.17 us | 1.229 us | 1.150 us |
-| FalsePosition | 328.11 us | 4.240 us | 3.966 us |
-| Illinois      | 104.43 us | 1.507 us | 1.410 us |
-| AndersonBjork | 128.49 us | 1.380 us | 1.223 us |
-| ITP           | 196.66 us | 3.165 us | 2.961 us |
-| Ridders       |  65.79 us | 1.077 us | 0.899 us |
-| Brent         | 118.80 us | 2.198 us | 2.056 us |
-| ModAB         |  49.07 us | 0.620 us | 0.549 us |
+| Bisection     |  92.29 us | 1.567 us | 1.609 us |
+| FalsePosition | 359.90 us | 2.654 us | 2.353 us |
+| Illinois      | 147.32 us | 0.889 us | 0.788 us |
+| AndersonBjork | 212.05 us | 1.408 us | 1.317 us |
+| ITP           | 234.97 us | 2.432 us | 2.275 us |
+| Ridders       | 104.56 us | 2.007 us | 2.465 us |
+| Brent         | 120.88 us | 2.401 us | 2.246 us |
+| ModAB         |  56.23 us | 0.521 us | 0.462 us |
+| SGModab       |  61.22 us | 0.622 us | 0.581 us |
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.5 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.8037/25H2/2025Update/HudsonValley2)  
 Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 ### Number of Evaluations
-Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB
--- | -- | -- | -- | -- | -- | -- | -- | --
-Sum | 4463 | 8334 | 2950 | 3297 | 2853 | 2278 | 2903 | 1764
-Ave | 47.9 | 88.4 | 31.6 | 33.6 | 30.4 | 24.5 | 31.3 | 18.9
-Rel | 2.53 | 4.67 | 1.67 | 1.78 | 1.61 | 1.30 | 1.65 | 1.00
-Max | 53 | 202 | 202 | 202 | 55 | 84 | 142 | 55
-Mean | 46.4 | 52.7 | 19.4 | 18.0 | 24.1 | 19.1 | 18.3 | 15.1
-Best | 13 | 8 | 10 | 52 | 6 | 5 | 22 | 38
-Worst | 38 | 43 | 6 | 7 | 3 | 1 | 1 | 1
-Median | 49.0 | 49.0 | 13.0 | 11.0 | 22.0 | 16.0 | 12.0 | 12.0
-Std Dev | 7.6 | 79.4 | 40.8 | 51.0 | 19.0 | 20.4 | 40.0 | 15.1
-Std Error | 0.79 | 8.19 | 4.25 | 5.00 | 1.97 | 2.12 | 4.17 | 1.57
+|Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | SGModAB
+|-- | -- | -- | -- | -- | -- | -- | -- | --
+|    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 |  1628
+|    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 |  17.7
+|   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 |  14.6
+| StdDev |   7.7 |  88.2 |  46.6 |  68.1 |  19.1 |  33.7 |  39.3 |  13.4 |  13.3
+| Median |  49.0 | 133.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |  12.0
+|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    55 |    55
+| BestAt |    13 |     6 |     2 |    26 |     7 |     5 |    35 |    44 |    42
+|WorstAt |    38 |    49 |     4 |    12 |     2 |     3 |     0 |     1 |     1
+|   Succ |    92 |    46 |    88 |    80 |    92 |    90 |    92 |    92 |    92
+|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8
+|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |     0
+|MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 |     0
 
-&emsp;&emsp;[Detailed results](Benchmark%20results.md)
+&emsp;&emsp;[Detailed results](Benchmark results Safeguarded.md)
 
 ## 📄 License
 

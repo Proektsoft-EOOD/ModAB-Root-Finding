@@ -67,10 +67,10 @@ namespace Root.Benchmark
         }
 
         [Benchmark]
-        public void ModABCorr()
+        public void SGModab()
         {
             foreach (Problem p in _problems)
-                Solver.ModABCorr(p.F, p.a, p.b, out _, tol, tol);
+                Solver.SgModAB(p.F, p.a, p.b, out _, tol, tol);
         }
     }
 }
