@@ -2,7 +2,7 @@
 
 julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "4eb77e5cf1c0ffadaa8b4f9d4f27030ba36f20e9"
+project_hash = "15d5016fbe73dcd18f109cbeabb29a74acc173da"
 
 [[deps.ADTypes]]
 deps = ["PrecompileTools"]
@@ -113,7 +113,7 @@ version = "1.8.0"
 
 [[deps.BracketingNonlinearSolve]]
 deps = ["CommonSolve", "ConcreteStructs", "NonlinearSolveBase", "PrecompileTools", "Reexport", "SciMLBase", "SciMLLogging"]
-path = "C:\\Users\\proek\\Documents\\GitHub\\NonlinearSolve.jl\\lib\\BracketingNonlinearSolve"
+path = "../../NonlinearSolve.jl/lib/BracketingNonlinearSolve"
 uuid = "70df07ce-3d50-431d-a3e7-ca6ddb60ac1e"
 version = "1.12.4"
 
@@ -412,7 +412,7 @@ version = "0.1.8"
 
 [[deps.NonlinearSolveBase]]
 deps = ["ADTypes", "Adapt", "ArrayInterface", "CommonSolve", "Compat", "ConcreteStructs", "DifferentiationInterface", "EnzymeCore", "FastClosures", "FunctionWrappers", "FunctionWrappersWrappers", "LinearAlgebra", "LogExpFunctions", "Markdown", "MaybeInplace", "PreallocationTools", "PrecompileTools", "Preferences", "Printf", "RecursiveArrayTools", "RespecializeParams", "SciMLBase", "SciMLJacobianOperators", "SciMLLogging", "SciMLOperators", "SciMLStructures", "Setfield", "StaticArraysCore", "SymbolicIndexingInterface", "TimerOutputs"]
-path = "C:\\Users\\proek\\Documents\\GitHub\\NonlinearSolve.jl\\lib\\NonlinearSolveBase"
+path = "../../NonlinearSolve.jl/lib/NonlinearSolveBase"
 uuid = "be0214bd-f91f-a760-ac4e-3421ce2b2da0"
 version = "2.38.0"
 

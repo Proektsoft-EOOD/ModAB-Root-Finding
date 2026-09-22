@@ -4,6 +4,7 @@
 using Roots
 import BracketingNonlinearSolve as BNS
 using SciMLBase: IntervalNonlinearProblem, solve
+include("modab_release.jl")  # defines ModABRelease, the registered v1.12.7 algorithm
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function
@@ -45,6 +46,19 @@ function modab_solver(f, left::Real, right::Real, target::Real=0.0; precision::F
     try
         prob = IntervalNonlinearProblem((x, p) -> g(x), (a, b))
         sol = solve(prob, BNS.ModAB(); abstol=precision, maxiters=200)
+        return sol.u
+    catch
+        return NaN
+    end
+end
+
+# The same algorithm as shipped in the registered BracketingNonlinearSolve release
+function modab_release_solver(f, left::Real, right::Real, target::Real=0.0; precision::Float64=1e-14)
+    g = target != 0 ? x -> f(x) - target : f
+    a, b = min(left, right), max(left, right)
+    try
+        prob = IntervalNonlinearProblem((x, p) -> g(x), (a, b))
+        sol = solve(prob, ModABRelease(); abstol=precision, maxiters=200)
         return sol.u
     catch
         return NaN
@@ -185,6 +199,7 @@ const solvers = [
     ("alefeld", alefeld_solver),
     ("    ITP", itp_solver),
     ("    A42", a42_solver),
+    ("modAB_rel", modab_release_solver),
     ("  modAB", modab_solver)]
 
 # Benchmark runner

@@ -1,6 +1,7 @@
 # Uses the local NonlinearSolve.jl checkout (../../NonlinearSolve.jl) via the
 # Project.toml in this directory. Run with:  julia --project=. <this file>
 using BracketingNonlinearSolve
+include("modab_release.jl")  # defines ModABRelease, the registered v1.12.7 algorithm
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function
@@ -32,7 +33,8 @@ brent_solver   = make_nlsolve_solver(Brent(),      "brent")
 ridder_solver  = make_nlsolve_solver(Ridder(),     "ridder")
 alefeld_solver = make_nlsolve_solver(Alefeld(),    "alefeld")
 itp_solver     = make_nlsolve_solver(ITP(),        "ITP")
-modab_solver   = make_nlsolve_solver(ModAB(),      "modab")
+modab_solver   = make_nlsolve_solver(ModAB(),        "modab")
+modabrel_solver = make_nlsolve_solver(ModABRelease(), "modab_release")
 
 # Problem definition
 struct Problem
@@ -167,6 +169,7 @@ const solvers = [
     (" ridder", ridder_solver),
     ("alefeld", alefeld_solver),
     ("    ITP", itp_solver),
+    ("modAB_rel", modabrel_solver),
     ("  modAB", modab_solver)]
 
 # Benchmark runner
