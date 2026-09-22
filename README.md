@@ -32,7 +32,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 &emsp;&emsp;[For 100 functions test set](Test%20functions.pdf)
 
-<img height="300" alt="image" src="https://github.com/user-attachments/assets/cd8b63e9-15d6-4cb0-863a-ccdd445de80e" />
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/9b9af07f-cdff-438c-812c-fc6950f25750" />
 
 ### Times
 | Method        | Mean      | Error    | StdDev   |
@@ -45,7 +45,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 | Ridders       | 104.56 us | 2.007 us | 2.465 us |
 | Brent         | 120.88 us | 2.401 us | 2.246 us |
 | ModAB         |  56.23 us | 0.521 us | 0.462 us |
-| <mark>**SGModab**</mark> | <mark>61.22 us</mark> | <mark>0.622 us</mark> | <mark>0.581 us</mark> |
+| <mark>**SGModAB**</mark> | <mark>61.22 us</mark> | <mark>0.622 us</mark> | <mark>0.581 us</mark> |
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.5 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.8037/25H2/2025Update/HudsonValley2)  
