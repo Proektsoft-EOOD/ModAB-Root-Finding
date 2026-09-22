@@ -67,7 +67,7 @@ Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 |  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |     0
 |MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 |     0
 
-&emsp;&emsp;[Detailed results](Benchmark results Safeguarded.md)
+[Detailed results](Benchmark%20results%20Safeguarded.md)
 
 ## 📄 License
 
