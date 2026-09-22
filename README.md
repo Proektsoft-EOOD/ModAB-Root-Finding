@@ -30,7 +30,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 ## ⏱️ Benchmarks
 
-&emsp;&emsp;[For 92 functions test set](/MDPI-Algorithms-Data/Test%20Functions.pdf) + 1: f93(x) = x^7 - 0.001
+&emsp;&emsp;[For 92 functions test set](/MDPI-Algorithms-Data/Test%20Functions.pdf) + 8 more
 
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/cd8b63e9-15d6-4cb0-863a-ccdd445de80e" />
 
@@ -45,7 +45,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 | Ridders       | 104.56 us | 2.007 us | 2.465 us |
 | Brent         | 120.88 us | 2.401 us | 2.246 us |
 | ModAB         |  56.23 us | 0.521 us | 0.462 us |
-| <mark>**SGModab**</mark> | <mark>**61.22 us**</mark> | <mark>**0.622 us**</mark> | <mark>**0.581 us**</mark> |
+| <mark>**SGModab**</mark> | <mark>61.22 us</mark> | <mark>0.622 us</mark> | <mark>0.581 us</mark> |
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.5 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.8037/25H2/2025Update/HudsonValley2)  
@@ -53,19 +53,19 @@ Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 ### Number of Evaluations
 |Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | <mark>**SGModAB**</mark>
-| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- 
-|    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 | <mark>**1628**</mark>
-|    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 | <mark>**17.7**</mark>
-|   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 | <mark>**14.6**</mark>
-| StdDev |   7.7 |  88.2 |  46.6 |  68.1 |  19.1 |  33.7 |  39.3 |  13.4 | <mark>**13.3**</mark>
-| Median |  49.0 | 133.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 | <mark>**12.0**</mark>
-|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    55 | <mark>**55**</mark>
-| BestAt |    13 |     6 |     2 |    26 |     7 |     5 |    35 |    44 | <mark>**42**</mark>
-|WorstAt |    38 |    49 |     4 |    12 |     2 |     3 |     0 |     1 | <mark>**1**</mark>
-|   Succ |    92 |    46 |    88 |    80 |    92 |    90 |    92 |    92 | <mark>**92**</mark>
-|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 | <mark>**8**</mark>
-|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 | <mark>**0**</mark>
-|MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 | <mark>**0**</mark>
+| --: | --: | --: | --: | --: | --: | --: | --: | --: | --: 
+|    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 | <mark>1628</mark>
+|    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 | <mark>17.7</mark>
+|   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 | <mark>14.6</mark>
+| StdDev |   7.7 |  88.2 |  46.6 |  68.1 |  19.1 |  33.7 |  39.3 |  13.4 | <mark>13.3</mark>
+| Median |  49.0 | 133.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 | <mark>12.0</mark>
+|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    55 | <mark>&emsp;55</mark>
+| BestAt |    13 |     6 |     2 |    26 |     7 |     5 |    35 |    44 | <mark>&emsp;42</mark>
+|WorstAt |    38 |    49 |     4 |    12 |     2 |     3 |     0 |     1 | <mark>&emsp;&ensp;1</mark>
+|   Succ |    92 |    46 |    88 |    80 |    92 |    90 |    92 |    92 | <mark>&emsp;92</mark>
+|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 | <mark>&emsp;&ensp;8</mark>
+|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 | <mark>&emsp;&ensp;0</mark>
+|MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 | <mark>&emsp;&ensp;0</mark>
 
 [Detailed results](Benchmark%20results%20Safeguarded.md)
 
