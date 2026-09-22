@@ -30,7 +30,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 ## ⏱️ Benchmarks
 
-&emsp;&emsp;[For 92 functions test set](/MDPI-Algorithms-Data/Test%20Functions.pdf) + 8 more
+&emsp;&emsp;[For 100 functions test set](Test%20Functions.pdf)
 
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/cd8b63e9-15d6-4cb0-863a-ccdd445de80e" />
 
