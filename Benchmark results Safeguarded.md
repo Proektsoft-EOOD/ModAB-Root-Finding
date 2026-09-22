@@ -443,7 +443,7 @@ List of algorithms:
 |  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |     0
 |MaxIter |     0 |    27 |     4 |    12 |     0 |     0 |     0 |     0 |     0
 
-### Wallclock times
+### Wall clock times
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
