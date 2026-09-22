@@ -93,22 +93,22 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 MEDIAN|       49|       13|       12|       16|       12|       13|       12|       12| 
    MIN|        3|        4|        4|        3|        3|        4|        3|        3| 
    MAX|       53|      102|      102|      202|       58|      102|       55|       55| 
-FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x|   1.000x|
+FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x|   1.000x| 
 
 #### Execution times  (ms per problem, 200 iterations)
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct|    modAB|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1470.47|   942.96|   868.82|  1028.44| 55510.72|   111.53|   166.70|    88.47| 
-   AVG|  14.7047|   9.4296|   8.6882|  10.2844| 555.1072|   1.1153|   1.6670|   0.8847| 
-MEDIAN|  14.3833|   4.8041|   4.5987|   5.9455| 330.2432|   0.6184|   1.2911|   0.6724| 
-   MIN|   1.6561|   1.9345|   2.2154|   1.5351|  73.5563|   0.1964|   0.6373|   0.1698| 
-   MAX|  53.0059|  39.4564|  48.1018|  59.0147|1807.3393|   5.6467|   4.4641|   3.2139| 
-FACTOR|  16.622x|  10.659x|   9.821x|  11.625x| 627.473x|   1.261x|   1.884x|   1.000x| 
+   SUM|  1461.96|   865.40|   846.89|  1047.16| 60698.42|   122.77|   174.44|    92.97| 
+   AVG|  14.6196|   8.6540|   8.4689|  10.4716| 606.9842|   1.2277|   1.7444|   0.9297| 
+MEDIAN|  14.4848|   4.6459|   4.5338|   5.9401| 387.4567|   0.6761|   1.3868|   0.7057| 
+   MIN|   1.4859|   1.6424|   1.8570|   1.7509|  75.4128|   0.2147|   0.5570|   0.1720| 
+   MAX|  26.4949|  31.4656|  32.3145|  67.3989|1722.7349|   6.7877|   4.7697|   3.0769| 
+FACTOR|  15.725x|   9.308x|   9.109x|  11.263x| 652.883x|   1.321x|   1.876x|   1.000x| 
 
 #### Notes:
 
-Last Run on: 20.09.2026  
+Last Run on: 22.09.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -116,7 +116,7 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB: pymodab version 1.0.9 - the latest implementation as native C extension  
+modAB: pymodab version 1.0.10 - the latest implementation as native C extension  
 
 The complete source code to reproduce the above benchmarks is available in [RootBenchmarkSciPy.py](RootBenchmarkSciPy.py).  
 Detailed benchmark results are listed in [BenchmarkResultsSciPy.md](BenchmarkResultsSciPy.md).  
