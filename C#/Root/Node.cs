@@ -19,18 +19,24 @@ namespace Proektsoft.Root
             Y = F(x);
         }
 
-        public static double SafeSecant(Node p1, Node p2)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double SafeSecant(Node p1, Node p2) =>
+            SafeSecant(p1.X, p1.Y, p2.X, p2.Y);
+
+        // Secant through (x1, y1) and (x2, y2), where the ordinates need not be
+        // the stored residuals (e.g. Anderson-Björck corrected values).
+        public static double SafeSecant(double x1, double y1, double x2, double y2)
         {
-            var a = Math.Abs(p1.Y);
-            var b = Math.Abs(p2.Y);
+            var a = Math.Abs(y1);
+            var b = Math.Abs(y2);
             var den = a + b;
             if (!(den > 0.0))
-                return SafeMidpoint(p1, p2);
+                return SafeMidpoint(x1, x2);
 
             if (double.IsInfinity(den))
             {
                 if (double.IsInfinity(a) || double.IsInfinity(b))
-                    return SafeMidpoint(p1, p2);
+                    return SafeMidpoint(x1, x2);
 
                 a *= 0.5;
                 b *= 0.5;
@@ -38,14 +44,18 @@ namespace Proektsoft.Root
             }
             var w1 = b / den;
             var w2 = a / den;
-            var x = w1 * p1.X + w2 * p2.X;
-            return x < p1.X ? p1.X :
-                   x > p2.X ? p2.X :
+            var x = w1 * x1 + w2 * x2;
+            return x < x1 ? x1 :
+                   x > x2 ? x2 :
                    x;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double SafeMidpoint(Node p1, Node p2) =>
-            0.5 * p1.X + 0.5 * p2.X;
+            SafeMidpoint(p1.X, p2.X);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double SafeMidpoint(double x1, double x2) =>
+            0.5 * x1 + 0.5 * x2;
     }
 }
