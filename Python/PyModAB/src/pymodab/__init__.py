@@ -11,5 +11,5 @@ Preprints 2026, 2026032190. https://doi.org/10.20944/preprints202603.2190.v1
 
 from .modab import find_root, get_evaluation_count, NATIVE
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __all__ = ["find_root", "get_evaluation_count"]

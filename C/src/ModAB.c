@@ -94,6 +94,12 @@ static inline double eval(double (*f)(double), double x) {
     return f(x);
 }
 
+static inline void swap(double *a, double *b) {
+    double c = *a;
+    *a = *b;
+    *b = c;
+}
+
 // Finds the root of "F(x) = 0" within the interval [x1, x2]
 // with the specified precisions - absolute: aTol and relative: rTol,
 // using an improved version of the modified Anderson Bjork's method:
@@ -109,18 +115,13 @@ static inline double eval(double (*f)(double), double x) {
 // F(x) must be continuous and sign(F(x1)) != sign(F(x2))
 EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double aTol, double rTol, int maxIter) {
     evaluation_count = 0;
+    if (x1 > x2) // Ensure x1 < x2
+        swap(&x1, &x2);
 
-    // Ensure x1 < x2
-    if (x1 > x2) {
-        double temp = x1; x1 = x2; x2 = temp;
-    }
     double y1 = eval(f, x1);
-    if (y1 == 0.0)
-        return x1;
-
+    if (y1 == 0.0) return x1;
     double y2 = eval(f, x2);
-    if (y2 == 0.0)
-        return x2;
+    if (y2 == 0.0) return x2;
 
     // NaN has no usable sign, and same_sign is false for it, so it must
     // be rejected before the predicate is used to update a bracket.
@@ -136,10 +137,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? safe_midpoint(x1, x2) : safe_secant(x1, y1, x2, y2);
         // Check for x-convergence
-        double eps = aTol + rTol * fabs(x3);
-        if (x2 - x1 <= eps)
-            return x3;
-
+        if (x2 - x1 <= aTol + rTol * fabs(x3)) return x3;
         double y3;
         if (bisection) {
             y3 = eval(f, x3);
@@ -152,48 +150,49 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 if (fabs(ym - y3) < k * fabs(ym) + k * fabs(y3)) {
                     bisection = false;
                     threshold = C * (x2 - x1);
+                    y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
             }
         } else {
             // If x3 got clamped, reuse the true residual stored at the endpoint.
-            if (x3 == x1) {
-                y3 = f1;
-            } else if (x3 == x2) {
-                y3 = f2;
-            } else {
-                y3 = eval(f, x3);
-            }
+            y3 = (x3 == x1) ? f1 : 
+                 (x3 == x2) ? f2 : 
+                 eval(f, x3);
             threshold *= 0.5;
             ymin = fmin(fabs(f1), fabs(f2));
         }
-        // Check for y-convergence
-        if (y3 == 0.0)
-            return x3;
-
-        // A NaN residual has no usable sign, so the bracket cannot be updated.
-        if (isnan(y3))
-            return NAN;
-
-        if (same_sign(f1, y3)) {
-            if (side == 1) { // Anderson-Bjork correction
-                y2 *= ab_factor(y3, y1);
-            } else if (!bisection) {
-                side = 1;
+        if (y3 == 0.0) return x3; // Check for y-convergence
+        if (isnan(y3)) return NAN; // A NaN residual has no usable sign, so the bracket cannot be updated.
+        if (bisection)
+        {
+            if (same_sign(f1, y3)) {
+                x1 = x3; f1 = y3;
+            } else {
+                x2 = x3; f2 = y3;
             }
-            x1 = x3; f1 = y1 = y3;
-        } else {
-            if (side == -1) { // Anderson-Bjork correction
-                y1 *= ab_factor(y3, y2);
-            } else if (!bisection) {
-                side = -1;
-            }
-            x2 = x3; f2 = y2 = y3;
         }
-
-        // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-        if (!bisection && x2 - x1 > threshold && fabs(y3) > 0.5 * ymin) {
-            bisection = true;
-            side = 0;
+        else
+        {
+            if (same_sign(f1, y3)) {
+                if (side == 1) {
+                    y2 *= ab_factor(y3, y1); // Anderson-Bjork correction
+                } else {
+                    side = 1;
+                }
+                x1 = x3; f1 = y1 = y3;
+            } else {
+                if (side == -1) {
+                    y1 *= ab_factor(y3, y2); // Anderson-Bjork correction
+                } else {
+                    side = -1;
+                }
+                x2 = x3; f2 = y2 = y3;
+            }
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+            if (x2 - x1 > threshold && fabs(y3) > 0.5 * ymin) {
+                bisection = true;
+                side = 0;
+            }
         }
     }
     return NAN;

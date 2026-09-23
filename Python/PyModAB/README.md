@@ -56,6 +56,8 @@ Version 1.0.10 adds overflow and NaN safeguards to the arithmetic. The midpoint 
 
 Version 1.1.0 simplifies these safeguards without weakening them. The test that switches from bisection to secant steps is now computed inline as `|ym - y3| < k·|ym| + k·|y3|`, which cannot overflow, and it is skipped while `f(x2) - f(x1)` overflows, so the search keeps bisecting until the residuals shrink. The bracket is updated from the sign of the true residuals instead of the Anderson-Björck auxiliary ordinates, so an auxiliary ordinate that underflows to zero can no longer steer the update, and the extra underflow guard of 1.0.10 is no longer needed. The 100 benchmark problems give the same roots and evaluation counts as with 1.0.10.
 
+Version 1.1.1 separates the bisection and Anderson-Björck steps in the solver loop. A bisection step now updates only the bracket and the true residuals. The Anderson-Björck corrections and the fallback test run only on secant steps, and the auxiliary ordinates start from the true residuals whenever the search switches to secant steps. The algorithm is unchanged: the 100 benchmark problems give the same roots and evaluation counts as with 1.1.0.
+
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
 ```python
