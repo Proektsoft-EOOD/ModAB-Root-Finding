@@ -21,12 +21,10 @@ namespace Proektsoft.Root
                 return p2.X;
 
             var isAB = false;
-            var side = 0;
+            var sideMoved = 0;
             const int LEFT = -1, RIGHT = 1;
             var fallbackThreshold = 0.0;
             var yMin = 0.0;
-            const int MaxResidualSteps = 3;
-            var residualSteps = 0;
             const double C = 2.0;
             for (var i = 1; i <= MaxIterations; ++i)
             {
@@ -65,41 +63,30 @@ namespace Proektsoft.Root
                 var p3 = new Node(x3, y3);
                 if (SameSign(f1, y3))
                 {
-                    if (side == LEFT)
+                    if (sideMoved == LEFT)
                         p2.Y *= GetABFactor(y3, f1);
                     else if (isAB)
-                        side = LEFT;
+                        sideMoved = LEFT;
 
                     p1 = p3;
                     f1 = y3;
                 }
                 else
                 {
-                    if (side == RIGHT)
+                    if (sideMoved == RIGHT)
                         p1.Y *= GetABFactor(y3, f2);
                     else if (isAB)
-                        side = RIGHT;
+                        sideMoved = RIGHT;
 
                     p2 = p3;
                     f2 = y3;
                 }
                 if (isAB)
                 {
-                    var fallBack = false;
-                    if (p2.X - p1.X > fallbackThreshold)
-                    {
-                        if (Math.Abs(y3) < 0.5 * yMin && residualSteps < MaxResidualSteps)
-                            ++residualSteps;
-                        else
-                            fallBack = true;
-                    }
-                    else
-                        residualSteps = 0;
-
-                    if (fallBack)
+                    if (p2.X - p1.X > fallbackThreshold && Math.Abs(y3) > 0.5 * yMin)
                     {
                         isAB = false;
-                        side = 0;
+                        sideMoved = 0;
                         p1.Y = f1;
                         p2.Y = f2;
                     }
@@ -109,7 +96,6 @@ namespace Proektsoft.Root
                 else if (switchToAB)
                 {
                     isAB = true;
-                    residualSteps = 0;
                     fallbackThreshold = C * (p2.X - p1.X);
                 }
             }
