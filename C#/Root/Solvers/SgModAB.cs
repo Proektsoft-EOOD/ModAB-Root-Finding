@@ -13,13 +13,14 @@ namespace Proektsoft.Root
                 return double.NaN;
             }
             returnCode = ReturnCode.Success;
-            // The true residuals at the endpoints of the bracket.
-            double f1 = p1.Y, f2 = p2.Y;
-            if (f1 == 0.0)
+            // p1.Y and p2.Y always hold the true residuals at the endpoints of the bracket.
+            if (p1.Y == 0.0)
                 return p1.X;
-            if (f2 == 0.0)
+            if (p2.Y == 0.0)
                 return p2.X;
 
+            // The Anderson-Björck corrected ordinates, used only on the AB path.
+            double f1 = 0.0, f2 = 0.0;
             var isAB = false;
             var sideMoved = 0; // The side that was moved on the previous Anderson-Björck step.
             const int LEFT = -1, RIGHT = 1;
@@ -29,7 +30,7 @@ namespace Proektsoft.Root
             for (var i = 1; i <= MaxIterations; ++i)
             {
                 var x3 = isAB
-                    ? Node.SafeSecant(p1, p2)
+                    ? Node.SafeSecant(p1.X, f1, p2.X, f2)
                     : Node.SafeMidpoint(p1, p2);
 
                 var xTol = aTol + rTol * Math.Abs(x3);
@@ -37,8 +38,8 @@ namespace Proektsoft.Root
                     return x3;
 
                 // If x3 got clamped, reuse the true residual stored at the endpoint.
-                var y3 = x3 == p1.X ? f1 :
-                         x3 == p2.X ? f2 :
+                var y3 = x3 == p1.X ? p1.Y :
+                         x3 == p2.X ? p2.Y :
                          F(x3);
 
                 if (y3 == 0.0)
@@ -51,52 +52,58 @@ namespace Proektsoft.Root
                 }
                 var switchToAB = false;
                 if (isAB)
-                    yMin = Math.Min(Math.Abs(f1), Math.Abs(f2)); // Best true residual of the bracket.
-                else if (double.IsFinite(f2 - f1)) // Avoids overflow in the calculations below.
+                    yMin = Math.Min(Math.Abs(p1.Y), Math.Abs(p2.Y)); // Best true residual of the bracket.
+                else if (double.IsFinite(p2.Y - p1.Y)) // Avoids overflow in the calculations below.
                 {
-                    var ym = 0.5 * (f1 + f2);
-                    var r = 1 - Math.Abs(ym / (f2 - f1)); // Symmetry factor
+                    var ym = 0.5 * (p1.Y + p2.Y);
+                    var r = 1 - Math.Abs(ym / (p2.Y - p1.Y)); // Symmetry factor
                     var k = r * r; // Deviation factor
                     switchToAB = Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3);
                     // k·|ym| + k·|y3| cannot overflow; an infinite y3 fails the test.
                 }
                 var p3 = new Node(x3, y3);
-                if (SameSign(f1, y3))
+                if (isAB) // Anderson-Björck step
                 {
-                    if (sideMoved == LEFT)
-                        p2.Y *= GetABFactor(y3, f1);
-                    else if (isAB)
-                        sideMoved = LEFT;
+                    if (SameSign(p1.Y, y3))
+                    {
+                        if (sideMoved == LEFT)
+                            f2 *= GetABFactor(y3, p1.Y); // Apply Anderson-Björck factor to the right side
+                        else
+                            sideMoved = LEFT;
 
-                    p1 = p3;
-                    f1 = y3;
-                }
-                else
-                {
-                    if (sideMoved == RIGHT)
-                        p1.Y *= GetABFactor(y3, f2);
-                    else if (isAB)
-                        sideMoved = RIGHT;
+                        p1 = p3; f1 = y3;
+                    }
+                    else
+                    {
+                        if (sideMoved == RIGHT)
+                            f1 *= GetABFactor(y3, p2.Y); // Apply Anderson-Björck factor to the left side
+                        else
+                            sideMoved = RIGHT;
 
-                    p2 = p3;
-                    f2 = y3;
-                }
-                if (isAB)
-                {
+                        p2 = p3; f2 = y3;
+                    }
                     if (p2.X - p1.X > fallbackThreshold && Math.Abs(y3) > 0.5 * yMin)
                     {
                         isAB = false;
                         sideMoved = 0;
-                        p1.Y = f1;
-                        p2.Y = f2;
                     }
                     else
                         fallbackThreshold *= 0.5;
                 }
-                else if (switchToAB)
+                else // Bisection step
                 {
-                    isAB = true;
-                    fallbackThreshold = C * (p2.X - p1.X);
+                    if (SameSign(p1.Y, y3))
+                        p1 = p3;
+                    else
+                        p2 = p3;
+
+                    if (switchToAB)
+                    {
+                        isAB = true;
+                        fallbackThreshold = C * (p2.X - p1.X);
+                        f1 = p1.Y;
+                        f2 = p2.Y;
+                    }
                 }
             }
             returnCode = ReturnCode.MaxIterationsExceeded;
