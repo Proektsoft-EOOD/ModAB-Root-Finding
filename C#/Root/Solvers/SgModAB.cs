@@ -66,7 +66,7 @@ namespace Proektsoft.Root
                     if (SameSign(p1.Y, y3))
                     {
                         if (sideMoved == LEFT)
-                            f2 *= GetABFactor(y3, p1.Y); // Apply Anderson-Björck factor to the right side
+                            f2 *= GetABFactor(y3, f1); // Apply Anderson-Björck factor to the right side
                         else
                             sideMoved = LEFT;
 
@@ -75,7 +75,7 @@ namespace Proektsoft.Root
                     else
                     {
                         if (sideMoved == RIGHT)
-                            f1 *= GetABFactor(y3, p2.Y); // Apply Anderson-Björck factor to the left side
+                            f1 *= GetABFactor(y3, f2); // Apply Anderson-Björck factor to the left side
                         else
                             sideMoved = RIGHT;
 
