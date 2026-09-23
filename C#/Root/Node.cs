@@ -45,9 +45,7 @@ namespace Proektsoft.Root
             var w1 = b / den;
             var w2 = a / den;
             var x = w1 * x1 + w2 * x2;
-            return x < x1 ? x1 :
-                   x > x2 ? x2 :
-                   x;
+            return x < x1 ? x1 : x > x2 ? x2 : x;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
