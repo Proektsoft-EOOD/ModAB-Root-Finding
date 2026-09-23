@@ -1,19 +1,23 @@
+@inline same_nonzero_sign(x, y) = (x < 0 && y < 0) || (x > 0 && y > 0)
+
 @inline safe_midpoint(x1, x2) = x1 / 2 + x2 / 2
 
 @inline function safe_secant(x1::T, y1, x2::T, y2) where {T <: AbstractFloat}
     a, b = abs(y1), abs(y2)
     den = a + b
+    # den is always > 0 here: a NaN residual is rejected at the point of
+    # evaluation, and neither residual is ever zero.
     if isinf(den)
-        # Non-finite residuals carry no usable slope; otherwise a + b merely
+        # An infinite ordinate carries no usable slope; otherwise a + b merely
         # overflowed, and halving both restores it without changing the ratio.
+        # One halving always suffices: a, b <= floatmax implies a/2 + b/2 <= floatmax.
         (isinf(a) || isinf(b)) && return safe_midpoint(x1, x2)
         a /= 2
         b /= 2
         den = a + b
     end
     # Convex combination: the weights lie in [0, 1] and sum to 1, so this cannot
-    # overflow for finite x1, x2, and den == 0 is impossible because both
-    # residuals are nonzero here. clamp only repairs last-ulp rounding.
+    # overflow for finite x1, x2. clamp only repairs last-ulp rounding.
     return clamp((b / den) * x1 + (a / den) * x2, x1, x2)
 end
 
@@ -56,8 +60,6 @@ end
     return m > 0 ? m : inv(2 * one(m))
 end
 
-@inline same_nonzero_sign(x, y) = (x < 0 && y < 0) || (x > 0 && y > 0)
-
 """
     ModAB()
 
@@ -73,7 +75,7 @@ N Ganchovski and A Traykov.
 This implementation includes the latest improvements made in 2026 by the following paper:
 Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm. Algorithms 2026, 19, 332.
-(https://doi.org/10.3390/a19050332)
+(https://doi.org/10.3390/a19050332) and additional fixes by L.Tomov
 
 """
 struct ModAB <: AbstractBracketingAlgorithm
@@ -139,6 +141,11 @@ function SciMLBase.__solve(
         end
         if iszero(y3)
             return build_exact_solution(prob, alg, x3, y3, ReturnCode.Success)
+        elseif isnan(y3)
+            # A NaN residual carries no sign, so the bracket is meaningless and
+            # no further progress is possible. Checked before the x-convergence
+            # exit so a NaN is never reported as a converged solution.
+            return build_bracketing_solution(prob, alg, x3, y3, x1, x2, ReturnCode.Failure)
         elseif (x2 - x1) < 2ϵ
             return build_bracketing_solution(prob, alg, x3, y3, x1, x2, ReturnCode.Success)
         end

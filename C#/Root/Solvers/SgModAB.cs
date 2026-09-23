@@ -59,7 +59,7 @@ namespace Proektsoft.Root
             double yMin = 0.0;
             const int MaxResidualSteps = 3;
             var residualSteps = 0;
-            const double C = 2.0;
+            const double C = 2;
 
             for (var i = 1; i <= MaxIterations; ++i)
             {

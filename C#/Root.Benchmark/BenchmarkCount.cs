@@ -12,7 +12,8 @@ namespace Root.Benchmark
             const int methodCount = 9;
             var problemCount = problems.Length;
             var results = new Result[problemCount, methodCount];
-            var sum = new int[methodCount];
+            var sumAll = new int[methodCount];
+            var sumValid = new int[methodCount];
             var average = new double[methodCount];
             var logSum = new double[methodCount];
             var mean = new double[methodCount];
@@ -69,9 +70,10 @@ namespace Root.Benchmark
                     else if (returnCode == Solver.ReturnCode.MaxIterationsExceeded) 
                         maxCount[j]++;
 
+                    sumAll[j] += evals;
                     if (returnCode != Solver.ReturnCode.Invalid)
                     {
-                        sum[j] += evals;
+                        sumValid[j] += evals;
                         logSum[j] += Math.Log(evals);
                         if (evals > max[j])
                             max[j] = evals;
@@ -144,7 +146,7 @@ List of algorithms:
             for (int j = 0; j < methodCount; ++j)
             {
                 var count = problemCount - invalidCount[j];
-                average[j] = (double)sum[j] / count;
+                average[j] = (double)sumValid[j] / count;
                 mean[j] = Math.Exp(logSum[j] / count); // geometric mean
                 variance[j] = 0.0;
                 for (int i = 0; i < problemCount; ++i)
@@ -173,7 +175,8 @@ List of algorithms:
                 Console.WriteLine($"|{label,7} | " + string.Join(" | ",
                     values.Select(v => (format == null ? v.ToString() : ((IFormattable)v).ToString(format, null)).PadLeft(5))));
 
-            WriteRow("Sum", sum);
+            WriteRow("SumAll", sumAll);
+            WriteRow("Valid", sumValid);
             WriteRow("Ave", average, "f1");
             WriteRow("Mean", mean, "f1");
             WriteRow("StdDev", stddev, "f1");
