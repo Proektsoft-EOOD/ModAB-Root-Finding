@@ -39,53 +39,19 @@
             return f(x);
         }
 
-        /// <summary>
-        /// Returns true only when both values have the same non-zero sign.
-        /// </summary>
-        /// <remarks>
-        /// The predicate is shared by all bracketing algorithms. Comparisons
-        /// with NaN are false, so every solver must reject NaN before using this
-        /// predicate to update a bracket.
-        /// </remarks>
         private static bool SameSign(double x, double y) =>
             (x < 0.0 && y < 0.0) ||
             (x > 0.0 && y > 0.0);
 
-        /// <summary>
-        /// Validates common inputs, orders the endpoints, evaluates the two
-        /// endpoint residuals, and returns a LOCAL counting wrapper for f.
-        /// </summary>
-        /// <remarks>
-        /// CORRECTION TO THE PREVIOUS SHARED WRAPPER.
-        ///
-        /// The old implementation stored the active function in
-        ///
-        ///     private static Func&lt;double,double&gt; F;
-        ///
-        /// so another or nested solver call could overwrite F while the first
-        /// call was still running. The wrapper is now returned through the out
-        /// parameter F and is therefore local to the current invocation.
-        ///
-        /// The null check is deliberately applied to the user delegate f before
-        /// the wrapper is created. Checking the wrapper itself would never catch
-        /// a null f because a non-null lambda can close over a null reference.
-        /// </remarks>
         private static bool Initialize(
             Func<double, double> f,
-            double x1,
-            double x2,
-            double aTol,
-            double rTol,
-            out Node p1,
-            out Node p2,
+            double x1, double x2,
+            double aTol, double rTol,
+            out Node p1, out Node p2,
             out Func<double, double> F)
         {
             EvaluationCount = 0;
             ArgumentNullException.ThrowIfNull(f);
-
-            // The counting wrapper belongs to this one solver call. Numerical
-            // results can no longer be corrupted by a different call changing a
-            // shared static function reference.
             F = x => EvaluateAndCount(f, x);
 
             if (!double.IsFinite(aTol) || aTol < 0.0)
