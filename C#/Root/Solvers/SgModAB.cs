@@ -21,9 +21,9 @@ namespace Proektsoft.Root
                 return p2.X;
 
             var isAB = false;
-            var sideMoved = 0;
+            var sideMoved = 0; // The side that was moved on the previous Anderson-Björck step.
             const int LEFT = -1, RIGHT = 1;
-            var fallbackThreshold = 0.0;
+            var fallbackThreshold = 0.0; // The threshold for switching back to the bisection method.
             var yMin = 0.0;
             const double C = 2.0;
             for (var i = 1; i <= MaxIterations; ++i)
@@ -54,7 +54,7 @@ namespace Proektsoft.Root
                     yMin = Math.Min(Math.Abs(f1), Math.Abs(f2)); // Best true residual of the bracket.
                 else if (double.IsFinite(f2 - f1)) // Avoids overflow in the calculations below.
                 {
-                    var ym = (f1 + f2) * 0.5;
+                    var ym = 0.5 * (f1 + f2);
                     var r = 1 - Math.Abs(ym / (f2 - f1)); // Symmetry factor
                     var k = r * r; // Deviation factor
                     switchToAB = Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3);
