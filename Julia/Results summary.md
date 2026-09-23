@@ -20,9 +20,9 @@ Two modAB columns are reported side by side in the same run:
 
 Func | bisect | brent | ridder | alefeld |  ITP | modAB_rel | modAB_SG
 ---  | -----: | ----: | -----: | ------: | ---: | --------: | ----:
-SUM  |   4890 |  6194 |   4026 |   98050 | 2773 |      1978 |  1944
-AVE  |   48,9 |  61,9 |   40,3 |   980,5 | 27,7 |      19,8 |  19,4
-REL  |   252% |  319% |   207% |   5044% | 143% |      102% |  100%
+SUM  |   4890 |  6194 |   4026 |   98050 | 2773 |      1978 |  1945
+AVE  |   48,9 |  61,9 |   40,3 |   980,5 | 27,7 |      19,8 |  19,5
+REL  |   251% |  318% |   207% |   5041% | 143% |      102% |  100%
 
 Failures: `alefeld` returns `NaN` on f43, f44, f45, f78, f91 and f100; `brent` on f100.
 Both modAB versions solve all 100.
@@ -33,9 +33,9 @@ Both modAB versions solve all 100.
 
 Func | bisect | brent | ridder | alefeld |  ITP |  A42 | modAB_rel | modAB_SG
 ---  | -----: | ----: | -----: | ------: | ---: | ---: | --------: | ----:
-SUM  |   4786 |  1944 |   3238 |    1826 | 2515 | 2069 |      1978 |  1944
-AVE  |   47,9 |  19,4 |   32,4 |    18,3 | 25,1 | 20,7 |      19,8 |  19,4
-REL  |   246% |  100% |   167% |     94% | 129% | 106% |      102% |  100%
+SUM  |   4786 |  1944 |   3238 |    1826 | 2515 | 2069 |      1978 |  1945
+AVE  |   47,9 |  19,4 |   32,4 |    18,3 | 25,1 | 20,7 |      19,8 |  19,5
+REL  |   246% |  100% |   166% |     94% | 129% | 106% |      102% |  100%
 
 Failures: `ridder` returns `NaN` on f72 and f73; on f100 `alefeld` and `A42` return `NaN`,
 while `brent`, `ridder` and `ITP` return the right endpoint `ℯ`, which is not a root.
@@ -54,17 +54,16 @@ timing loop.
 
 Func | bisect   | brent   | ridder  | alefeld   |   ITP   | modAB_rel |  modAB_SG
 ---- | -------: | ------: | ------: | --------: | ------: | --------: | ------:
-SUM  | 111,3 μs | 97,3 μs | 60,7 μs | 374,7 μs* | 91,8 μs |   35,5 μs | 36,8 μs
-AVE  |  1113 ns |  973 ns |  607 ns |  3747 ns* |  918 ns |    355 ns |  368 ns
-REL  |     302% |    264% |    165% |    1018%* |    249% |       96% |    100%
+SUM  | 117,3 μs | 95,9 μs | 58,1 μs | 382,1 μs* | 95,5 μs |   34,2 μs | 32,8 μs
+AVE  |  1173 ns |  959 ns |  581 ns |  3821 ns* |  955 ns |    342 ns |  328 ns
+REL  |     358% |    292% |    177% |    1165%* |    291% |      104% |    100%
 
 \* `alefeld` errors on f43, f44, f45, f78, f91 and f100, so its total covers only the
 94 problems it solved and understates the true cost. Every other solver completed all 100.
 
-The two modAB versions trade off against each other. Per function evaluation the
-release costs 17,9 ns and the local version 18,9 ns, because the local version's
-safeguard helpers do more work per iteration. The local version needs 1,7% fewer
-evaluations but ends up 3,7% slower in wall-clock. Both figures are close to the
-run-to-run spread on this machine, so the fair reading is that the two are
-equivalent in speed, with the local version ahead on evaluation count — which is
-what matters when the objective function is expensive.
+The local version no longer trades speed for its safeguards. Per function
+evaluation the release costs 17,3 ns and the local version 16,9 ns. The local
+version needs 1,7% fewer evaluations and is 4,1% faster in wall-clock. The time
+difference is close to the run-to-run spread on this machine, so the fair reading
+is that the two are equivalent in speed, with the local version ahead on
+evaluation count — which is what matters when the objective function is expensive.

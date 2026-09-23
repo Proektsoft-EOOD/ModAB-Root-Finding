@@ -74,7 +74,7 @@
                     returnCode = ReturnCode.Invalid;
                     return double.NaN;
                 }
-                if (SameNonzeroSign(p1.Y, p3.Y))
+                if (SameSign(p1.Y, p3.Y))
                 {
                     if (side == 1) // Apply Anderson-Bjork correction to the right side
                     {

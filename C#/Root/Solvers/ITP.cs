@@ -51,9 +51,9 @@
                 double x = Math.Abs(xt - xb) <= r ? xt : xb - σ * r;
                 // Update
                 Node p = new(x, F);
-                if (SameNonzeroSign(p.Y, p1.Y))
+                if (SameSign(p.Y, p1.Y))
                     p1 = p;
-                else if (SameNonzeroSign(p.Y, p2.Y))
+                else if (SameSign(p.Y, p2.Y))
                     p2 = p;
                 else
                     return x;

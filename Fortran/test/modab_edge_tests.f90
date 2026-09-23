@@ -3,8 +3,8 @@ program modab_edge_tests
 !!
 !! The 100-problem benchmark suite in root_tests never produces a non-finite or
 !! overflowing residual, so none of it reaches the overflow/NaN branches of
-!! same_nonzero_sign, safe_midpoint, safe_secant, symmetry_factor and
-!! passes_switching_test. The brackets below do.
+!! same_sign, safe_midpoint and safe_secant, or the overflow cases of the
+!! switching test. The brackets below do.
 !!
 !! Those helpers are private to root_module, so this program reaches them only
 !! through the solver. The first case is decisive on its own: before
@@ -13,11 +13,12 @@ program modab_edge_tests
 !! overflowed even though the mathematical answer is an ordinary finite number.
 !!
 !! The sibling ports (C/test, Java, Python, Rust, TypeScript, Zig, Cython) test
-!! the five helpers directly against a shared table of expected values, which
+!! the three helpers directly against a shared table of expected values, which
 !! this program cannot do without widening the module's public interface.
 
     use root_module, only: wp => root_module_rk, root_scalar
-    use ieee_arithmetic, only: ieee_value, ieee_quiet_nan, ieee_is_nan
+    use ieee_arithmetic, only: ieee_value, ieee_quiet_nan, ieee_is_nan, &
+                               ieee_positive_inf, ieee_negative_inf
 
     implicit none
 
@@ -33,8 +34,8 @@ program modab_edge_tests
     call ck_root('x1 + x2 overflows, negative', f_mid_neg, -1.7e308_wp, -1.0e308_wp, -1.2e308_wp)
 
     ! |f1| + |f2| overflows, so the old symmetry factor divided by an infinite
-    ! f2 - f1 and always saw a perfectly symmetric bracket. symmetry_factor
-    ! halves both magnitudes and keeps the ratio that defines the weights.
+    ! f2 - f1 and always saw a perfectly symmetric bracket. The switching test
+    ! is now skipped while f2 - f1 overflows, so the solver keeps bisecting.
     call ck_root('|f1| + |f2| overflows',       f_sym,     0.0_wp,      1.0_wp,      1.7_wp/2.2_wp)
     call ck_root('|f1| + |f2| overflows, wide', f_sym2,    -0.6_wp,     1.0_wp,      0.6_wp/1.62_wp)
 
@@ -45,6 +46,17 @@ program modab_edge_tests
     ! A NaN residual has no usable sign, so the bracket cannot be updated and
     ! the solver must not report success.
     call ck_rejects('NaN residual mid-solve',   f_nan,     0.0_wp,      1.0_wp)
+
+    ! Overflow and infinite residuals in the switching test.
+    ! |ym| + |y3| overflows at the first midpoint while |ym - y3| is finite.
+    call ck_root('hump',                        f_hump,      -1.0_wp, 1.0_wp, -5.0_wp/6.0_wp)
+    ! f2 - f1 overflows: switching is disabled until the residuals shrink.
+    call ck_root('f2 - f1 overflows',           f_tanh,      -1.0_wp, 1.0_wp, 0.3_wp)
+    ! Infinite residuals at one or both ends of the bracket.
+    call ck_root('infinite left residual',      f_inf_left,  -1.0_wp, 1.0_wp, 0.1_wp)
+    call ck_root('infinite residuals',          f_inf_both,  -1.0_wp, 1.0_wp, 0.1_wp)
+    ! Subnormal residuals: A&B corrections underflow towards zero.
+    call ck_root('subnormal residuals',         f_subnormal, -1.0_wp, 1.0_wp, 0.2_wp**(1.0_wp/3.0_wp))
 
     write(*,'(A,I0,A,I0,A)') 'Fortran edge-cases: ', passed, '/', total, &
         merge(' PASS', ' FAIL', passed == total)
@@ -103,6 +115,55 @@ contains
         f = x - 0.5_wp
     end if
     end function f_nan
+
+    !! Linear pieces up to huge(): |ym| + |y3| overflows at the first midpoint.
+    function f_hump(x) result(f)
+    real(wp),intent(in) :: x
+    real(wp) :: f
+    if (x <= 0.0_wp) then
+        f = huge(1.0_wp)*(-0.2_wp + 1.2_wp*(x + 1.0_wp))
+    else
+        f = huge(1.0_wp)*(1.0_wp - 0.2_wp*x)
+    end if
+    end function f_hump
+
+    !! Residuals near +-1.7e308, so f2 - f1 overflows; the root is 0.3.
+    function f_tanh(x) result(f)
+    real(wp),intent(in) :: x
+    real(wp) :: f
+    f = 1.7e308_wp*tanh(10.0_wp*(x - 0.3_wp))
+    end function f_tanh
+
+    !! -Inf left of -0.5; the root is 0.1.
+    function f_inf_left(x) result(f)
+    real(wp),intent(in) :: x
+    real(wp) :: f
+    if (x < -0.5_wp) then
+        f = ieee_value(f, ieee_negative_inf)
+    else
+        f = x - 0.1_wp
+    end if
+    end function f_inf_left
+
+    !! -Inf left of -0.5 and +Inf right of 0.9; the root is 0.1.
+    function f_inf_both(x) result(f)
+    real(wp),intent(in) :: x
+    real(wp) :: f
+    if (x < -0.5_wp) then
+        f = ieee_value(f, ieee_negative_inf)
+    else if (x > 0.9_wp) then
+        f = ieee_value(f, ieee_positive_inf)
+    else
+        f = x - 0.1_wp
+    end if
+    end function f_inf_both
+
+    !! Residuals of order 1e-300; the root is 0.2**(1/3).
+    function f_subnormal(x) result(f)
+    real(wp),intent(in) :: x
+    real(wp) :: f
+    f = 1.0e-300_wp*(x*x*x - 0.2_wp)
+    end function f_subnormal
 
     !! Asserts the solver reports success and lands on the expected root.
     subroutine ck_root(name, fun, ax, bx, want)

@@ -2770,7 +2770,7 @@
 !    2. The original function values y1 and y2 (without A&B corrections) are stored for later use in bisection fallback
     subroutine ModAB(me,ax,bx,fax,fbx,xzero,fzero,iflag)
 
-    use ieee_arithmetic, only: ieee_is_nan
+    use ieee_arithmetic, only: ieee_is_nan, ieee_is_finite
 
     implicit none
 
@@ -2783,35 +2783,36 @@
     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-1`=NaN residual, `-2`=max iterations reached)
 
-    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ymin,ym,threshold
+    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ymin,ym,r,k,threshold
     integer :: i  !! iteration counter
     logical :: root_found, bis
     integer :: side !! for tracking the side
 
     iflag = 0
     side = 0
-    x1 = ax; y1 = fax; f1 = y1
+    x1 = ax; y1 = fax; f1 = y1   ! f1, f2: true residuals, kept unmodified by A&B corrections
     x2 = bx; y2 = fbx; f2 = y2
     bis = .true.
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
-    ymin = 0.0_wp
+    ymin = 0.0_wp   ! best true residual of the bracket
     do i = 1, me%maxiter
         if (bis) then
             x3 = safe_midpoint(x1,x2)
             y3 = me%f(x3)
             if (me%solution(x3,y3,xzero,fzero)) return
-            ym = safe_midpoint(f1,f2)   ! ordinate of the chord at the midpoint
-            if (passes_switching_test(ym,y3,symmetry_factor(f1,f2))) then
-                bis = .false.
-                threshold = 2.0_wp*(x2-x1)   ! safety factor
+            if (ieee_is_finite(f2-f1)) then   ! avoids overflow in the calculations below
+                ym = (f1+f2)*0.5_wp            ! chord ordinate at the midpoint; f1, f2 have opposite signs
+                r = 1.0_wp - abs(ym/(f2-f1))   ! symmetry factor
+                k = r*r                        ! deviation factor
+                ! k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
+                if (abs(ym-y3) < k*abs(ym) + k*abs(y3)) then
+                    bis = .false.
+                    threshold = 2.0_wp*(x2-x1)   ! safety factor
+                end if
             end if
         else
-            ! safe_secant already returns a point inside [x1,x2], so no separate
-            ! clamp is needed here.
             x3 = safe_secant(x1,y1,x2,y2)
-            ! If rounding makes the proposal coincide with an endpoint, reuse
-            ! the true residual already stored there (f1/f2 are untouched by the
-            ! A&B modifications).
+            ! If x3 got clamped, reuse the true residual stored at the endpoint.
             if (x3 == x1) then
                 y3 = f1
             else if (x3 == x2) then
@@ -2821,7 +2822,6 @@
                 if (me%solution(x3,y3,xzero,fzero)) return
             end if
             threshold = 0.5_wp * threshold
-            ! best residual of the bracket before y3 replaces an endpoint
             ymin = min(abs(f1),abs(f2))
         end if
 
@@ -2835,7 +2835,7 @@
         end if
 
         ! A NaN residual has no usable sign, so the bracket cannot be updated
-        ! and [[same_nonzero_sign]] must not be reached with it.
+        ! and [[same_sign]] must not be reached with it.
         if (ieee_is_nan(y3)) then
             xzero = x3
             fzero = y3
@@ -2845,12 +2845,14 @@
 
         select case (side)
         case(1)
-            y2 = scale_preserving_nonzero_sign(y2, ab_factor(y3,y1))
+            y2 = y2*ab_factor(y3,y1)
         case(2)
-            y1 = scale_preserving_nonzero_sign(y1, ab_factor(y3,y2))
+            y1 = y1*ab_factor(y3,y2)
         end select
 
-        if (same_nonzero_sign(y1,y3)) then
+        ! The sign test uses the true residual f1: the auxiliary y1 may have
+        ! underflowed to zero after repeated A&B corrections.
+        if (same_sign(f1,y3)) then
             if (.not. bis) side = 1
             x1 = x3
             y1 = y3
@@ -2877,7 +2879,7 @@
 !
 !  These helpers carry the overflow/NaN postconditions that [[ModAB]] relies on.
 !  They are the Fortran form of the reference implementation in
-!  `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,ModABCorr}.cs`, so a change to
+!  `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,SgModAB}.cs`, so a change to
 !  the numerics belongs in one place rather than inline in the solver.
 !
 !  `ieee_is_nan` / `ieee_is_finite` are used instead of `x /= x` style tests so
@@ -2890,7 +2892,7 @@
 !  Comparisons with NaN are false, so a caller must reject NaN before using this
 !  predicate to update a bracket.
 
-    pure function same_nonzero_sign(x,y) result(same)
+    pure function same_sign(x,y) result(same)
 
     implicit none
 
@@ -2900,7 +2902,7 @@
 
     same = (x < 0.0_wp .and. y < 0.0_wp) .or. (x > 0.0_wp .and. y > 0.0_wp)
 
-    end function same_nonzero_sign
+    end function same_sign
 !*****************************************************************************************
 
 !*****************************************************************************************
@@ -2991,97 +2993,6 @@
 
 !*****************************************************************************************
 !>
-!  Returns `k = r**2` for the symmetry-sensitive switching criterion.
-!  The calculation is homogeneous in the true endpoint residuals.
-
-    function symmetry_factor(y1,y2) result(k)
-
-    use ieee_arithmetic, only: ieee_is_finite, ieee_value, ieee_quiet_nan
-
-    implicit none
-
-    real(wp),intent(in) :: y1
-    real(wp),intent(in) :: y2
-    real(wp) :: k
-
-    real(wp) :: a,b,den,r
-
-    a = abs(y1)
-    b = abs(y2)
-    den = a + b
-
-    if (.not. ieee_is_finite(den)) then
-        ! Infinite true residuals deliberately disable switching and keep the
-        ! controller in bisection mode. NaN is returned rather than an infinity
-        ! because every exit of [[passes_switching_test]] is a "<" comparison,
-        ! which is false against NaN; an infinity would instead satisfy it and
-        ! switch. Residuals are never zero here, so only an overflowing sum
-        ! remains, and halving both restores it without changing the ratio.
-        if (.not. ieee_is_finite(a) .or. .not. ieee_is_finite(b)) then
-            k = ieee_value(k, ieee_quiet_nan)
-            return
-        end if
-        a = 0.5_wp*a
-        b = 0.5_wp*b
-        den = a + b
-    end if
-
-    ! |b-a| <= den, so the quotient lies in [0,1]; halving after the division
-    ! avoids forming 2*den, which could overflow.
-    r = 1.0_wp - abs(b - a)/den/2.0_wp
-    k = r*r
-
-    end function symmetry_factor
-!*****************************************************************************************
-
-!*****************************************************************************************
-!>
-!  Tests whether the true midpoint value `yf` is close enough to the midpoint
-!  value `ym` of the chord through the true endpoint residuals.
-
-    function passes_switching_test(ym,yf,symmetry) result(passes)
-
-    use ieee_arithmetic, only: ieee_is_finite
-
-    implicit none
-
-    real(wp),intent(in) :: ym
-    real(wp),intent(in) :: yf
-    real(wp),intent(in) :: symmetry
-    logical :: passes
-
-    real(wp) :: abs_ym,abs_yf,total,scale,norm_ym,norm_yf
-
-    abs_ym = abs(ym)
-    abs_yf = abs(yf)
-    total = abs_yf + abs_ym
-
-    ! Fast path. The exact-root case is handled before this is called, and a
-    ! non-finite ordinate or a NaN symmetry factor fails the comparison, which
-    ! disables switching as intended.
-    if (ieee_is_finite(total)) then
-        passes = abs(ym - yf) < symmetry*total
-        return
-    end if
-
-    ! Only reached when the sum overflows. Non-finite values are unsuitable for
-    ! the linearity comparison.
-    if (.not. ieee_is_finite(ym) .or. .not. ieee_is_finite(yf)) then
-        passes = .false.
-        return
-    end if
-
-    ! Normalize both sides of the homogeneous inequality to avoid overflow.
-    scale = max(abs_yf,abs_ym)
-    norm_ym = ym/scale
-    norm_yf = yf/scale
-    passes = abs(norm_ym - norm_yf) < symmetry*(abs(norm_yf) + abs(norm_ym))
-
-    end function passes_switching_test
-!*****************************************************************************************
-
-!*****************************************************************************************
-!>
 !  The Anderson-Bjorck contraction factor for the ordinate that did not move.
 
     pure function ab_factor(y3,y_moved) result(m)
@@ -3096,39 +3007,6 @@
     if (.not. (m > 0.0_wp)) m = 0.5_wp
 
     end function ab_factor
-!*****************************************************************************************
-
-!*****************************************************************************************
-!>
-!  Multiplies an auxiliary Anderson-Bjorck ordinate by a positive factor while
-!  preserving a finite non-zero sign.
-!
-!  This keeps [[same_nonzero_sign]] sound: an auxiliary ordinate that
-!  underflowed to zero would otherwise silently change which branch of the
-!  bracket update is taken. It acts only on auxiliary ordinates; an underflowed
-!  working value is never accepted as a root of `f`.
-
-    function scale_preserving_nonzero_sign(value,positive_factor) result(scaled)
-
-    use ieee_arithmetic, only: ieee_is_finite
-
-    implicit none
-
-    real(wp),intent(in) :: value
-    real(wp),intent(in) :: positive_factor
-    real(wp) :: scaled
-
-    scaled = value*positive_factor
-
-    if (scaled == 0.0_wp .and. value /= 0.0_wp) then
-        ! Smallest positive subnormal for this kind.
-        scaled = sign(tiny(1.0_wp)*epsilon(1.0_wp), value)
-        return
-    end if
-
-    if (.not. ieee_is_finite(scaled)) scaled = sign(huge(1.0_wp), value)
-
-    end function scale_preserving_nonzero_sign
 !*****************************************************************************************
 
 !*****************************************************************************************

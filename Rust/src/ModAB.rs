@@ -2,7 +2,7 @@
 //!
 //! The `safe_*` helpers below carry the overflow/NaN postconditions the solver
 //! relies on. They are the Rust form of the reference implementation in
-//! `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,ModABCorr}.cs`, so a change to
+//! `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,SgModAB}.cs`, so a change to
 //! the numerics belongs in one place rather than inline in the solver.
 
 /// Returns true only when both values have the same non-zero sign.
@@ -10,7 +10,7 @@
 /// Comparisons with NaN are false, so a caller must reject NaN before using
 /// this predicate to update a bracket.
 #[inline]
-pub fn same_nonzero_sign(x: f64, y: f64) -> bool {
+pub fn same_sign(x: f64, y: f64) -> bool {
     (x < 0.0 && y < 0.0) || (x > 0.0 && y > 0.0)
 }
 
@@ -72,94 +72,11 @@ pub fn safe_secant(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
     x.clamp(x1, x2)
 }
 
-/// Returns `k = r^2` for the symmetry-sensitive switching criterion.
-///
-/// The calculation is homogeneous in the true endpoint residuals.
-#[inline]
-pub fn symmetry_factor(y1: f64, y2: f64) -> f64 {
-    let mut a = y1.abs();
-    let mut b = y2.abs();
-    let mut den = a + b;
-
-    if den.is_infinite() {
-        // Infinite true residuals deliberately disable switching and keep the
-        // controller in bisection mode. NaN is returned rather than an infinity
-        // because every exit of `passes_switching_test` is a "<" comparison,
-        // which is false against NaN; an infinity would instead satisfy it and
-        // switch. Residuals are never zero here, so only an overflowing sum
-        // remains, and halving both restores it without changing the ratio.
-        if a.is_infinite() || b.is_infinite() {
-            return f64::NAN;
-        }
-        a *= 0.5;
-        b *= 0.5;
-        den = a + b;
-    }
-
-    // |b-a| <= den, so the quotient lies in [0,1]; halving after the division
-    // avoids forming 2*den, which could overflow.
-    let r = 1.0 - (b - a).abs() / den / 2.0;
-    r * r
-}
-
-/// Tests whether the true midpoint value `yf` is close enough to the midpoint
-/// value `ym` of the chord through the true endpoint residuals.
-#[inline]
-pub fn passes_switching_test(ym: f64, yf: f64, symmetry: f64) -> bool {
-    let abs_ym = ym.abs();
-    let abs_yf = yf.abs();
-    let sum = abs_yf + abs_ym;
-
-    // Fast path. The exact-root case is handled before this is called, and a
-    // non-finite ordinate or a NaN symmetry factor fails the comparison, which
-    // disables switching as intended.
-    if sum.is_finite() {
-        return (ym - yf).abs() < symmetry * sum;
-    }
-
-    // Only reached when the sum overflows. Non-finite values are unsuitable for
-    // the linearity comparison.
-    if !ym.is_finite() || !yf.is_finite() {
-        return false;
-    }
-
-    // Normalize both sides of the homogeneous inequality to avoid overflow.
-    let scale = abs_yf.max(abs_ym);
-    let norm_ym = ym / scale;
-    let norm_yf = yf / scale;
-    (norm_ym - norm_yf).abs() < symmetry * (norm_yf.abs() + norm_ym.abs())
-}
-
-/// Smallest positive subnormal (2^-1074), the f64 analogue of C#'s `double.Epsilon`.
-const MIN_SUBNORMAL: f64 = f64::from_bits(1);
-
 /// The Anderson-Bjorck contraction factor for the ordinate that did not move.
 #[inline]
 fn ab_factor(y3: f64, y_moved: f64) -> f64 {
     let m = 1.0 - y3 / y_moved;
     if m > 0.0 { m } else { 0.5 }
-}
-
-/// Multiplies an auxiliary Anderson-Bjorck ordinate by a positive factor while
-/// preserving a finite non-zero sign in binary64 arithmetic.
-///
-/// This keeps [`same_nonzero_sign`] sound: an auxiliary ordinate that
-/// underflowed to zero would otherwise silently change which branch of the
-/// bracket update is taken. It acts only on auxiliary ordinates; an underflowed
-/// working value is never accepted as a root of f.
-#[inline]
-fn scale_preserving_nonzero_sign(value: f64, positive_factor: f64) -> f64 {
-    let scaled = value * positive_factor;
-
-    if scaled == 0.0 && value != 0.0 {
-        return MIN_SUBNORMAL.copysign(value);
-    }
-
-    if scaled.is_infinite() {
-        return f64::MAX.copysign(value);
-    }
-
-    scaled
 }
 
 // Finds the root of "F(x) = 0" within the interval [x1, x2]
@@ -172,8 +89,8 @@ fn scale_preserving_nonzero_sign(value: f64, positive_factor: f64) -> f64 {
 //     1. The secant point is clamped to the interval [x1, x2] before the X-convergence exit
 //     2. The original function values y1 and y2 (without A&B corrections)
 //        are stored for later use in bisection fallback
-// The overflow- and NaN-safe forms of the interpolation and switching
-// arithmetic live in the shared safeguards above.
+// The overflow- and NaN-safe form of the interpolation lives in the shared
+// safeguards above; the switching test is written so that it cannot overflow.
 // F(x) must be continuous and sign(F(x1)) != sign(F(x2))
 pub fn mod_ab_root<F>(
     f: F,
@@ -199,20 +116,19 @@ where
     if y2.abs() <= epsy {
         return x2;
     }
-    // NaN has no usable sign, and `same_nonzero_sign` is false for it, so it
+    // NaN has no usable sign, and `same_sign` is false for it, so it
     // must be rejected before the predicate is used to update a bracket.
-    if y1.is_nan() || y2.is_nan() || same_nonzero_sign(y1, y2) {
+    if y1.is_nan() || y2.is_nan() || same_sign(y1, y2) {
         return f64::NAN;
     }
+    // True residuals, kept unmodified by A&B corrections
     let mut f1 = y1;
     let mut f2 = y2;
     let mut side: i32 = 0;
     let mut bisection = true;
     let mut threshold = x2 - x1;
-    let mut ymin = 0.0;
+    let mut ymin = 0.0; // Best true residual of the bracket
     for _ in 0..maxiter {
-        // `safe_secant` already returns a point inside [x1, x2], so the separate
-        // clamp on the convergence exit is no longer needed.
         let x3 = if bisection {
             safe_midpoint(x1, x2)
         } else {
@@ -225,14 +141,19 @@ where
         let y3: f64;
         if bisection {
             y3 = f(x3) - y;
-            let ym = safe_midpoint(f1, f2);
-            if passes_switching_test(ym, y3, symmetry_factor(f1, f2)) {
-                bisection = false;
-                threshold = (x2 - x1) * 2.0;
+            if (f2 - f1).is_finite() {
+                // Avoids overflow in the calculations below
+                let ym = (f1 + f2) * 0.5; // Chord ordinate at midpoint; f1, f2 have opposite signs
+                let r = 1.0 - (ym / (f2 - f1)).abs(); // Symmetry factor
+                let k = r * r; // Deviation factor
+                // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
+                if (ym - y3).abs() < k * ym.abs() + k * y3.abs() {
+                    bisection = false;
+                    threshold = 2.0 * (x2 - x1);
+                }
             }
         } else {
-            // If rounding makes the proposal coincide with an endpoint, reuse
-            // the true residual already stored there.
+            // If x3 got clamped, reuse the true residual stored at the endpoint.
             if x3 == x1 {
                 y3 = f1;
             } else if x3 == x2 {
@@ -250,16 +171,16 @@ where
         if y3.is_nan() {
             return f64::NAN;
         }
-        if same_nonzero_sign(y1, y3) {
+        if same_sign(f1, y3) {
             if side == 1 {
-                y2 = scale_preserving_nonzero_sign(y2, ab_factor(y3, y1));
+                y2 *= ab_factor(y3, y1);
             } else if !bisection {
                 side = 1;
             }
             (x1, y1, f1) = (x3, y3, y3);
         } else {
             if side == -1 {
-                y1 = scale_preserving_nonzero_sign(y1, ab_factor(y3, y2));
+                y1 *= ab_factor(y3, y2);
             } else if !bisection {
                 side = -1;
             }
@@ -278,11 +199,11 @@ mod safeguard_tests {
     //! Edge-case tests for the shared modAB safeguards.
     //!
     //! The 100-problem benchmark suite never produces a non-finite or overflowing
-    //! residual, so the overflow/NaN branches of same_nonzero_sign, safe_midpoint,
-    //! safe_secant, symmetry_factor and passes_switching_test are covered here.
+    //! residual, so the overflow/NaN branches of same_sign, safe_midpoint and
+    //! safe_secant, and the overflow cases of the switching test, are covered here.
     //!
     //! Expected values come from the C# reference in C#/Root/Node.cs and
-    //! C#/Root/Solvers/ModABCorr.cs; every language port is held to the same table.
+    //! C#/Root/Solvers/SgModAB.cs; every language port is held to the same table.
 
     use super::*;
 
@@ -291,21 +212,21 @@ mod safeguard_tests {
     }
 
     #[test]
-    fn same_nonzero_sign_edge_cases() {
-        assert_eq!(same_nonzero_sign(1.0f64, 2.0f64), true, "case 0");
-        assert_eq!(same_nonzero_sign(-1.0f64, -2.0f64), true, "case 1");
-        assert_eq!(same_nonzero_sign(1.0f64, -2.0f64), false, "case 2");
-        assert_eq!(same_nonzero_sign(-1.0f64, 2.0f64), false, "case 3");
-        assert_eq!(same_nonzero_sign(0.0f64, 1.0f64), false, "case 4");
-        assert_eq!(same_nonzero_sign(1.0f64, 0.0f64), false, "case 5");
-        assert_eq!(same_nonzero_sign(0.0f64, 0.0f64), false, "case 6");
-        assert_eq!(same_nonzero_sign(-0.0f64, -1.0f64), false, "case 7");
-        assert_eq!(same_nonzero_sign(f64::NAN, 1.0f64), false, "case 8");
-        assert_eq!(same_nonzero_sign(1.0f64, f64::NAN), false, "case 9");
-        assert_eq!(same_nonzero_sign(f64::NAN, f64::NAN), false, "case 10");
-        assert_eq!(same_nonzero_sign(f64::INFINITY, 1.0f64), true, "case 11");
-        assert_eq!(same_nonzero_sign(-f64::INFINITY, -1.0f64), true, "case 12");
-        assert_eq!(same_nonzero_sign(f64::INFINITY, -f64::INFINITY), false, "case 13");
+    fn same_sign_edge_cases() {
+        assert_eq!(same_sign(1.0f64, 2.0f64), true, "case 0");
+        assert_eq!(same_sign(-1.0f64, -2.0f64), true, "case 1");
+        assert_eq!(same_sign(1.0f64, -2.0f64), false, "case 2");
+        assert_eq!(same_sign(-1.0f64, 2.0f64), false, "case 3");
+        assert_eq!(same_sign(0.0f64, 1.0f64), false, "case 4");
+        assert_eq!(same_sign(1.0f64, 0.0f64), false, "case 5");
+        assert_eq!(same_sign(0.0f64, 0.0f64), false, "case 6");
+        assert_eq!(same_sign(-0.0f64, -1.0f64), false, "case 7");
+        assert_eq!(same_sign(f64::NAN, 1.0f64), false, "case 8");
+        assert_eq!(same_sign(1.0f64, f64::NAN), false, "case 9");
+        assert_eq!(same_sign(f64::NAN, f64::NAN), false, "case 10");
+        assert_eq!(same_sign(f64::INFINITY, 1.0f64), true, "case 11");
+        assert_eq!(same_sign(-f64::INFINITY, -1.0f64), true, "case 12");
+        assert_eq!(same_sign(f64::INFINITY, -f64::INFINITY), false, "case 13");
     }
 
     #[test]
@@ -334,39 +255,32 @@ mod safeguard_tests {
         assert!(eq(safe_secant(1e+308f64, -1.0f64, 1.7e+308f64, 1.0f64), 1.35e+308f64), "case 10");
     }
 
-    #[test]
-    fn symmetry_factor_edge_cases() {
-        assert!(eq(symmetry_factor(-1.0f64, 1.0f64), 1.0f64), "case 0");
-        assert!(eq(symmetry_factor(-1.0f64, 3.0f64), 0.5625f64), "case 1");
-        assert!(eq(symmetry_factor(-3.0f64, 1.0f64), 0.5625f64), "case 2");
-        assert!(eq(symmetry_factor(-1e+308f64, 1e+308f64), 1.0f64), "case 3");
-        assert!(eq(symmetry_factor(-1.7e+308f64, 1.0f64), 0.25f64), "case 4");
-        assert!(eq(symmetry_factor(f64::INFINITY, -1.0f64), f64::NAN), "case 5");
-        assert!(eq(symmetry_factor(-1.0f64, f64::INFINITY), f64::NAN), "case 6");
-        assert!(eq(symmetry_factor(f64::NAN, 1.0f64), f64::NAN), "case 7");
-        assert!(eq(symmetry_factor(-1e-300f64, 1e+300f64), 0.25f64), "case 8");
-    }
-
-    #[test]
-    fn passes_switching_test_edge_cases() {
-        assert_eq!(passes_switching_test(1.0f64, 1.0f64, 0.5f64), true, "case 0");
-        assert_eq!(passes_switching_test(1.0f64, -1.0f64, 0.5f64), false, "case 1");
-        assert_eq!(passes_switching_test(1.0f64, 0.5f64, 0.5f64), true, "case 2");
-        assert_eq!(passes_switching_test(1.0f64, 0.5f64, 0.1f64), false, "case 3");
-        assert_eq!(passes_switching_test(1e+308f64, 1e+308f64, 0.5f64), true, "case 4");
-        assert_eq!(passes_switching_test(1.7e+308f64, -1.7e+308f64, 0.5f64), false, "case 5");
-        assert_eq!(passes_switching_test(1e+308f64, 1.6e+308f64, 0.5f64), true, "case 6");
-        assert_eq!(passes_switching_test(f64::INFINITY, 1.0f64, 0.5f64), false, "case 7");
-        assert_eq!(passes_switching_test(1.0f64, f64::INFINITY, 0.5f64), false, "case 8");
-        assert_eq!(passes_switching_test(f64::NAN, 1.0f64, 0.5f64), false, "case 9");
-        assert_eq!(passes_switching_test(1.0f64, 1.0f64, f64::NAN), false, "case 10");
-        assert_eq!(passes_switching_test(0.0f64, 0.0f64, 0.5f64), false, "case 11");
-    }
-
     /// Solver-level regression: this returned +Inf before `safe_midpoint`.
     #[test]
     fn overflowing_bracket() {
         let root = mod_ab_root(|x| x * 1e-308 - 1.2, 1e308, 1.7e308, 0.0, 1e-14, 0.0, 200);
         assert!((root - 1.2e308).abs() <= 1e-13 * 1.2e308, "got {root}");
+    }
+
+    fn ck_root(name: &str, f: impl Fn(f64) -> f64, a: f64, b: f64, want: f64) {
+        let got = mod_ab_root(f, a, b, 0.0, 1e-14, 0.0, 200);
+        assert!((got - want).abs() <= 1e-13 * want.abs().max(1.0), "{name}: got {got}, want {want}");
+    }
+
+    /// Solver-level cases for overflow and infinite residuals in the switching test.
+    #[test]
+    fn switching_test_overflow() {
+        let m = f64::MAX;
+        // |ym| + |y3| overflows at the first midpoint while |ym - y3| is finite
+        ck_root("hump", |x| if x <= 0.0 { m * (-0.2 + 1.2 * (x + 1.0)) } else { m * (1.0 - 0.2 * x) },
+                -1.0, 1.0, -5.0 / 6.0);
+        // f2 - f1 overflows: switching is disabled until the residuals shrink
+        ck_root("f2-f1 overflow", |x| 1.7e308 * (10.0 * (x - 0.3)).tanh(), -1.0, 1.0, 0.3);
+        // infinite residuals at one or both ends of the bracket
+        ck_root("inf left", |x| if x < -0.5 { f64::NEG_INFINITY } else { x - 0.1 }, -1.0, 1.0, 0.1);
+        ck_root("inf both", |x| if x < -0.5 { f64::NEG_INFINITY } else if x > 0.9 { f64::INFINITY } else { x - 0.1 },
+                -1.0, 1.0, 0.1);
+        // subnormal residuals: AB corrections underflow towards zero
+        ck_root("subnormal", |x| 1e-300 * (x * x * x - 0.2), -1.0, 1.0, 0.2f64.cbrt());
     }
 }

@@ -99,16 +99,16 @@ FACTOR|   2.550x|   1.442x|   1.421x|   1.772x|   1.078x|   1.442x|   1.011x| <m
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1461.96|   865.40|   846.89|  1047.16| 60698.42|   122.77|   174.44| <mark>**92.97**</mark>| 
-   AVG|  14.6196|   8.6540|   8.4689|  10.4716| 606.9842|   1.2277|   1.7444| <mark>**0.9297**</mark>| 
-MEDIAN|  14.4848|   4.6459|   4.5338|   5.9401| 387.4567|   0.6761|   1.3868| <mark>**0.7057**</mark>| 
-   MIN|   1.4859|   1.6424|   1.8570|   1.7509|  75.4128|   0.2147|   0.5570| <mark>**0.1720**</mark>| 
-   MAX|  26.4949|  31.4656|  32.3145|  67.3989|1722.7349|   6.7877|   4.7697| <mark>**3.0769**</mark>| 
-FACTOR|  15.725x|   9.308x|   9.109x|  11.263x| 652.883x|   1.321x|   1.876x| <mark>**1.000x**</mark>| 
+   SUM|  1865.49|  1137.26|  1102.66|  1278.29| 75917.09|   153.54|   217.19| <mark>**111.78**</mark>| 
+   AVG|  18.6549|  11.3726|  11.0266|  12.7829| 759.1709|   1.5354|   2.1719| <mark>**1.1178**</mark>| 
+MEDIAN|  19.0822|   5.8095|   5.7526|   7.0948| 474.6053|   0.7840|   1.6973| <mark>**0.8513**</mark>| 
+   MIN|   2.1178|   1.7499|   2.1133|   2.0280| 104.0443|   0.2467|   0.7565| <mark>**0.2343**</mark>| 
+   MAX|  28.0714|  54.6413|  52.7952|  79.2168| 2522.3508|  12.2412|   8.8301| <mark>**3.5638**</mark>| 
+FACTOR|  16.689x|  10.174x|   9.864x|  11.436x| 679.151x|   1.374x|   1.943x| <mark>**1.000x**</mark>| 
 
 #### Notes:
 
-Last Run on: 22.09.2026  
+Last Run on: 23.09.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -116,7 +116,7 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB_SG: pymodab version 1.0.10 - the latest implementation of the safeguarded modab as native C extension  
+modAB_SG: pymodab version 1.1.0 - the latest implementation of the safeguarded modab as native C extension  
 
 The complete source code to reproduce the above benchmarks is available in [RootBenchmarkSciPy.py](RootBenchmarkSciPy.py).  
 Detailed benchmark results are listed in [BenchmarkResultsSciPy.md](BenchmarkResultsSciPy.md).  

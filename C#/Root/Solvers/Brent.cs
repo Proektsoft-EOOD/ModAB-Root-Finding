@@ -26,7 +26,7 @@
             returnCode = ReturnCode.Success;
             for (int i = 1; i <= MaxIterations; ++i)
             {
-                if (SameNonzeroSign(p2.Y, p3.Y))
+                if (SameSign(p2.Y, p3.Y))
                 {
                     p3 = p1; //Rename a, b, c and adjust bounding interval
                     e = d = p2.X - p1.X;

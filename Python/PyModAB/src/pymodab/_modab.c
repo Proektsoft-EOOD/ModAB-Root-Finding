@@ -13,7 +13,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <math.h>
-#include <float.h>
 
 static int evaluation_count = 0;
 
@@ -53,12 +52,12 @@ static double eval_cfunc(void *ctx, double x, int *err) {
  *
  * These helpers carry the overflow/NaN postconditions that the bracketing
  * solver relies on. They mirror C/src/ModAB.c and the reference implementation
- * in C#/Root/Node.cs and C#/Root/Solvers/{Solver,ModABCorr}.cs.
+ * in C#/Root/Node.cs and C#/Root/Solvers/{Solver,SgModAB}.cs.
  * ------------------------------------------------------------------------- */
 
 /* True only when both values have the same non-zero sign. Comparisons with NaN
    are false, so a caller must reject NaN before using this to update a bracket. */
-static inline int same_nonzero_sign(double x, double y) {
+static inline int same_sign(double x, double y) {
     return (x < 0.0 && y < 0.0) || (x > 0.0 && y > 0.0);
 }
 
@@ -113,82 +112,10 @@ static inline double safe_secant(double x1, double y1, double x2, double y2) {
     return x < x1 ? x1 : (x > x2 ? x2 : x);
 }
 
-/* Returns k = r^2 for the symmetry-sensitive switching criterion. The
-   calculation is homogeneous in the true endpoint residuals. */
-static inline double symmetry_factor(double y1, double y2) {
-    double a = fabs(y1);
-    double b = fabs(y2);
-    double den = a + b;
-    double r;
-
-    if (isinf(den)) {
-        /* Infinite true residuals deliberately disable switching and keep the
-           controller in bisection mode. NaN is returned rather than an infinity
-           because every exit of passes_switching_test is a "<" comparison,
-           which is false against NaN; an infinity would instead satisfy it and
-           switch. Residuals are never zero here, so only an overflowing sum
-           remains, and halving both restores it without changing the ratio. */
-        if (isinf(a) || isinf(b))
-            return NAN;
-        a *= 0.5;
-        b *= 0.5;
-        den = a + b;
-    }
-
-    /* |b-a| <= den, so the quotient lies in [0,1]; halving after the division
-       avoids forming 2*den, which could overflow. */
-    r = 1.0 - fabs(b - a) / den / 2.0;
-    return r * r;
-}
-
-/* Tests whether the true midpoint value yf is close enough to the midpoint
-   value ym of the chord through the true endpoint residuals. */
-static inline int passes_switching_test(double ym, double yf, double symmetry) {
-    double abs_ym = fabs(ym);
-    double abs_yf = fabs(yf);
-    double sum = abs_yf + abs_ym;
-    double scale, norm_ym, norm_yf;
-
-    /* Fast path. The exact-root case is handled before this is called, and a
-       non-finite ordinate or a NaN symmetry factor fails the comparison, which
-       disables switching as intended. */
-    if (isfinite(sum))
-        return fabs(ym - yf) < symmetry * sum;
-
-    /* Only reached when the sum overflows. Non-finite values are unsuitable
-       for the linearity comparison. */
-    if (!isfinite(ym) || !isfinite(yf))
-        return 0;
-
-    /* Normalize both sides of the homogeneous inequality to avoid overflow. */
-    scale = fmax(abs_yf, abs_ym);
-    norm_ym = ym / scale;
-    norm_yf = yf / scale;
-    return fabs(norm_ym - norm_yf) < symmetry * (fabs(norm_yf) + fabs(norm_ym));
-}
-
 /* The Anderson-Bjorck contraction factor for the ordinate that did not move. */
 static inline double ab_factor(double y3, double y_moved) {
     double m = 1.0 - y3 / y_moved;
     return m > 0.0 ? m : 0.5;
-}
-
-/* Multiplies an auxiliary Anderson-Bjorck ordinate by a positive factor while
-   preserving a finite non-zero sign in binary64 arithmetic. This keeps
-   same_nonzero_sign sound: an auxiliary ordinate that underflowed to zero would
-   otherwise silently change which branch of the bracket update is taken. It
-   acts only on auxiliary ordinates; an underflowed working value is never
-   accepted as a root of f. */
-static inline double scale_preserving_nonzero_sign(double value, double positive_factor) {
-    double scaled = value * positive_factor;
-
-    if (scaled == 0.0 && value != 0.0)
-        return copysign(DBL_TRUE_MIN, value);
-
-    if (isinf(scaled))
-        return copysign(DBL_MAX, value);
-
-    return scaled;
 }
 
 /* Same algorithm as C/src/ModAB.c, with an abort path for evaluator errors. */
@@ -211,19 +138,18 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
     if (y2 == 0.0)
         return x2;
 
-    /* NaN has no usable sign, and same_nonzero_sign is false for it, so it
+    /* NaN has no usable sign, and same_sign is false for it, so it
        must be rejected before the predicate is used to update a bracket. */
-    if (isnan(y1) || isnan(y2) || same_nonzero_sign(y1, y2))
+    if (isnan(y1) || isnan(y2) || same_sign(y1, y2))
         return NAN;
 
     int bisection = 1;
     int side = 0;
     double threshold = x2 - x1;
-    double f1 = y1, f2 = y2, ymin = 0.0;
+    double f1 = y1, f2 = y2; /* True residuals, kept unmodified by A&B corrections */
+    double ymin = 0.0; /* Best true residual of the bracket */
     const double C = 2.0;
     for (int i = 1; i <= maxIter; ++i) {
-        /* safe_secant already returns a point inside [x1, x2], so the separate
-           clamp on the convergence exit is no longer needed. */
         double x3 = bisection ? safe_midpoint(x1, x2) : safe_secant(x1, y1, x2, y2);
         double eps = aTol + rTol * fabs(x3);
         if (x2 - x1 <= eps) {
@@ -233,14 +159,18 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
         double y3;
         if (bisection) {
             y3 = EVAL(x3);
-            double ym = safe_midpoint(f1, f2);
-            if (passes_switching_test(ym, y3, symmetry_factor(f1, f2))) {
-                bisection = 0;
-                threshold = (x2 - x1) * C;
+            if (isfinite(f2 - f1)) { /* Avoids overflow in the calculations below */
+                double ym = (f1 + f2) * 0.5; /* Chord ordinate at midpoint; f1, f2 have opposite signs */
+                double r = 1.0 - fabs(ym / (f2 - f1)); /* Symmetry factor */
+                double k = r * r; /* Deviation factor */
+                /* k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test. */
+                if (fabs(ym - y3) < k * fabs(ym) + k * fabs(y3)) {
+                    bisection = 0;
+                    threshold = C * (x2 - x1);
+                }
             }
         } else {
-            /* If rounding makes the proposal coincide with an endpoint, reuse
-               the true residual already stored there. */
+            /* If x3 got clamped, reuse the true residual stored at the endpoint. */
             if (x3 == x1) {
                 y3 = f1;
             } else if (x3 == x2) {
@@ -249,7 +179,6 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
                 y3 = EVAL(x3);
             }
             threshold *= 0.5;
-            /* Best true residual of the bracket BEFORE y3 replaces an endpoint. */
             ymin = fmin(fabs(f1), fabs(f2));
         }
 
@@ -260,16 +189,16 @@ static double modab_core(eval_fn f, void *ctx, double x1, double x2,
         if (isnan(y3))
             return NAN;
 
-        if (same_nonzero_sign(y1, y3)) {
+        if (same_sign(f1, y3)) {
             if (side == 1) {
-                y2 = scale_preserving_nonzero_sign(y2, ab_factor(y3, y1));
+                y2 *= ab_factor(y3, y1);
             } else if (!bisection) {
                 side = 1;
             }
             x1 = x3; f1 = y1 = y3;
         } else {
             if (side == -1) {
-                y1 = scale_preserving_nonzero_sign(y1, ab_factor(y3, y2));
+                y1 *= ab_factor(y3, y2);
             } else if (!bisection) {
                 side = -1;
             }

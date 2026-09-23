@@ -18,12 +18,9 @@ public class ModAB {
     //
     // These helpers carry the overflow/NaN postconditions that the bracketing
     // solver relies on. They are the Java form of the reference implementation
-    // in C#/Root/Node.cs and C#/Root/Solvers/{Solver,ModABCorr}.cs, so a change
+    // in C#/Root/Node.cs and C#/Root/Solvers/{Solver,SgModAB}.cs, so a change
     // to the numerics belongs in one place rather than inline in the solver.
     // -----------------------------------------------------------------------
-
-    /** Smallest positive subnormal double (2^-1074), the analogue of C#'s double.Epsilon. */
-    private static final double MIN_SUBNORMAL = Double.MIN_VALUE;
 
     /**
      * Returns true only when both values have the same non-zero sign.
@@ -31,7 +28,7 @@ public class ModAB {
      * Comparisons with NaN are false, so a caller must reject NaN before using
      * this predicate to update a bracket.
      */
-    public static boolean sameNonzeroSign(double x, double y) {
+    public static boolean sameSign(double x, double y) {
         return (x < 0.0 && y < 0.0) || (x > 0.0 && y > 0.0);
     }
 
@@ -93,66 +90,6 @@ public class ModAB {
         return x < x1 ? x1 : (x > x2 ? x2 : x);
     }
 
-    /**
-     * Returns k = r^2 for the symmetry-sensitive switching criterion. The
-     * calculation is homogeneous in the true endpoint residuals.
-     */
-    public static double symmetryFactor(double y1, double y2) {
-        double a = Math.abs(y1);
-        double b = Math.abs(y2);
-        double den = a + b;
-
-        if (Double.isInfinite(den)) {
-            // Infinite true residuals deliberately disable switching and keep
-            // the controller in bisection mode. NaN is returned rather than an
-            // infinity because every exit of passesSwitchingTest is a "<"
-            // comparison, which is false against NaN; an infinity would instead
-            // satisfy it and switch. Residuals are never zero here, so only an
-            // overflowing sum remains, and halving both restores it without
-            // changing the ratio.
-            if (Double.isInfinite(a) || Double.isInfinite(b)) {
-                return Double.NaN;
-            }
-            a *= 0.5;
-            b *= 0.5;
-            den = a + b;
-        }
-
-        // |b-a| <= den, so the quotient lies in [0,1]; halving after the
-        // division avoids forming 2*den, which could overflow.
-        double r = 1.0 - Math.abs(b - a) / den / 2.0;
-        return r * r;
-    }
-
-    /**
-     * Tests whether the true midpoint value yf is close enough to the midpoint
-     * value ym of the chord through the true endpoint residuals.
-     */
-    public static boolean passesSwitchingTest(double ym, double yf, double symmetry) {
-        double absYm = Math.abs(ym);
-        double absYf = Math.abs(yf);
-        double sum = absYf + absYm;
-
-        // Fast path. The exact-root case is handled before this is called, and
-        // a non-finite ordinate or a NaN symmetry factor fails the comparison,
-        // which disables switching as intended.
-        if (Double.isFinite(sum)) {
-            return Math.abs(ym - yf) < symmetry * sum;
-        }
-
-        // Only reached when the sum overflows. Non-finite values are unsuitable
-        // for the linearity comparison.
-        if (!Double.isFinite(ym) || !Double.isFinite(yf)) {
-            return false;
-        }
-
-        // Normalize both sides of the homogeneous inequality to avoid overflow.
-        double scale = Math.max(absYf, absYm);
-        double normYm = ym / scale;
-        double normYf = yf / scale;
-        return Math.abs(normYm - normYf) < symmetry * (Math.abs(normYf) + Math.abs(normYm));
-    }
-
     /** The Anderson-Bjorck contraction factor for the ordinate that did not move. */
     private static double abFactor(double y3, double yMoved) {
         double m = 1.0 - y3 / yMoved;
@@ -160,33 +97,11 @@ public class ModAB {
     }
 
     /**
-     * Multiplies an auxiliary Anderson-Bjorck ordinate by a positive factor
-     * while preserving a finite non-zero sign in binary64 arithmetic. This
-     * keeps {@link #sameNonzeroSign} sound: an auxiliary ordinate that
-     * underflowed to zero would otherwise silently change which branch of the
-     * bracket update is taken. It acts only on auxiliary ordinates; an
-     * underflowed working value is never accepted as a root of f.
-     */
-    private static double scalePreservingNonzeroSign(double value, double positiveFactor) {
-        double scaled = value * positiveFactor;
-
-        if (scaled == 0.0 && value != 0.0) {
-            return Math.copySign(MIN_SUBNORMAL, value);
-        }
-
-        if (Double.isInfinite(scaled)) {
-            return Math.copySign(Double.MAX_VALUE, value);
-        }
-
-        return scaled;
-    }
-
-    /**
      * Finds the root of f(x) = y within [x1, x2] using modified Anderson-Björk method.
      * f(x) must be continuous and sign(f(x1) - y) != sign(f(x2) - y).
      * <p>
-     * The overflow- and NaN-safe forms of the interpolation and switching
-     * arithmetic live in the shared safeguards above.
+     * The overflow- and NaN-safe form of the interpolation lives in the shared
+     * safeguards above; the switching test is written so that it cannot overflow.
      *
      * @param f       The function to find the root of
      * @param x1      Left boundary of the interval
@@ -213,18 +128,17 @@ public class ModAB {
         if (Math.abs(y2) <= epsy) {
             return x2;
         }
-        // NaN has no usable sign, and sameNonzeroSign is false for it, so it
+        // NaN has no usable sign, and sameSign is false for it, so it
         // must be rejected before the predicate is used to update a bracket.
-        if (Double.isNaN(y1) || Double.isNaN(y2) || sameNonzeroSign(y1, y2)) {
+        if (Double.isNaN(y1) || Double.isNaN(y2) || sameSign(y1, y2)) {
             return Double.NaN; // No sign change - no root guaranteed
         }
-        double f1 = y1, f2 = y2, ymin = 0.0;
+        double f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
+        double ymin = 0.0; // Best true residual of the bracket
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
         for (int i = 0; i < maxiter; i++) {
-            // safeSecant already returns a point inside [x1, x2], so the
-            // separate clamp on the convergence exit is no longer needed.
             double x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
             double epsx = xtol * Math.max(Math.abs(x3), 1);
             if (x2 - x1 <= epsx) { // x-convergence check
@@ -233,14 +147,18 @@ public class ModAB {
             double y3;
             if (bisection) {
                 y3 = f.applyAsDouble(x3) - y;
-                double ym = safeMidpoint(f1, f2);
-                if (passesSwitchingTest(ym, y3, symmetryFactor(f1, f2))) {
-                    bisection = false;
-                    threshold = (x2 - x1) * 2.0;
+                if (Double.isFinite(f2 - f1)) { // Avoids overflow in the calculations below
+                    double ym = (f1 + f2) * 0.5; // Chord ordinate at midpoint; f1, f2 have opposite signs
+                    double r = 1.0 - Math.abs(ym / (f2 - f1)); // Symmetry factor
+                    double k = r * r; // Deviation factor
+                    // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
+                    if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
+                        bisection = false;
+                        threshold = 2.0 * (x2 - x1);
+                    }
                 }
             } else {
-                // If rounding makes the proposal coincide with an endpoint,
-                // reuse the true residual already stored there.
+                // If x3 got clamped, reuse the true residual stored at the endpoint.
                 if (x3 == x1) {
                     y3 = f1;
                 } else if (x3 == x2) {
@@ -261,9 +179,9 @@ public class ModAB {
                 return Double.NaN;
             }
 
-            if (sameNonzeroSign(y1, y3)) {
+            if (sameSign(f1, y3)) {
                 if (side == 1) {
-                    y2 = scalePreservingNonzeroSign(y2, abFactor(y3, y1));
+                    y2 *= abFactor(y3, y1);
                 } else if (!bisection) {
                     side = 1;
                 }
@@ -272,7 +190,7 @@ public class ModAB {
                 f1 = y3;
             } else {
                 if (side == -1) {
-                    y1 = scalePreservingNonzeroSign(y1, abFactor(y3, y2));
+                    y1 *= abFactor(y3, y2);
                 } else if (!bisection) {
                     side = -1;
                 }

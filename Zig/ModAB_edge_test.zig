@@ -1,11 +1,11 @@
 //! Edge-case tests for the shared modAB safeguards.
 //!
 //! The 100-problem benchmark suite never produces a non-finite or overflowing
-//! residual, so the overflow/NaN branches of same_nonzero_sign, safe_midpoint,
-//! safe_secant, symmetry_factor and passes_switching_test are covered here.
+//! residual, so the overflow/NaN branches of same_sign, safe_midpoint and
+//! safe_secant, and the overflow cases of the switching test, are covered here.
 //!
 //! Expected values come from the C# reference in C#/Root/Node.cs and
-//! C#/Root/Solvers/ModABCorr.cs; every language port is held to the same table.
+//! C#/Root/Solvers/SgModAB.cs; every language port is held to the same table.
 //!
 //! Run (from the Zig directory):
 //!     zig run ModAB_edge_test.zig
@@ -41,22 +41,55 @@ fn fOverflow(x: f64) f64 {
     return x * 1e-308 - 1.2;
 }
 
+// Solver-level cases for overflow and infinite residuals in the switching test.
+const max_f64 = std.math.floatMax(f64);
+
+/// |ym| + |y3| overflows at the first midpoint while |ym - y3| is finite.
+fn fHump(x: f64) f64 {
+    return if (x <= 0) max_f64 * (-0.2 + 1.2 * (x + 1)) else max_f64 * (1 - 0.2 * x);
+}
+/// f2 - f1 overflows: switching is disabled until the residuals shrink.
+fn fDiffOverflow(x: f64) f64 {
+    return 1.7e308 * std.math.tanh(10 * (x - 0.3));
+}
+/// Infinite residuals at one or both ends of the bracket.
+fn fInfLeft(x: f64) f64 {
+    return if (x < -0.5) -inf else x - 0.1;
+}
+fn fInfBoth(x: f64) f64 {
+    return if (x < -0.5) -inf else if (x > 0.9) inf else x - 0.1;
+}
+/// Subnormal residuals: AB corrections underflow towards zero.
+fn fSubnormal(x: f64) f64 {
+    return 1e-300 * (x * x * x - 0.2);
+}
+
+fn ckRoot(name: []const u8, f: *const fn (f64) f64, a: f64, b: f64, want: f64) void {
+    total += 1;
+    const got = M.modAB(f, a, b, 0.0, 1e-14, 0.0, 200);
+    if (@abs(got - want) <= 1e-13 * @max(@abs(want), 1.0)) {
+        passed += 1;
+        return;
+    }
+    std.debug.print("FAIL {s}: got {d} want {d}\n", .{ name, got, want });
+}
+
 pub fn main() void {
-    // --- same_nonzero_sign ---
-    ckb("same_nonzero_sign", 0, M.sameNonzeroSign(1.0, 2.0), true);
-    ckb("same_nonzero_sign", 1, M.sameNonzeroSign(-1.0, -2.0), true);
-    ckb("same_nonzero_sign", 2, M.sameNonzeroSign(1.0, -2.0), false);
-    ckb("same_nonzero_sign", 3, M.sameNonzeroSign(-1.0, 2.0), false);
-    ckb("same_nonzero_sign", 4, M.sameNonzeroSign(0.0, 1.0), false);
-    ckb("same_nonzero_sign", 5, M.sameNonzeroSign(1.0, 0.0), false);
-    ckb("same_nonzero_sign", 6, M.sameNonzeroSign(0.0, 0.0), false);
-    ckb("same_nonzero_sign", 7, M.sameNonzeroSign(-0.0, -1.0), false);
-    ckb("same_nonzero_sign", 8, M.sameNonzeroSign(nan, 1.0), false);
-    ckb("same_nonzero_sign", 9, M.sameNonzeroSign(1.0, nan), false);
-    ckb("same_nonzero_sign", 10, M.sameNonzeroSign(nan, nan), false);
-    ckb("same_nonzero_sign", 11, M.sameNonzeroSign(inf, 1.0), true);
-    ckb("same_nonzero_sign", 12, M.sameNonzeroSign(-inf, -1.0), true);
-    ckb("same_nonzero_sign", 13, M.sameNonzeroSign(inf, -inf), false);
+    // --- same_sign ---
+    ckb("same_sign", 0, M.sameSign(1.0, 2.0), true);
+    ckb("same_sign", 1, M.sameSign(-1.0, -2.0), true);
+    ckb("same_sign", 2, M.sameSign(1.0, -2.0), false);
+    ckb("same_sign", 3, M.sameSign(-1.0, 2.0), false);
+    ckb("same_sign", 4, M.sameSign(0.0, 1.0), false);
+    ckb("same_sign", 5, M.sameSign(1.0, 0.0), false);
+    ckb("same_sign", 6, M.sameSign(0.0, 0.0), false);
+    ckb("same_sign", 7, M.sameSign(-0.0, -1.0), false);
+    ckb("same_sign", 8, M.sameSign(nan, 1.0), false);
+    ckb("same_sign", 9, M.sameSign(1.0, nan), false);
+    ckb("same_sign", 10, M.sameSign(nan, nan), false);
+    ckb("same_sign", 11, M.sameSign(inf, 1.0), true);
+    ckb("same_sign", 12, M.sameSign(-inf, -1.0), true);
+    ckb("same_sign", 13, M.sameSign(inf, -inf), false);
 
     // --- safe_midpoint ---
     ck("safe_midpoint", 0, M.safeMidpoint(2.0, 4.0), 3.0);
@@ -80,31 +113,6 @@ pub fn main() void {
     ck("safe_secant", 9, M.safeSecant(0.0, -1e+300, 1.0, 1e-300), 1.0);
     ck("safe_secant", 10, M.safeSecant(1e+308, -1.0, 1.7e+308, 1.0), 1.35e+308);
 
-    // --- symmetry_factor ---
-    ck("symmetry_factor", 0, M.symmetryFactor(-1.0, 1.0), 1.0);
-    ck("symmetry_factor", 1, M.symmetryFactor(-1.0, 3.0), 0.5625);
-    ck("symmetry_factor", 2, M.symmetryFactor(-3.0, 1.0), 0.5625);
-    ck("symmetry_factor", 3, M.symmetryFactor(-1e+308, 1e+308), 1.0);
-    ck("symmetry_factor", 4, M.symmetryFactor(-1.7e+308, 1.0), 0.25);
-    ck("symmetry_factor", 5, M.symmetryFactor(inf, -1.0), nan);
-    ck("symmetry_factor", 6, M.symmetryFactor(-1.0, inf), nan);
-    ck("symmetry_factor", 7, M.symmetryFactor(nan, 1.0), nan);
-    ck("symmetry_factor", 8, M.symmetryFactor(-1e-300, 1e+300), 0.25);
-
-    // --- passes_switching_test ---
-    ckb("passes_switching_test", 0, M.passesSwitchingTest(1.0, 1.0, 0.5), true);
-    ckb("passes_switching_test", 1, M.passesSwitchingTest(1.0, -1.0, 0.5), false);
-    ckb("passes_switching_test", 2, M.passesSwitchingTest(1.0, 0.5, 0.5), true);
-    ckb("passes_switching_test", 3, M.passesSwitchingTest(1.0, 0.5, 0.1), false);
-    ckb("passes_switching_test", 4, M.passesSwitchingTest(1e+308, 1e+308, 0.5), true);
-    ckb("passes_switching_test", 5, M.passesSwitchingTest(1.7e+308, -1.7e+308, 0.5), false);
-    ckb("passes_switching_test", 6, M.passesSwitchingTest(1e+308, 1.6e+308, 0.5), true);
-    ckb("passes_switching_test", 7, M.passesSwitchingTest(inf, 1.0, 0.5), false);
-    ckb("passes_switching_test", 8, M.passesSwitchingTest(1.0, inf, 0.5), false);
-    ckb("passes_switching_test", 9, M.passesSwitchingTest(nan, 1.0, 0.5), false);
-    ckb("passes_switching_test", 10, M.passesSwitchingTest(1.0, 1.0, nan), false);
-    ckb("passes_switching_test", 11, M.passesSwitchingTest(0.0, 0.0, 0.5), false);
-
     // Solver-level regression: this returned inf before safeMidpoint.
     total += 1;
     const root = M.modAB(fOverflow, 1e308, 1.7e308, 0.0, 1e-14, 0.0, 200);
@@ -113,6 +121,12 @@ pub fn main() void {
     } else {
         std.debug.print("FAIL overflowing bracket: got {d} want 1.2e308\n", .{root});
     }
+
+    ckRoot("hump", fHump, -1.0, 1.0, -5.0 / 6.0);
+    ckRoot("f2-f1 overflow", fDiffOverflow, -1.0, 1.0, 0.3);
+    ckRoot("inf left", fInfLeft, -1.0, 1.0, 0.1);
+    ckRoot("inf both", fInfBoth, -1.0, 1.0, 0.1);
+    ckRoot("subnormal", fSubnormal, -1.0, 1.0, std.math.cbrt(@as(f64, 0.2)));
 
     std.debug.print("Zig edge-cases: {d}/{d} {s}\n", .{
         passed, total, if (passed == total) "PASS" else "FAIL",

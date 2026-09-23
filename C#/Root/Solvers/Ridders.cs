@@ -119,13 +119,13 @@
                 // the Ridders point relative to the midpoint is linked to the
                 // midpoint sign, so these two compact branches select the
                 // tighter valid sub-bracket without reversing p1.X and p2.X.
-                if (SameNonzeroSign(p1.Y, p4.Y))
+                if (SameSign(p1.Y, p4.Y))
                 {
                     // p4 has the sign of the left endpoint and therefore
                     // replaces it. If the midpoint has the sign of the old
                     // right endpoint, it provides a tighter new right endpoint.
                     p1 = p4;
-                    if (SameNonzeroSign(p2.Y, p3.Y))
+                    if (SameSign(p2.Y, p3.Y))
                         p2 = p3;
                 }
                 else
@@ -133,7 +133,7 @@
                     // Since p4 is nonzero and the old endpoints have opposite
                     // signs, p4 has the sign of the right endpoint.
                     p2 = p4;
-                    if (SameNonzeroSign(p1.Y, p3.Y))
+                    if (SameSign(p1.Y, p3.Y))
                         p1 = p3;
                 }
             }

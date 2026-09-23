@@ -447,20 +447,20 @@ List of algorithms:
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     |  92.29 us | 1.567 us | 1.609 us |
-| FalsePosition | 359.90 us | 2.654 us | 2.353 us |
-| Illinois      | 147.32 us | 0.889 us | 0.788 us |
-| AndersonBjork | 212.05 us | 1.408 us | 1.317 us |
-| ITP           | 234.97 us | 2.432 us | 2.275 us |
-| Ridders       | 104.56 us | 2.007 us | 2.465 us |
-| Brent         | 120.88 us | 2.401 us | 2.246 us |
-| ModAB         |  56.23 us | 0.521 us | 0.462 us |
-| SGModab       |  61.22 us | 0.622 us | 0.581 us |
+| Bisection     |  94.36 us | 1.872 us | 1.838 us |
+| FalsePosition | 366.45 us | 5.343 us | 4.462 us |
+| Illinois      | 151.03 us | 1.666 us | 1.477 us |
+| AndersonBjork | 214.44 us | 2.019 us | 1.576 us |
+| ITP           | 239.22 us | 3.720 us | 3.480 us |
+| Ridders       | 102.03 us | 0.947 us | 0.886 us |
+| Brent         | 119.11 us | 1.626 us | 1.521 us |
+| ModAB         |  58.22 us | 0.791 us | 0.740 us |
+| SGModab       |  60.62 us | 1.117 us | 1.329 us |
 
 Benchmark Process Environment Information:  
 BenchmarkDotNet v0.15.8  
 DOTNET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v4  
-Windows 11 (10.0.26200.8037/25H2/2025Update/HudsonValley2)  
+Windows 11 (10.0.26200.9457/25H2/2025Update/HudsonValley2)  
 Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 16GB RAM
 AVX512 BITALG+VBMI2+VNNI+VPOPCNTDQ,AVX512 IFMA+VBMI,AVX512 F+BW+CD+DQ+VL,AVX2+BMI1+BMI2+F16C+FMA+LZCNT+MOVBE,AVX,SSE3+SSSE3+SSE4.1+SSE4.2+POPCNT,X86Base+SSE+SSE2,AES+PCLMUL VectorSize=256  
