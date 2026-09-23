@@ -430,7 +430,8 @@ List of algorithms:
 |    f98 |    53 |   202 |    70 |   202 |    55 |    26 |    18 |    18 |    18
 |    f99 |    53 |   202 |    82 |   202 |    55 |    22 |    21 |    17 |    17
 |   f100 |    50 |    35 |    42 |    38 |    38 |    43 |    35 |    42 |    43
-|    Sum |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 |  1628
+| SumAll |  4831 | 10990 |  3885 |  5065 |  3284 |  3285 |  3064 |  1914 |  1913
+|  Valid |  4424 | 10513 |  3284 |  4464 |  2872 |  2828 |  2622 |  1627 |  1628
 |    Ave |  48.1 | 114.3 |  35.7 |  48.5 |  31.2 |  30.7 |  28.5 |  17.7 |  17.7
 |   Mean |  46.4 |  67.6 |  21.6 |  22.0 |  24.6 |  22.0 |  16.9 |  14.5 |  14.6
 | StdDev |   7.7 |  88.2 |  46.6 |  68.1 |  19.1 |  33.7 |  39.3 |  13.4 |  13.3
@@ -445,17 +446,17 @@ List of algorithms:
 
 ### Wall clock times
 
-| Method        | Mean      | Error    | StdDev   |
-|-------------- |----------:|---------:|---------:|
-| Bisection     |  94.36 us | 1.872 us | 1.838 us |
-| FalsePosition | 366.45 us | 5.343 us | 4.462 us |
-| Illinois      | 151.03 us | 1.666 us | 1.477 us |
-| AndersonBjork | 214.44 us | 2.019 us | 1.576 us |
-| ITP           | 239.22 us | 3.720 us | 3.480 us |
-| Ridders       | 102.03 us | 0.947 us | 0.886 us |
-| Brent         | 119.11 us | 1.626 us | 1.521 us |
-| ModAB         |  58.22 us | 0.791 us | 0.740 us |
-| SGModab       |  60.62 us | 1.117 us | 1.329 us |
+| Method        | Mean      | Error    | StdDev    | Median    |
+|-------------- |----------:|---------:|----------:|----------:|
+| Bisection     |  94.99 us | 1.845 us |  1.636 us |  95.06 us |
+| FalsePosition | 399.32 us | 7.982 us | 18.657 us | 399.70 us |
+| Illinois      | 159.51 us | 2.934 us |  7.932 us | 157.14 us |
+| AndersonBjork | 219.17 us | 1.645 us |  1.284 us | 219.52 us |
+| ITP           | 246.22 us | 2.900 us |  2.712 us | 246.88 us |
+| Ridders       | 107.08 us | 2.082 us |  2.314 us | 106.71 us |
+| Brent         | 123.07 us | 1.724 us |  1.528 us | 123.31 us |
+| ModAB         |  59.39 us | 1.169 us |  1.251 us |  58.96 us |
+| SGModab       |  60.26 us | 1.193 us |  1.116 us |  59.99 us |
 
 Benchmark Process Environment Information:  
 BenchmarkDotNet v0.15.8  

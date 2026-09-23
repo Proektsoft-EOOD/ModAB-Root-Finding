@@ -6,7 +6,7 @@ registered package. See `Project.toml` / `setup_env.jl` for the wiring.
 
 Two modAB columns are reported side by side in the same run:
 
-- `modAB_SG` — the local development version in this machine's `NonlinearSolve.jl` checkout.
+- `modAB_sg` — the local development version in this machine's `NonlinearSolve.jl` checkout.
 - `modAB_rel` — the algorithm exactly as shipped in the registered
   `BracketingNonlinearSolve` **v1.12.7** release (byte-identical to SciML
   `upstream/master` `b15bf2b1`), vendored by `modab_release.jl` under the name
@@ -18,7 +18,7 @@ Two modAB columns are reported side by side in the same run:
 
 `nonlinearsolve_modab_benchmark.jl` → `BenchmarkResults.txt`
 
-Func | bisect | brent | ridder | alefeld |  ITP | modAB_rel | modAB_SG
+Func | bisect | brent | ridder | alefeld |  ITP | modAB_rel | modAB_sg
 ---  | -----: | ----: | -----: | ------: | ---: | --------: | ----:
 SUM  |   4890 |  6194 |   4026 |   98050 | 2773 |      1978 |  1945
 AVE  |   48,9 |  61,9 |   40,3 |   980,5 | 27,7 |      19,8 |  19,5
@@ -31,7 +31,7 @@ Both modAB versions solve all 100.
 
 `roots_modab_benchmark.jl` → `BenchmarkResultsRoots.txt`
 
-Func | bisect | brent | ridder | alefeld |  ITP |  A42 | modAB_rel | modAB_SG
+Func | bisect | brent | ridder | alefeld |  ITP |  A42 | modAB_rel | modAB_sg
 ---  | -----: | ----: | -----: | ------: | ---: | ---: | --------: | ----:
 SUM  |   4786 |  1944 |   3238 |    1826 | 2515 | 2069 |      1978 |  1945
 AVE  |   47,9 |  19,4 |   32,4 |    18,3 | 25,1 | 20,7 |      19,8 |  19,5
@@ -52,11 +52,11 @@ problems and f80 — f94 30→21, f80 26→19, f92 26→22.
 Median of `@belapsed` over `solve()` only, with the problem constructed outside the
 timing loop.
 
-Func | bisect   | brent   | ridder  | alefeld   |   ITP   | modAB_rel |  modAB_SG
+Func | bisect   | brent   | ridder  | alefeld   |   ITP   | modAB_rel |  modAB_sg
 ---- | -------: | ------: | ------: | --------: | ------: | --------: | ------:
 SUM  | 117,3 μs | 95,9 μs | 58,1 μs | 382,1 μs* | 95,5 μs |   34,2 μs | 32,8 μs
-AVE  |  1173 ns |  959 ns |  581 ns |  3821 ns* |  955 ns |    342 ns |  328 ns
-REL  |     358% |    292% |    177% |    1165%* |    291% |      104% |    100%
+AVE  |   967 ns |  870 ns |  521 ns |  3821 ns* |  795 ns |    310 ns |  304 ns
+AVE  |     318% |    286% |    171% |    1257%* |    262% |      102% |    100%
 
 \* `alefeld` errors on f43, f44, f45, f78, f91 and f100, so its total covers only the
 94 problems it solved and understates the true cost. Every other solver completed all 100.

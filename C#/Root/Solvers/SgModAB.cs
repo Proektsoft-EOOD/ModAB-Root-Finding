@@ -33,8 +33,7 @@ namespace Proektsoft.Root
                     ? Node.SafeSecant(p1.X, f1, p2.X, f2)
                     : Node.SafeMidpoint(p1, p2);
 
-                var xTol = aTol + rTol * Math.Abs(x3);
-                if (p2.X - p1.X <= xTol)
+                if (p2.X - p1.X <= aTol + rTol * Math.Abs(x3))
                     return x3;
 
                 // If x3 got clamped, reuse the true residual stored at the endpoint.
