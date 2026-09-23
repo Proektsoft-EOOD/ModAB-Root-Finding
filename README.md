@@ -35,17 +35,17 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/435c4fb9-7f79-4a58-a33b-23a84d82311a" />
 
 ### Times
-| Method        | Mean      | Error    | StdDev   |
-|-------------- |----------:|---------:|---------:|
-| Bisection     |  94.36 us | 1.872 us | 1.838 us |
-| FalsePosition | 366.45 us | 5.343 us | 4.462 us |
-| Illinois      | 151.03 us | 1.666 us | 1.477 us |
-| AndersonBjork | 214.44 us | 2.019 us | 1.576 us |
-| ITP           | 239.22 us | 3.720 us | 3.480 us |
-| Ridders       | 102.03 us | 0.947 us | 0.886 us |
-| Brent         | 119.11 us | 1.626 us | 1.521 us |
-| ModAB         |  58.22 us | 0.791 us | 0.740 us |
-| <mark>**SGModAB**</mark> | <mark>60.62 us</mark> | <mark>1.117 us</mark> | <mark>1.329 us</mark> |
+| Method        | Mean      | Error    | StdDev    | Median    |
+|-------------- |----------:|---------:|----------:|----------:|
+| Bisection     |  94.99 us | 1.845 us |  1.636 us |  95.06 us |
+| FalsePosition | 399.32 us | 7.982 us | 18.657 us | 399.70 us |
+| Illinois      | 159.51 us | 2.934 us |  7.932 us | 157.14 us |
+| AndersonBjork | 219.17 us | 1.645 us |  1.284 us | 219.52 us |
+| ITP           | 246.22 us | 2.900 us |  2.712 us | 246.88 us |
+| Ridders       | 107.08 us | 2.082 us |  2.314 us | 106.71 us |
+| Brent         | 123.07 us | 1.724 us |  1.528 us | 123.31 us |
+| ModAB         |  59.39 us | 1.169 us |  1.251 us |  58.96 us |
+| <mark>**SGModab**</mark>|  <mark>60.26 us</mark> | <mark>1.193 us</mark> |  <mark>1.116 us</mark> |  <mark>59.99 us</mark> |
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.12 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.9457/25H2/2025Update/HudsonValley2)  
