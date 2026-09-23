@@ -128,6 +128,8 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 if (@abs(ym - y3) < k * @abs(ym) + k * @abs(y3)) {
                     bisecting = false;
                     threshold = C * (x2 - x1);
+                    y1 = f1; // A&B starts from the true residuals
+                    y2 = f2;
                 }
             }
         } else {
@@ -151,31 +153,39 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
         if (std.math.isNan(y3)) {
             return std.math.nan(f64);
         }
-
-        if (sameSign(f1, y3)) { // Same sign check
-            if (side == 1) { // Anderson-Bjork correction
-                y2 *= abFactor(y3, y1);
-            } else if (!bisecting) {
-                side = 1;
+        if (bisecting) {
+            if (sameSign(f1, y3)) { // Same sign check
+                x1 = x3;
+                f1 = y3; // Also store the unmodified y1 value to be used for bisection fallback
+            } else {
+                x2 = x3;
+                f2 = y3; // Also store the unmodified y2 value to be used for bisection fallback
             }
-            x1 = x3;
-            y1 = y3;
-            f1 = y3; // Also store the unmodified y1 value to be used for bisection fallback
         } else {
-            if (side == -1) { // Anderson-Bjork correction
-                y1 *= abFactor(y3, y2);
-            } else if (!bisecting) {
-                side = -1;
+            if (sameSign(f1, y3)) { // Same sign check
+                if (side == 1) { // Anderson-Bjork correction
+                    y2 *= abFactor(y3, y1);
+                } else if (!bisecting) {
+                    side = 1;
+                }
+                x1 = x3;
+                y1 = y3;
+                f1 = y3; // Also store the unmodified y1 value to be used for bisection fallback
+            } else {
+                if (side == -1) { // Anderson-Bjork correction
+                    y1 *= abFactor(y3, y2);
+                } else if (!bisecting) {
+                    side = -1;
+                }
+                x2 = x3;
+                y2 = y3;
+                f2 = y3; // Also store the unmodified y2 value to be used for bisection fallback
             }
-            x2 = x3;
-            y2 = y3;
-            f2 = y3; // Also store the unmodified y2 value to be used for bisection fallback
-        }
-
-        // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-        if (!bisecting and x2 - x1 > threshold and @abs(y3) > 0.5 * ymin) {
-            bisecting = true;
-            side = 0;
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+            if (x2 - x1 > threshold and @abs(y3) > 0.5 * ymin) {
+                bisecting = true;
+                side = 0;
+            }
         }
     }
     return std.math.nan(f64);

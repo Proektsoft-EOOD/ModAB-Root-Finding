@@ -2808,6 +2808,7 @@
                 if (abs(ym-y3) < k*abs(ym) + k*abs(y3)) then
                     bis = .false.
                     threshold = 2.0_wp*(x2-x1)   ! safety factor
+                    y1 = f1; y2 = f2             ! A&B starts from the true residuals
                 end if
             end if
         else
@@ -2843,29 +2844,28 @@
             exit
         end if
 
-        select case (side)
-        case(1)
-            y2 = y2*ab_factor(y3,y1)
-        case(2)
-            y1 = y1*ab_factor(y3,y2)
-        end select
-
-        ! The sign test uses the true residual f1: the auxiliary y1 may have
+        ! The sign tests use the true residual f1: the auxiliary y1 may have
         ! underflowed to zero after repeated A&B corrections.
-        if (same_sign(f1,y3)) then
-            if (.not. bis) side = 1
-            x1 = x3
-            y1 = y3
-            f1 = y3
-        else
-            if (.not. bis) side = 2
-            x2 = x3
-            y2 = y3
-            f2 = y3
-        end if
-        if (.not. bis .and. x2-x1>threshold .and. abs(y3) > 0.5_wp*ymin) then ! if Anderson-Bjork is not shrinking the interval fast enough
-            bis  = .true. ! reset to bisection.
-            side = 0
+        if (bis) then ! Bisection step: only the true residuals are tracked
+            if (same_sign(f1,y3)) then
+                x1 = x3; f1 = y3
+            else
+                x2 = x3; f2 = y3
+            end if
+        else ! Anderson-Bjork step
+            if (same_sign(f1,y3)) then
+                if (side == 1) y2 = y2*ab_factor(y3,y1) ! A&B correction of the right side
+                side = 1
+                x1 = x3; y1 = y3; f1 = y3
+            else
+                if (side == 2) y1 = y1*ab_factor(y3,y2) ! A&B correction of the left side
+                side = 2
+                x2 = x3; y2 = y3; f2 = y3
+            end if
+            if (x2-x1>threshold .and. abs(y3) > 0.5_wp*ymin) then ! if Anderson-Bjork is not shrinking the interval fast enough
+                bis  = .true. ! reset to bisection.
+                side = 0
+            end if
         end if
 
     end do

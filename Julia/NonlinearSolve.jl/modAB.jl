@@ -88,11 +88,12 @@ function SciMLBase.__solve(
                 ym = (f1 + f2) / 2 # Ordinate of chord at midpoint
                 r = 1 - abs(ym / (f2 - f1)) # Symmetry factor
                 k = r * r # Deviation factor
-                if abs(ym - y3) < k * abs(y3) + k * abs(ym) # Check if the function is close enough to linear
-                    threshold = C * (x2 - x1) # Initialize the bisection fallback threshold
+                if abs(ym - y3) < k * abs(y3) + k * abs(ym) # Check if the function is close enough to linear
                     bisecting = false
+                    threshold = C * (x2 - x1) # Initialize the bisection fallback threshold
+                    y1, y2 = f1, f2  # A&B starts from the true residuals
                 end
-            end 
+            end
         else # Anderson-Bjork method is used
             x3 = safe_secant(x1, y1, x2, y2)
             y3 = x3 == x1 ? f1 : x3 == x2 ? f2 : f(x3)
@@ -106,29 +107,37 @@ function SciMLBase.__solve(
         elseif (x2 - x1) < 2ϵ
             return build_bracketing_solution(prob, alg, x3, y3, x1, x2, ReturnCode.Success)
         end
-        if same_signs(f1, y3)
-            if side == 1  # Apply Anderson-Bjork correction on the right side
-                y2 *= get_ab_factor(y3, y1)
-            elseif !bisecting
-                side = 1
+        if bisecting
+            if same_signs(f1, y3)
+                x1, f1 = x3, y3
+            else
+                x2, f2 = x3, y3
             end
-            x1, y1, f1 = x3, y3, y3
         else
-            if side == -1  # Apply Anderson-Bjork correction on the left side
-                y1 *= get_ab_factor(y3, y2)
-            elseif !bisecting
-                side = -1
+            if same_signs(f1, y3)
+                if side == 1  # Apply Anderson-Bjork correction on the right side
+                    y2 *= get_ab_factor(y3, y1)
+                else
+                    side = 1
+                end
+                x1, y1, f1 = x3, y3, y3
+            else
+                if side == -1  # Apply Anderson-Bjork correction on the left side
+                    y1 *= get_ab_factor(y3, y2)
+                else
+                    side = -1
+                end
+                x2, y2, f2 = x3, y3, y3
             end
-            x2, y2, f2 = x3, y3, y3
+            if x2 - x1 > threshold && abs(y3) > yMin / 2
+                bisecting = true   # reset to bisection
+                side = 0
+            end
         end
         if nextfloat(x1) == x2
             return build_bracketing_solution(prob, alg, x2, f(x2), x1, x2, ReturnCode.FloatingPointLimit)
         end
         i += 1
-        if !bisecting && x2 - x1 > threshold && abs(y3) > yMin / 2
-            bisecting = true   # reset to bisection
-            side = 0
-        end
     end
-    return build_bracketing_solution(prob, alg, x1, y1, x1, x2, ReturnCode.MaxIters)
+    return build_bracketing_solution(prob, alg, x1, f1, x1, x2, ReturnCode.MaxIters)
 end

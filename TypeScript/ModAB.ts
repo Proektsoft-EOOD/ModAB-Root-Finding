@@ -143,17 +143,15 @@ export function modABRoot(
                 if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
                     bisection = false;
                     threshold = 2 * (x2 - x1); // Safety factor
+                    y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
             }
         } else {
             // If x3 got clamped, reuse the true residual stored at the endpoint.
-            if (x3 === x1) {
-                y3 = f1;
-            } else if (x3 === x2) {
-                y3 = f2;
-            } else {
-                y3 = f(x3) - y;
-            }
+            y3 = x3 === x1 ? f1 :
+                 x3 === x2 ? f2 :
+                 f(x3) - y;
+
             threshold *= 0.5;
             ymin = Math.min(Math.abs(f1), Math.abs(f2));
         }
@@ -164,25 +162,33 @@ export function modABRoot(
         if (Number.isNaN(y3)) {
             return NaN;
         }
+        if (bisection) {
         if (sameSign(f1, y3)) { // Same sign check
-            if (side === 1) {
-                y2 *= abFactor(y3, y1);
-            } else if (!bisection) {
-                side = 1;
-            }
-            x1 = x3; f1 = y1 = y3;
+            x1 = x3; f1 = y3;
         } else {
-            if (side === -1) {
-                y1 *= abFactor(y3, y2);
-            } else if (!bisection) {
-                side = -1;
-            }
-            x2 = x3; f2 = y2 = y3;
+            x2 = x3; f2 = y3;
         }
-        // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-        if (!bisection && x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
-            bisection = true;
-            side = 0;
+        } else {
+            if (sameSign(f1, y3)) { // Same sign check
+                if (side === 1) {
+                    y2 *= abFactor(y3, y1);
+                } else if (!bisection) {
+                    side = 1;
+                }
+                x1 = x3; f1 = y1 = y3;
+            } else {
+                if (side === -1) {
+                    y1 *= abFactor(y3, y2);
+                } else if (!bisection) {
+                    side = -1;
+                }
+                x2 = x3; f2 = y2 = y3;
+            }        
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+            if (x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
+                bisection = true;
+                side = 0;
+            }
         }
     }
     return NaN;

@@ -121,18 +121,18 @@ public class ModAB {
         }
         double epsy = ytol * Math.max(Math.abs(y), 1);
         double y1 = f.applyAsDouble(x1) - y;
-        if (Math.abs(y1) <= epsy) {
+        if (Math.abs(y1) <= epsy)
             return x1;
-        }
+        
         double y2 = f.applyAsDouble(x2) - y;
-        if (Math.abs(y2) <= epsy) {
+        if (Math.abs(y2) <= epsy)
             return x2;
-        }
+        
         // NaN has no usable sign, and sameSign is false for it, so it
         // must be rejected before the predicate is used to update a bracket.
-        if (Double.isNaN(y1) || Double.isNaN(y2) || sameSign(y1, y2)) {
+        if (Double.isNaN(y1) || Double.isNaN(y2) || sameSign(y1, y2))
             return Double.NaN; // No sign change - no root guaranteed
-        }
+        
         double f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
         double ymin = 0.0; // Best true residual of the bracket
         int side = 0;
@@ -140,10 +140,9 @@ public class ModAB {
         double threshold = x2 - x1;
         for (int i = 0; i < maxiter; i++) {
             double x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
-            double epsx = xtol * Math.max(Math.abs(x3), 1);
-            if (x2 - x1 <= epsx) { // x-convergence check
+            if (x2 - x1 <= xtol * Math.max(Math.abs(x3), 1)) // x-convergence check
                 return x3;
-            }
+
             double y3;
             if (bisection) {
                 y3 = f.applyAsDouble(x3) - y;
@@ -155,52 +154,51 @@ public class ModAB {
                     if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
                         bisection = false;
                         threshold = 2.0 * (x2 - x1);
+                        y1 = f1; y2 = f2; // A&B starts from the true residuals
                     }
                 }
             } else {
                 // If x3 got clamped, reuse the true residual stored at the endpoint.
-                if (x3 == x1) {
-                    y3 = f1;
-                } else if (x3 == x2) {
-                    y3 = f2;
-                } else {
-                    y3 = f.applyAsDouble(x3) - y;
-                }
+                y3 = x3 == x1 ? f1 :
+                     x3 == x2 ? f2 :
+                     f.applyAsDouble(x3) - y;
                 threshold *= 0.5;
                 ymin = Math.min(Math.abs(f1), Math.abs(f2));
             }
 
-            if (Math.abs(y3) <= epsy) {
+            if (Math.abs(y3) <= epsy)
                 return x3;
-            }
 
             // A NaN residual has no usable sign, so the bracket cannot be updated.
-            if (Double.isNaN(y3)) {
+            if (Double.isNaN(y3))
                 return Double.NaN;
-            }
-
-            if (sameSign(f1, y3)) {
-                if (side == 1) {
-                    y2 *= abFactor(y3, y1);
-                } else if (!bisection) {
-                    side = 1;
+            
+            if (bisection) {
+                if (sameSign(f1, y3)) {
+                    x1 = x3; f1 = y3;
+                } else {
+                    x2 = x3; f2 = y3;
                 }
-                x1 = x3;
-                y1 = y3;
-                f1 = y3;
             } else {
-                if (side == -1) {
-                    y1 *= abFactor(y3, y2);
-                } else if (!bisection) {
-                    side = -1;
-                }
-                x2 = x3;
-                y2 = y3;
-                f2 = y3;
-            }
-            if (!bisection && x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
-                bisection = true;
-                side = 0;
+                if (sameSign(f1, y3)) {
+                    if (side == 1) {
+                        y2 *= abFactor(y3, y1);
+                    } else if (!bisection) {
+                        side = 1;
+                    }
+                    x1 = x3; y1 = y3; f1 = y3;
+                } else {
+                    if (side == -1) {
+                        y1 *= abFactor(y3, y2);
+                    } else if (!bisection) {
+                        side = -1;
+                    }
+                    x2 = x3; y2 = y3; f2 = y3;
+                } 
+                if (x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
+                    bisection = true;
+                    side = 0;
+                } 
             }
         }
         return Double.NaN;

@@ -150,6 +150,7 @@ where
                 if (ym - y3).abs() < k * ym.abs() + k * y3.abs() {
                     bisection = false;
                     threshold = 2.0 * (x2 - x1);
+                    (y1, y2) = (f1, f2); // A&B starts from the true residuals
                 }
             }
         } else {
@@ -171,24 +172,32 @@ where
         if y3.is_nan() {
             return f64::NAN;
         }
-        if same_sign(f1, y3) {
-            if side == 1 {
-                y2 *= ab_factor(y3, y1);
-            } else if !bisection {
-                side = 1;
+        if bisection {
+            if same_sign(f1, y3) {
+                (x1, f1) = (x3, y3);
+            } else {
+                (x2, f2) = (x3, y3);
             }
-            (x1, y1, f1) = (x3, y3, y3);
         } else {
-            if side == -1 {
-                y1 *= ab_factor(y3, y2);
-            } else if !bisection {
-                side = -1;
+            if same_sign(f1, y3) {
+                if side == 1 {
+                    y2 *= ab_factor(y3, y1);
+                } else if !bisection {
+                    side = 1;
+                }
+                (x1, y1, f1) = (x3, y3, y3);
+            } else {
+                if side == -1 {
+                    y1 *= ab_factor(y3, y2);
+                } else if !bisection {
+                    side = -1;
+                }
+                (x2, y2, f2) = (x3, y3, y3);
             }
-            (x2, y2, f2) = (x3, y3, y3);
-        }
-        if !bisection && x2 - x1 > threshold && y3.abs() > 0.5 * ymin {
-            bisection = true;
-            side = 0;
+            if x2 - x1 > threshold && y3.abs() > 0.5 * ymin {
+                bisection = true;
+                side = 0;
+            }
         }
     }
     f64::NAN
