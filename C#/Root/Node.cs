@@ -31,12 +31,12 @@ namespace Proektsoft.Root
             var b = Math.Abs(y2);
             var den = a + b;
             if (!(den > 0.0))
-                return SafeMidpoint(x1, x2);
+                return 0.5 * x1 + 0.5 * x2;
 
             if (double.IsInfinity(den))
             {
                 if (double.IsInfinity(a) || double.IsInfinity(b))
-                    return SafeMidpoint(x1, x2);
+                    return 0.5 * x1 + 0.5 * x2;
 
                 a *= 0.5;
                 b *= 0.5;
@@ -52,10 +52,6 @@ namespace Proektsoft.Root
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double SafeMidpoint(Node p1, Node p2) =>
-            SafeMidpoint(p1.X, p2.X);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double SafeMidpoint(double x1, double x2) =>
-            0.5 * x1 + 0.5 * x2;
+            0.5 * p1.X + 0.5 * p2.X;
     }
 }
