@@ -82,7 +82,7 @@ function SciMLBase.__solve(
     while i < maxiters
         local x3, y3
         if bisecting # Bisection method is used
-            x3 = 0.5 * x1 + 0.5 * x2 # Avoids possible overflow in x1 + x2
+            x3 = safe_midpoint(x1, x2) # Avoids possible overflow in x1 + x2
             y3 = f(x3) # Function value at midpoint
             if isfinite(f2 - f1)
                 ym = (f1 + f2) / 2 # Ordinate of chord at midpoint
@@ -117,17 +117,13 @@ function SciMLBase.__solve(
             if same_signs(f1, y3)
                 if side == 1  # Apply Anderson-Bjork correction on the right side
                     y2 *= get_ab_factor(y3, y1)
-                else
-                    side = 1
                 end
-                x1, y1, f1 = x3, y3, y3
+                x1, y1, f1, side = x3, y3, y3, 1
             else
                 if side == -1  # Apply Anderson-Bjork correction on the left side
                     y1 *= get_ab_factor(y3, y2)
-                else
-                    side = -1
                 end
-                x2, y2, f2 = x3, y3, y3
+                x2, y2, f2, side = x3, y3, y3, -1
             end
             if x2 - x1 > threshold && abs(y3) > yMin / 2
                 bisecting = true   # reset to bisection

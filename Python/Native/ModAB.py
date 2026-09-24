@@ -99,6 +99,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 if abs(ym - y3) < k * abs(ym) + k * abs(y3):
                     bisection = False
                     threshold = C * (x2 - x1)  # Safety factor: skips two AB steps before the first fallback
+                    y1, y2 = f1, f2  # A&B starts from the true residuals
         else:
             # If x3 got clamped, reuse the true residual stored at the endpoint.
             if x3 == x1:
@@ -117,23 +118,28 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
         # A NaN residual has no usable sign, so the bracket cannot be updated.
         if math.isnan(y3):
             return _NAN
-
-        if same_sign(f1, y3):  # Same sign check
-            if side == 1:
-                y2 *= ab_factor(y3, y1)
-            elif not bisection:
-                side = 1
-            x1, y1, f1 = x3, y3, y3  # Also store the unmodified y1 value to be used for bisection fallback
+        if bisection:
+            if same_sign(f1, y3):  # Same sign check
+                x1, f1 = x3, y3,
+            else:
+                x2, f2 = x3, y3
         else:
-            if side == -1:
-                y1 *= ab_factor(y3, y2)
-            elif not bisection:
-                side = -1
-            x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
+            if same_sign(f1, y3):  # Same sign check
+                if side == 1:
+                    y2 *= ab_factor(y3, y1)
+                else:
+                    side = 1
+                x1, y1, f1 = x3, y3, y3  # Also store the unmodified y1 value to be used for bisection fallback
+            else:
+                if side == -1:
+                    y1 *= ab_factor(y3, y2)
+                else:
+                    side = -1
+                x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
-        # Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-        if not bisection and x2 - x1 > threshold and abs(y3) > 0.5 * ymin:
-            bisection = True
-            side = 0
+            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual
+            if x2 - x1 > threshold and abs(y3) > 0.5 * ymin:
+                bisection = True
+                side = 0
 
     return _NAN
