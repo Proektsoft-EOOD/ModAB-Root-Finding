@@ -138,7 +138,7 @@ problems3 = [
     Problem("f99", lambda x: x**17 - 0.001, -10, 10),
     Problem("f100", V, 0, math.e),
     # L. Tomov counterexample: A&B keeps halving the residual without shrinking the bracket
-    Problem("f101", lambda x: -x * x if x < 0 else 7 * x * x, -3, 1),
+    Problem("f101", lambda x: -x * x if x < 0 else 7 * x * x, -math.pi, 1),
 ]
 
 all_problems = problems1 + problems2 + problems3

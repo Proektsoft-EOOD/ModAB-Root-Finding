@@ -193,12 +193,14 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             }
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            bool width_failed = x2 - x1 > threshold;
-            if (width_failed && (fabs(y3) >= 0.5 * ymin || residual_steps >= MAX_RESIDUAL_STEPS)) {
-                bisection = true;
-                side = 0;
+            if (x2 - x1 > threshold) {
+                if (residual_steps >= MAX_RESIDUAL_STEPS || fabs(y3) >= 0.5 * ymin) {
+                    bisection = true;
+                    side = 0;
+                } else
+                    ++residual_steps;
             } else
-                residual_steps = width_failed ? residual_steps + 1 : 0;
+                residual_steps = 0;
         }
     }
     return NAN;

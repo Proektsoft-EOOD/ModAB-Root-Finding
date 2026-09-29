@@ -199,12 +199,15 @@ where
             }
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            let width_failed = x2 - x1 > threshold;
-            if width_failed && (y3.abs() >= 0.5 * ymin || residual_steps >= MAX_RESIDUAL_STEPS) {
-                bisection = true;
-                side = 0;
+            if x2 - x1 > threshold {
+                if residual_steps >= MAX_RESIDUAL_STEPS || y3.abs() >= 0.5 * ymin {
+                    bisection = true;
+                    side = 0;
+                } else {
+                    residual_steps += 1;
+                }
             } else {
-                residual_steps = if width_failed { residual_steps + 1 } else { 0 };
+                residual_steps = 0;
             }
         }
     }

@@ -79,7 +79,7 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, r, k, threshold, ymin
     cdef double C = 2.0  # Threshold safety factor
     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
-    cdef int side, bisection, residual_steps, width_failed, _
+    cdef int side, bisection, residual_steps, _
     if x2 < x1:
         x1, x2 = x2, x1
 
@@ -167,12 +167,14 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
 
             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            width_failed = x2 - x1 > threshold
-            if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
-                bisection = 1
-                side = 0
+            if x2 - x1 > threshold:
+                if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:
+                    bisection = 1
+                    side = 0
+                else:
+                    residual_steps += 1
             else:
-                residual_steps = residual_steps + 1 if width_failed else 0
+                residual_steps = 0
     return NAN
 
 

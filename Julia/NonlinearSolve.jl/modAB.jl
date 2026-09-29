@@ -138,12 +138,15 @@ function SciMLBase.__solve(
             end
             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             # but for no more than MaxResidualSteps consecutive steps
-            widthFailed = x2 - x1 > threshold
-            if widthFailed && (abs(y3) >= yMin / 2 || residualSteps >= MaxResidualSteps)
-                bisecting = true   # reset to bisection
-                side = 0
+            if x2 - x1 > threshold
+                if residualSteps >= MaxResidualSteps || abs(y3) >= yMin / 2
+                    bisecting = true   # reset to bisection
+                    side = 0
+                else
+                    residualSteps += 1
+                end
             else
-                residualSteps = widthFailed ? residualSteps + 1 : 0
+                residualSteps = 0
             end
         end
         if nextfloat(x1) == x2

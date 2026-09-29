@@ -674,7 +674,7 @@ namespace Root.Benchmark
             new() { // L. Tomov counterexample
                 Name = "f101",
                 F = (x) => x < 0d ? - x * x : 7 * x * x,
-                a = -3d, b = 1d,
+                a = -3, b = 1d,
                 Roots = [0]
             },
         };

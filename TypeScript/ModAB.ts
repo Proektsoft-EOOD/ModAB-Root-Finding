@@ -189,12 +189,15 @@ export function modABRoot(
             }        
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            const widthFailed = x2 - x1 > threshold;
-            if (widthFailed && (Math.abs(y3) >= 0.5 * ymin || residualSteps >= MAX_RESIDUAL_STEPS)) {
-                bisection = true;
-                side = 0;
+            if (x2 - x1 > threshold) {
+                if (residualSteps >= MAX_RESIDUAL_STEPS || Math.abs(y3) >= 0.5 * ymin) {
+                    bisection = true;
+                    side = 0;
+                } else {
+                    residualSteps++;
+                }
             } else {
-                residualSteps = widthFailed ? residualSteps + 1 : 0;
+                residualSteps = 0;
             }
         }
     }

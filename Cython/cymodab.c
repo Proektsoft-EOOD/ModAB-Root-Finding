@@ -3196,7 +3196,6 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   int __pyx_v_side;
   int __pyx_v_bisection;
   int __pyx_v_residual_steps;
-  int __pyx_v_width_failed;
   CYTHON_UNUSED int __pyx_v__;
   double __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -3213,7 +3212,6 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   int __pyx_t_11;
   int __pyx_t_12;
   double __pyx_t_13;
-  long __pyx_t_14;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3240,7 +3238,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
  *     cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, r, k, threshold, ymin
  *     cdef double C = 2.0  # Threshold safety factor             # <<<<<<<<<<<<<<
  *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
- *     cdef int side, bisection, residual_steps, width_failed, _
+ *     cdef int side, bisection, residual_steps, _
 */
   __pyx_v_C = 2.0;
 
@@ -3248,14 +3246,14 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
  *     cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, r, k, threshold, ymin
  *     cdef double C = 2.0  # Threshold safety factor
  *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone             # <<<<<<<<<<<<<<
- *     cdef int side, bisection, residual_steps, width_failed, _
+ *     cdef int side, bisection, residual_steps, _
  *     if x2 < x1:
 */
   __pyx_v_MAX_RESIDUAL_STEPS = 3;
 
   /* "cymodab.pyx":83
  *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
- *     cdef int side, bisection, residual_steps, width_failed, _
+ *     cdef int side, bisection, residual_steps, _
  *     if x2 < x1:             # <<<<<<<<<<<<<<
  *         x1, x2 = x2, x1
  * 
@@ -3266,7 +3264,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 
 
     /* "cymodab.pyx":84
- *     cdef int side, bisection, residual_steps, width_failed, _
+ *     cdef int side, bisection, residual_steps, _
  *     if x2 < x1:
  *         x1, x2 = x2, x1             # <<<<<<<<<<<<<<
  * 
@@ -3281,7 +3279,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 
     /* "cymodab.pyx":83
  *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
- *     cdef int side, bisection, residual_steps, width_failed, _
+ *     cdef int side, bisection, residual_steps, _
  *     if x2 < x1:             # <<<<<<<<<<<<<<
  *         x1, x2 = x2, x1
  * 
@@ -4291,95 +4289,100 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       /* "cymodab.pyx":170
  *             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
  *             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
- *             width_failed = x2 - x1 > threshold             # <<<<<<<<<<<<<<
- *             if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
- *                 bisection = 1
+ *             if x2 - x1 > threshold:             # <<<<<<<<<<<<<<
+ *                 if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:
+ *                     bisection = 1
 */
-      __pyx_v_width_failed = ((__pyx_v_x2 - __pyx_v_x1) > __pyx_v_threshold);
+      __pyx_t_1 = ((__pyx_v_x2 - __pyx_v_x1) > __pyx_v_threshold);
 
-      /* "cymodab.pyx":171
- *             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
- *             width_failed = x2 - x1 > threshold
- *             if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):             # <<<<<<<<<<<<<<
- *                 bisection = 1
- *                 side = 0
-*/
-      __pyx_t_9 = (__pyx_v_width_failed != 0);
-
-      if (__pyx_t_9) {
-
-      } else {
-
-        __pyx_t_1 = __pyx_t_9;
-
-        goto __pyx_L26_bool_binop_done;
-      }
-      __pyx_t_9 = (fabs(__pyx_v_y3) >= (0.5 * __pyx_v_ymin));
-
-      if (!__pyx_t_9) {
-
-      } else {
-
-        __pyx_t_1 = __pyx_t_9;
-
-        goto __pyx_L26_bool_binop_done;
-      }
-      __pyx_t_9 = (__pyx_v_residual_steps >= __pyx_v_MAX_RESIDUAL_STEPS);
-
-
-      __pyx_t_1 = __pyx_t_9;
-
-      __pyx_L26_bool_binop_done:;
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":172
- *             width_failed = x2 - x1 > threshold
- *             if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
- *                 bisection = 1             # <<<<<<<<<<<<<<
- *                 side = 0
- *             else:
-*/
-        __pyx_v_bisection = 1;
-
-        /* "cymodab.pyx":173
- *             if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
- *                 bisection = 1
- *                 side = 0             # <<<<<<<<<<<<<<
- *             else:
- *                 residual_steps = residual_steps + 1 if width_failed else 0
-*/
-        __pyx_v_side = 0;
-
         /* "cymodab.pyx":171
  *             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
- *             width_failed = x2 - x1 > threshold
- *             if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):             # <<<<<<<<<<<<<<
- *                 bisection = 1
- *                 side = 0
+ *             if x2 - x1 > threshold:
+ *                 if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:             # <<<<<<<<<<<<<<
+ *                     bisection = 1
+ *                     side = 0
+*/
+        __pyx_t_9 = (__pyx_v_residual_steps >= __pyx_v_MAX_RESIDUAL_STEPS);
+
+        if (!__pyx_t_9) {
+
+        } else {
+
+          __pyx_t_1 = __pyx_t_9;
+
+          goto __pyx_L27_bool_binop_done;
+        }
+        __pyx_t_9 = (fabs(__pyx_v_y3) >= (0.5 * __pyx_v_ymin));
+
+
+        __pyx_t_1 = __pyx_t_9;
+
+        __pyx_L27_bool_binop_done:;
+        if (__pyx_t_1) {
+
+
+          /* "cymodab.pyx":172
+ *             if x2 - x1 > threshold:
+ *                 if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:
+ *                     bisection = 1             # <<<<<<<<<<<<<<
+ *                     side = 0
+ *                 else:
+*/
+          __pyx_v_bisection = 1;
+
+          /* "cymodab.pyx":173
+ *                 if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:
+ *                     bisection = 1
+ *                     side = 0             # <<<<<<<<<<<<<<
+ *                 else:
+ *                     residual_steps += 1
+*/
+          __pyx_v_side = 0;
+
+          /* "cymodab.pyx":171
+ *             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
+ *             if x2 - x1 > threshold:
+ *                 if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:             # <<<<<<<<<<<<<<
+ *                     bisection = 1
+ *                     side = 0
+*/
+          goto __pyx_L26;
+        }
+
+        /* "cymodab.pyx":175
+ *                     side = 0
+ *                 else:
+ *                     residual_steps += 1             # <<<<<<<<<<<<<<
+ *             else:
+ *                 residual_steps = 0
+*/
+        /*else*/ {
+          __pyx_v_residual_steps = (__pyx_v_residual_steps + 1);
+        }
+        __pyx_L26:;
+
+        /* "cymodab.pyx":170
+ *             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+ *             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
+ *             if x2 - x1 > threshold:             # <<<<<<<<<<<<<<
+ *                 if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:
+ *                     bisection = 1
 */
         goto __pyx_L25;
       }
 
-      /* "cymodab.pyx":175
- *                 side = 0
+      /* "cymodab.pyx":177
+ *                     residual_steps += 1
  *             else:
- *                 residual_steps = residual_steps + 1 if width_failed else 0             # <<<<<<<<<<<<<<
+ *                 residual_steps = 0             # <<<<<<<<<<<<<<
  *     return NAN
  * 
 */
       /*else*/ {
-        __pyx_t_1 = (__pyx_v_width_failed != 0);
-
-        if (__pyx_t_1) {
-
-          __pyx_t_14 = (__pyx_v_residual_steps + 1);
-        } else {
-
-          __pyx_t_14 = 0;
-        }
-
-        __pyx_v_residual_steps = __pyx_t_14;
+        __pyx_v_residual_steps = 0;
       }
       __pyx_L25:;
     }
@@ -4387,9 +4390,9 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   }
 
 
-  /* "cymodab.pyx":176
+  /* "cymodab.pyx":178
  *             else:
- *                 residual_steps = residual_steps + 1 if width_failed else 0
+ *                 residual_steps = 0
  *     return NAN             # <<<<<<<<<<<<<<
  * 
  * 
@@ -4417,7 +4420,6 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   __Pyx_AddTraceback("cymodab.modAB_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-
 
 
 
@@ -4652,7 +4654,7 @@ static PyObject *__pyx_pf_7cymodab_modAB_root(CYTHON_UNUSED PyObject *__pyx_self
   return __pyx_r;
 }
 
-/* "cymodab.pyx":188
+/* "cymodab.pyx":190
  * # ---------------------------------------------------------------------------
  * 
  * cpdef bint t_same_sign(double x, double y):             # <<<<<<<<<<<<<<
@@ -4670,7 +4672,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static int __pyx_f_7cymodab_t_same_sign(double __pyx_v_x, double __pyx_v_y, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
 
-  /* "cymodab.pyx":189
+  /* "cymodab.pyx":191
  * 
  * cpdef bint t_same_sign(double x, double y):
  *     return same_sign(x, y)             # <<<<<<<<<<<<<<
@@ -4683,7 +4685,7 @@ static int __pyx_f_7cymodab_t_same_sign(double __pyx_v_x, double __pyx_v_y, CYTH
   }
   goto __pyx_L0;
 
-  /* "cymodab.pyx":188
+  /* "cymodab.pyx":190
  * # ---------------------------------------------------------------------------
  * 
  * cpdef bint t_same_sign(double x, double y):             # <<<<<<<<<<<<<<
@@ -4737,39 +4739,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x,&__pyx_mstate_global->__pyx_n_u_y,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 188, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 190, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 188, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 190, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 188, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 190, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_same_sign", 0) < (0)) __PYX_ERR(0, 188, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_same_sign", 0) < (0)) __PYX_ERR(0, 190, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, i); __PYX_ERR(0, 188, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, i); __PYX_ERR(0, 190, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 188, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 190, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 188, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 190, __pyx_L3_error)
     }
-    __pyx_v_x = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 188, __pyx_L3_error)
-    __pyx_v_y = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 188, __pyx_L3_error)
+    __pyx_v_x = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L3_error)
+    __pyx_v_y = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 188, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 190, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4801,8 +4803,8 @@ static PyObject *__pyx_pf_7cymodab_2t_same_sign(CYTHON_UNUSED PyObject *__pyx_se
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("t_same_sign", 0);
-  __pyx_t_1 = __pyx_f_7cymodab_t_same_sign(__pyx_v_x, __pyx_v_y, 1); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 188, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7cymodab_t_same_sign(__pyx_v_x, __pyx_v_y, 1); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -4827,7 +4829,7 @@ static PyObject *__pyx_pf_7cymodab_2t_same_sign(CYTHON_UNUSED PyObject *__pyx_se
   return __pyx_r;
 }
 
-/* "cymodab.pyx":191
+/* "cymodab.pyx":193
  *     return same_sign(x, y)
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):             # <<<<<<<<<<<<<<
@@ -4845,7 +4847,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static double __pyx_f_7cymodab_t_safe_midpoint(double __pyx_v_x1, double __pyx_v_x2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_r;
 
-  /* "cymodab.pyx":192
+  /* "cymodab.pyx":194
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):
  *     return safe_midpoint(x1, x2)             # <<<<<<<<<<<<<<
@@ -4858,7 +4860,7 @@ static double __pyx_f_7cymodab_t_safe_midpoint(double __pyx_v_x1, double __pyx_v
   }
   goto __pyx_L0;
 
-  /* "cymodab.pyx":191
+  /* "cymodab.pyx":193
  *     return same_sign(x, y)
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):             # <<<<<<<<<<<<<<
@@ -4912,39 +4914,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x1,&__pyx_mstate_global->__pyx_n_u_x2,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 191, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 193, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 191, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 193, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 191, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 193, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_midpoint", 0) < (0)) __PYX_ERR(0, 191, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_midpoint", 0) < (0)) __PYX_ERR(0, 193, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, i); __PYX_ERR(0, 191, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, i); __PYX_ERR(0, 193, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 191, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 193, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 191, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 193, __pyx_L3_error)
     }
-    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 191, __pyx_L3_error)
-    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 191, __pyx_L3_error)
+    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 193, __pyx_L3_error)
+    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 193, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 191, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 193, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4976,8 +4978,8 @@ static PyObject *__pyx_pf_7cymodab_4t_safe_midpoint(CYTHON_UNUSED PyObject *__py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("t_safe_midpoint", 0);
-  __pyx_t_1 = __pyx_f_7cymodab_t_safe_midpoint(__pyx_v_x1, __pyx_v_x2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 191, __pyx_L1_error)
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7cymodab_t_safe_midpoint(__pyx_v_x1, __pyx_v_x2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 193, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -5002,7 +5004,7 @@ static PyObject *__pyx_pf_7cymodab_4t_safe_midpoint(CYTHON_UNUSED PyObject *__py
   return __pyx_r;
 }
 
-/* "cymodab.pyx":194
+/* "cymodab.pyx":196
  *     return safe_midpoint(x1, x2)
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):             # <<<<<<<<<<<<<<
@@ -5019,7 +5021,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static double __pyx_f_7cymodab_t_safe_secant(double __pyx_v_x1, double __pyx_v_y1, double __pyx_v_x2, double __pyx_v_y2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_r;
 
-  /* "cymodab.pyx":195
+  /* "cymodab.pyx":197
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):
  *     return safe_secant(x1, y1, x2, y2)             # <<<<<<<<<<<<<<
@@ -5030,7 +5032,7 @@ static double __pyx_f_7cymodab_t_safe_secant(double __pyx_v_x1, double __pyx_v_y
   }
   goto __pyx_L0;
 
-  /* "cymodab.pyx":194
+  /* "cymodab.pyx":196
  *     return safe_midpoint(x1, x2)
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):             # <<<<<<<<<<<<<<
@@ -5085,53 +5087,53 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x1,&__pyx_mstate_global->__pyx_n_u_y1,&__pyx_mstate_global->__pyx_n_u_x2,&__pyx_mstate_global->__pyx_n_u_y2,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 194, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 196, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 194, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 196, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 194, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 196, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 194, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 196, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 194, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 196, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_secant", 0) < (0)) __PYX_ERR(0, 194, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_secant", 0) < (0)) __PYX_ERR(0, 196, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 4; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, i); __PYX_ERR(0, 194, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, i); __PYX_ERR(0, 196, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 4)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 194, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 196, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 194, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 196, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 194, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 196, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 194, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 196, __pyx_L3_error)
     }
-    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
-    __pyx_v_y1 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
-    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
-    __pyx_v_y2 = __Pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
+    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 196, __pyx_L3_error)
+    __pyx_v_y1 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 196, __pyx_L3_error)
+    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 196, __pyx_L3_error)
+    __pyx_v_y2 = __Pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 196, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 194, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 196, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5165,8 +5167,8 @@ static PyObject *__pyx_pf_7cymodab_6t_safe_secant(CYTHON_UNUSED PyObject *__pyx_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("t_safe_secant", 0);
-  __pyx_t_1 = __pyx_f_7cymodab_t_safe_secant(__pyx_v_x1, __pyx_v_y1, __pyx_v_x2, __pyx_v_y2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L1_error)
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7cymodab_t_safe_secant(__pyx_v_x1, __pyx_v_y1, __pyx_v_x2, __pyx_v_y2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 196, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -5552,48 +5554,48 @@ __Pyx_RefNannySetupContext("PyInit_cymodab", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_modAB_root, __pyx_t_2) < (0)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cymodab.pyx":188
+  /* "cymodab.pyx":190
  * # ---------------------------------------------------------------------------
  * 
  * cpdef bint t_same_sign(double x, double y):             # <<<<<<<<<<<<<<
  *     return same_sign(x, y)
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_3t_same_sign, 0, __pyx_mstate_global->__pyx_n_u_t_same_sign, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_3t_same_sign, 0, __pyx_mstate_global->__pyx_n_u_t_same_sign, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_same_sign, __pyx_t_2) < (0)) __PYX_ERR(0, 188, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_same_sign, __pyx_t_2) < (0)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cymodab.pyx":191
+  /* "cymodab.pyx":193
  *     return same_sign(x, y)
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):             # <<<<<<<<<<<<<<
  *     return safe_midpoint(x1, x2)
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_5t_safe_midpoint, 0, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_5t_safe_midpoint, 0, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, __pyx_t_2) < (0)) __PYX_ERR(0, 191, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, __pyx_t_2) < (0)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cymodab.pyx":194
+  /* "cymodab.pyx":196
  *     return safe_midpoint(x1, x2)
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):             # <<<<<<<<<<<<<<
  *     return safe_secant(x1, y1, x2, y2)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_7t_safe_secant, 0, __pyx_mstate_global->__pyx_n_u_t_safe_secant, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_7t_safe_secant, 0, __pyx_mstate_global->__pyx_n_u_t_safe_secant, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_secant, __pyx_t_2) < (0)) __PYX_ERR(0, 194, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_secant, __pyx_t_2) < (0)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "cymodab.pyx":1
@@ -5713,21 +5715,21 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
     const struct { const unsigned int length: 5; } str_length_index[] = {{1},{11},{20},{12},{8},{8},{10},{8},{12},{8},{13},{18},{18},{7},{1},{5},{7},{10},{3},{10},{15},{13},{11},{6},{1},{2},{2},{4},{1},{2},{2},{4}};
-    const struct { const unsigned int length: 10; } bytes_length_index[] = {{16},{721},{20},{16}};
+    const struct { const unsigned int length: 10; } bytes_length_index[] = {{16},{714},{20},{16}};
     #ifndef CYTHON_COMPRESS_STRINGS
       #define CYTHON_COMPRESS_STRINGS 0
     #endif
-    #if (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (696 bytes) */
-static const char cstring[] = "x\332}R\277o\332P\020\346gC\024\242\340\304$\312\217\252\005\312\320%\222\tQSUU\004\205\241K\025\022:[\017c*\253`\003~\256\354\241R\3067\336\370\3067zdd\354\230\221\321\243\377\204\374\t\275g\222\224\251\036\356\356\335{\337w\367\235\357\332\010&\316\220\014\316\247\201\257\3537hn\202\216eP\375\233\351\323[s\244\353\304\266\035J\250\251\3437\362lC\372\t\261\354\304;Co\234\334\330d\222\370\231G\306\31715]\212\316ru\303\231;\036\265l\223\270\201mX\316\371K\3025\306hu\244\243sb\230\003b\374|\352hdQs\342N\210\217~\216\231V[\237;\016\235:S\327\244CsD\2741\245\272KF\246>\261\206S\307\262\237\217\256i\220\365\001\373p\255\037\366/2\366L\327\3675\277\341Sg\034\004Z\320\0100X\245\016\201D\271\035\366\021Zp\307\323\253\324\321\352\250\365G\211\352W\253\253\257\017\312c5\225/C+\312UE%\316m\335\273\254\312ZQ\241\310\272\240B/F\340%d\240\0163\236\343-\336\027J\224\333f\n\253\260&\233\003\036\266\356)\323X\007\262\240E\205=6\213\377\177\375XH\345\013\367\036k\261>\034@\227+\374\0357\304qX\t\233\341\354\037A\2646;L\213r%HK\223\205\006\364\236Re\031\025X\236}\207\212$\226\311\242\002\2579\341Th1\206\247I\263\252\350\207J\214\254\036\264\301\344\032\357\210\264(\013\"\021\027l\200\234\0278\234\342\001h\3613\207\202\214M\230s%*\3561\037egy\203\367\242\322!\030|\2377\371\034\047PR\241\3033\3309\341\256\250\211\2730\023Vd\262\r\003\236\216K\007H\260\306\365\305\276h\210[AC-\354,2\213\352\242\275\030.+K-R\337\212\2644\231\027\274Z\027\275H=\306\302\322<\276J\355\226\230\0135TZ\222r\025\025\276\300,\211ci\200\000\225\235\305E\tA\t\227<\315U\336\343\246h\212Y\230\226\202\232l\006\271\004&%\"\345v\021\377f\032\224M\311{,X#\245\202\256\014\342\227`\363RV\310r\354\374\204\277\027\232\350`\t\365\024\317\3110\362\311\260{q\362\n\027e\343UTN4\235ar\363).\302\356\031\277\340\003\221\305\021\365d\037\277yW\336\210aX\013\373\213\375\305\3452\273\274~\250=`\361\004}\004\263\270T\021op\220\365\325\007\334\335d\033V\251\023^\221\321\247d$M\271\001\253\224\004`\356\363\272\373\277\221\256\2077";
-    PyObject *data = __Pyx_DecompressString(cstring, 696, 1);
+    #if (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (687 bytes) */
+static const char cstring[] = "x\332}R1o\332P\020\306`\032\242P\005\047&Q\222V*\244T\352\022\311\204H\251\252*\202\220\241K\025\022:[\017c*\253`\003~T\366\226\361\2157\276\361\215\036\031\031\03132z\364O\310O\350=\223\244L\365p\367\335\275w\337\335w~WV8\362\372\244w6\016\003\323\274Es\033\266\035\213\232?\354\200\336\331\003\323$\256\353QBm\023\277\301\314\265\244\037\021\307M\275\327\237\r\323\023\227\214R?\231\221\341\013\246\266O\3219\276iySoF\035\327&~\350Z\216w\366\232\360\255!Z\023\351\350\224Xv\217X\277\237\047\0328\324\036\371#\022\240\237b\246\3312\247\236G\307\336\330\267i\337\036\220\331\220R\323\047\003\333\0349\375\261\347\270/\241o[d\035\340\034\276\363\313\375C\2063\333\017\002#\250\007\324\033\206\241\021\326C\004\253\314\001\220X\335a_\240\t\367\\Ye\016W\207\315\245\026\327.W\227\337\037\265\247j&_\206f\254VE%Q\267\036|Ve\315\270Pd7\240C\047\301\302\013\310B\r&\\\345M\336\025Z\254n3\215UX\203M\001\203\255\007\312\014\326\206\034\030qa\227M\222\377\037?\0252\371\302\303\2145Y\027\366\341\206k\374#\267\304QT\211\032\321\344\037A\2746;\314\210\325\022(\322\344\240\016\235\347TY\242\002\313\263\237P\221\3042Y\324\340=\047\234\n#Ax\222\016\253\213n\244%\310:\203\026\330\334\340m\241\210\262 \262\342\234\365\220\363\034\227S\334\007#y\341\320\220\261\001S\256\305\305]\026\240\354\034\257\363N\\:\000\213\357\361\006\237\342\006J:\264y\026\047\047\334\027\247\342>\312F\025\231lA\217+Ii\037\t\326u]\261\047\352\342N\320\310\210\332\363\354\274:o\315\373\213\312\302\210\365\017B\221&\373Z\257\327D\047\326\217\260\2614Oo2oK\314\207STZ\222r5\035\256a\222\342D\032 @\345dIQ\226\240\204\013\256p\235w\270-\032b\022)RP\203M@M\313\244D\244\334.\342\337T@\333\224\274\313\302u\245Tp#A\362\n6\017e\207\034\307\311\217\371ga\2106\266\320O0N\227\221O\227\335I\322[\370P6n\305\345T\323;Ln^\305\207\220\n\254\342|r\333Xy%NW\265\313En\321XL\226\352\362zI\037\353\217\235\347Ua\253D\377$HR\252\210\365\313Xe\216yE\242\257\351.\032\362\327\2572\262\017\346\276\255\307\376\013\314\317\204\036";
+    PyObject *data = __Pyx_DecompressString(cstring, 687, 1);
     #define __Pyx_DecompressString_LZSS_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (1026 bytes) */
-static const char bytes[] = "?cymodab.pyx__Pyx_PyDict_NextRef__annotate____func____main____module____name____qualname____test___is_coroutineasyncio.coroutinescline_in_tracebackcymodabfitemsmaxitermodAB_rootpopsetdefaultt_safe_midpointt_safe_secantt_same_signvaluesxx1x2xtolyy1y2ytol\320\000\026\220a\330\004\013\2109\220A\220S\230\001\320\000\027\320\027A\300\021\330%8\3208I\310\021\360\"\000\005\025\220A\330\004\"\240!\340\004\007\200s\210\"\210A\330\010\014\210E\220\024\220Q\340\004\013\2105\220\002\220%\220q\230\004\230A\230T\240\021\330\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\340\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\360\010\000\005\010\200u\210A\210T\220\023\220E\230\021\230$\230c\240\031\250!\2504\250q\330\010\017\210q\340\004\t\210\021\330\004\t\210\021\330\004\013\2101\330\004\020\220\001\330\004\020\220\003\2202\220Q\330\004\013\2101\330\004\025\220Q\330\004\010\210\005\210U\220!\2201\330\010\013\2101\330\014\021\220\035\230a\230t\2401\340\014\021\220\033\230A\230T\240\024\240T\250\021\340\010\017\210u\220B\220e\2301\230D\240\001\240\025\240a\330\010\013\2103\210b\220\003\2203\220a\330\014\023\2201\340\010\013\2101\330\014\021\220\021\220!\2204\220r\230\021\330\014\017\210x\220q\230\003\2302\230Q\330\020\026\220c\230\022\2304\230r\240\021\330\020\024\220D\230\002\230$\230a\230s\240#\240S\250\002\250!\330\020\024\220B\220b\230\001\340\020\023\2204\220q\230\003\2302\230T\240\022\2402\240R\240t\2501\250D\260\002\260\"\260B\260d\270!\2701\330\024 \240\001\330\024 \240\002\240#\240S\250\002\250!\330\024%\240Q\330\024\031\230\021\330\024\031\230\021\360\006\000\r\020\210s\220#\220Q\330\020\025\220Q\330\021\024\220C\220q\330\020\025\220Q\340\020\025\220Q\220a\220t\2302\230Q\340\014\031\230\021\330\014\023\2205\230\001\230\024\230Q\230e\2404\240q\250\001\340\010\013\2104\210q\220\004\220C\220q\330\014\023\2201\360\006\000\t\014\2105\220\001\220\021\330\014\023\2201\340\010\013\2101\330""\014\017\210y\230\001\230\024\230Q\330\020\024\220E\230\024\230Q\340\020\024\220E\230\024\230Q\340\014\017\210y\230\001\230\024\230Q\330\020\023\2205\230\003\2301\330\024\032\230)\2401\240D\250\001\340\024\033\2301\330\020\024\220D\230\005\230T\240\024\240Q\340\020\023\2205\230\004\230A\330\024\032\230)\2401\240D\250\001\330\025\031\230\021\330\024\034\230A\330\020\024\220D\230\005\230T\240\024\240Q\360\010\000\r\034\2303\230b\240\003\2402\240Q\330\014\017\210}\230E\240\024\240Q\240d\250#\250T\260\022\2605\270\003\270?\310#\310Q\330\020\034\230A\330\020\027\220q\340\020!\240\037\260\002\260%\3207I\310\021\330\004\013\2101\320\000\032\230!\330\004\013\210;\220a\220t\2304\230t\2401\320\000\034\230A\330\004\013\210=\230\001\230\024\230Q";
+    #else /* compression: none (1019 bytes) */
+static const char bytes[] = "?cymodab.pyx__Pyx_PyDict_NextRef__annotate____func____main____module____name____qualname____test___is_coroutineasyncio.coroutinescline_in_tracebackcymodabfitemsmaxitermodAB_rootpopsetdefaultt_safe_midpointt_safe_secantt_same_signvaluesxx1x2xtolyy1y2ytol\320\000\026\220a\330\004\013\2109\220A\220S\230\001\320\000\027\320\027A\300\021\330%8\3208I\310\021\360\"\000\005\025\220A\330\004\"\240!\340\004\007\200s\210\"\210A\330\010\014\210E\220\024\220Q\340\004\013\2105\220\002\220%\220q\230\004\230A\230T\240\021\330\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\340\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\360\010\000\005\010\200u\210A\210T\220\023\220E\230\021\230$\230c\240\031\250!\2504\250q\330\010\017\210q\340\004\t\210\021\330\004\t\210\021\330\004\013\2101\330\004\020\220\001\330\004\020\220\003\2202\220Q\330\004\013\2101\330\004\025\220Q\330\004\010\210\005\210U\220!\2201\330\010\013\2101\330\014\021\220\035\230a\230t\2401\340\014\021\220\033\230A\230T\240\024\240T\250\021\340\010\017\210u\220B\220e\2301\230D\240\001\240\025\240a\330\010\013\2103\210b\220\003\2203\220a\330\014\023\2201\340\010\013\2101\330\014\021\220\021\220!\2204\220r\230\021\330\014\017\210x\220q\230\003\2302\230Q\330\020\026\220c\230\022\2304\230r\240\021\330\020\024\220D\230\002\230$\230a\230s\240#\240S\250\002\250!\330\020\024\220B\220b\230\001\340\020\023\2204\220q\230\003\2302\230T\240\022\2402\240R\240t\2501\250D\260\002\260\"\260B\260d\270!\2701\330\024 \240\001\330\024 \240\002\240#\240S\250\002\250!\330\024%\240Q\330\024\031\230\021\330\024\031\230\021\360\006\000\r\020\210s\220#\220Q\330\020\025\220Q\330\021\024\220C\220q\330\020\025\220Q\340\020\025\220Q\220a\220t\2302\230Q\340\014\031\230\021\330\014\023\2205\230\001\230\024\230Q\230e\2404\240q\250\001\340\010\013\2104\210q\220\004\220C\220q\330\014\023\2201\360\006\000\t\014\2105\220\001\220\021\330\014\023\2201\340\010\013\2101\330""\014\017\210y\230\001\230\024\230Q\330\020\024\220E\230\024\230Q\340\020\024\220E\230\024\230Q\340\014\017\210y\230\001\230\024\230Q\330\020\023\2205\230\003\2301\330\024\032\230)\2401\240D\250\001\340\024\033\2301\330\020\024\220D\230\005\230T\240\024\240Q\340\020\023\2205\230\004\230A\330\024\032\230)\2401\240D\250\001\330\025\031\230\021\330\024\034\230A\330\020\024\220D\230\005\230T\240\024\240Q\360\010\000\r\020\210s\220\"\220C\220r\230\021\330\020\023\220?\240#\320%8\270\003\2704\270q\300\004\300C\300t\3102\310Q\330\024 \240\001\330\024\033\2301\340\024&\240a\340\020!\240\021\330\004\013\2101\320\000\032\230!\330\004\013\210;\220a\220t\2304\230t\2401\320\000\034\230A\330\004\013\210=\230\001\230\024\230Q";
     PyObject *data = NULL;
     #define __Pyx_DecompressString_UNUSED
     #define __Pyx_DecompressString_LZSS_UNUSED
@@ -5863,17 +5865,17 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_modAB_root, __pyx_mstate->__pyx_kp_b_iso88591_A_88I_A_s_A_E_Q_5_q_AT_4r_t1D_1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 188};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 190};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_x, __pyx_mstate->__pyx_n_u_y};
     __pyx_mstate_global->__pyx_codeobj_tab[1] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_t_same_sign, __pyx_mstate->__pyx_kp_b_iso88591_a_9AS, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[1])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 191};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 193};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_x1, __pyx_mstate->__pyx_n_u_x2};
     __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_t_safe_midpoint, __pyx_mstate->__pyx_kp_b_iso88591_A_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 194};
+    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 196};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_x1, __pyx_mstate->__pyx_n_u_y1, __pyx_mstate->__pyx_n_u_x2, __pyx_mstate->__pyx_n_u_y2};
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_t_safe_secant, __pyx_mstate->__pyx_kp_b_iso88591_at4t1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }

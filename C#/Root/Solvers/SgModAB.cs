@@ -83,19 +83,20 @@ namespace Proektsoft.Root
 
                         p2 = p3; f2 = y3;
                     }
-                    var widthFailed = p2.X - p1.X > fallbackThreshold;
-                    var fallBack = widthFailed &&
-                    (Math.Abs(y3) >= 0.5 * yMin || residualSteps >= MaxResidualSteps);
-                    if (fallBack)
+                    if (p2.X - p1.X > fallbackThreshold)
                     {
-                        isAB = false;
-                        sideMoved = 0;
+                        if (residualSteps >= MaxResidualSteps || Math.Abs(y3) >= 0.5 * yMin)
+                        {
+                            isAB = false;
+                            sideMoved = 0;
+                        }
+                        else
+                            ++residualSteps;
                     }
                     else
-                    {
-                        residualSteps = widthFailed ? residualSteps + 1 : 0;
-                        fallbackThreshold *= 0.5;
-                    }
+                        residualSteps = 0;
+
+                    fallbackThreshold *= 0.5;
                 }
                 else // Bisection step
                 {

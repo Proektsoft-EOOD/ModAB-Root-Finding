@@ -105,7 +105,7 @@ int main(void) {
     ck_root("inf left", f_inf_left, -1.0, 1.0, 0.1);
     ck_root("inf both", f_inf_both, -1.0, 1.0, 0.1);
     ck_root("subnormal", f_subnormal, -1.0, 1.0, cbrt(0.2));
-    ck_root("residual cap", f_tomov, -3.0, 1.0, 0.0);
+    ck_root("residual cap", f_tomov, -acos(-1.0), 1.0, 0.0); /* [-pi, 1] */
 
     printf("C edge-cases: %d/%d %s\n", passed, total, passed == total ? "PASS" : "FAIL");
     return passed == total ? 0 : 1;

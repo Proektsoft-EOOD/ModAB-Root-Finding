@@ -158,7 +158,7 @@ public class ModABTest {
         // Vertical tangent at the root x = 0.75; f(0) = cbrt(-3/0.0) = -infinity
         problems.add(new Problem("f100", x -> Math.cbrt((4 * x - 3) / x), 0, Math.E));
         // L. Tomov counterexample: A&B keeps halving the residual without shrinking the bracket
-        problems.add(new Problem("f101", x -> x < 0 ? -x * x : 7 * x * x, -3, 1));
+        problems.add(new Problem("f101", x -> x < 0 ? -x * x : 7 * x * x, -Math.PI, 1));
         return problems;
     }
 

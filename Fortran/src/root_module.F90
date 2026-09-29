@@ -2785,7 +2785,7 @@
 
     real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ymin,ym,r,k,threshold
     integer :: i  !! iteration counter
-    logical :: root_found, bis, width_failed
+    logical :: root_found, bis
     integer :: side !! for tracking the side
     integer,parameter :: max_residual_steps = 3 !! max consecutive A&B steps kept by the residual test alone
     integer :: residual_steps
@@ -2868,12 +2868,13 @@
             end if
             ! if Anderson-Bjork is not shrinking the interval fast enough, fall back to bisection,
             ! unless it still halves the residual, but for no more than max_residual_steps consecutive steps
-            width_failed = x2-x1 > threshold
-            if (width_failed .and. (abs(y3) >= 0.5_wp*ymin .or. residual_steps >= max_residual_steps)) then
-                bis  = .true. ! reset to bisection.
-                side = 0
-            else if (width_failed) then
-                residual_steps = residual_steps + 1
+            if (x2-x1 > threshold) then
+                if (residual_steps >= max_residual_steps .or. abs(y3) >= 0.5_wp*ymin) then
+                    bis  = .true. ! reset to bisection.
+                    side = 0
+                else
+                    residual_steps = residual_steps + 1
+                end if
             else
                 residual_steps = 0
             end if

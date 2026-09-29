@@ -127,7 +127,7 @@ const problems3: Problem[] = [
     // Vertical tangent at the root x = 0.75; f(0) = cbrt(-3/0) = -Infinity
     { name: "f100", f: (x) => Math.cbrt((4 * x - 3) / x), a: 0, b: Math.E },
     // L. Tomov counterexample: A&B keeps halving the residual without shrinking the bracket
-    { name: "f101", f: (x) => x < 0 ? -x * x : 7 * x * x, a: -3, b: 1 },
+    { name: "f101", f: (x) => x < 0 ? -x * x : 7 * x * x, a: -Math.PI, b: 1 },
 ];
 
 const allProblems: Problem[] = [...problems1, ...problems2, ...problems3];

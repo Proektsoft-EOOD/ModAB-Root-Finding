@@ -186,12 +186,15 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
             }
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than max_residual_steps consecutive steps
-            const width_failed = x2 - x1 > threshold;
-            if (width_failed and (@abs(y3) >= 0.5 * ymin or residual_steps >= max_residual_steps)) {
-                bisecting = true;
-                side = 0;
+            if (x2 - x1 > threshold) {
+                if (residual_steps >= max_residual_steps or @abs(y3) >= 0.5 * ymin) {
+                    bisecting = true;
+                    side = 0;
+                } else {
+                    residual_steps += 1;
+                }
             } else {
-                residual_steps = if (width_failed) residual_steps + 1 else 0;
+                residual_steps = 0;
             }
         }
     }

@@ -142,11 +142,13 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
 
             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            width_failed = x2 - x1 > threshold
-            if width_failed and (abs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
-                bisection = True
-                side = 0
+            if x2 - x1 > threshold:
+                if residual_steps >= MAX_RESIDUAL_STEPS or abs(y3) >= 0.5 * ymin:
+                    bisection = True
+                    side = 0
+                else:
+                    residual_steps += 1
             else:
-                residual_steps = residual_steps + 1 if width_failed else 0
+                residual_steps = 0
 
     return _NAN

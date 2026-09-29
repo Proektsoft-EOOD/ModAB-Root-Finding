@@ -481,7 +481,7 @@ const all_problems = [_]Problem{
     .{ .name = "f_98", .f = f_98, .a = -10.0, .b = 10.0 },
     .{ .name = "f_99", .f = f_99, .a = -10.0, .b = 10.0 },
     .{ .name = "f_100", .f = f_100, .a = 0.0, .b = std.math.e },
-    .{ .name = "f_101", .f = f_101, .a = -3.0, .b = 1.0 },
+    .{ .name = "f_101", .f = f_101, .a = -std.math.pi, .b = 1.0 },
 };
 
 pub fn main() void {
