@@ -51,6 +51,7 @@ namespace Proektsoft.Root
                     returnCode = ReturnCode.Invalid;
                     return double.NaN;
                 }
+                var switchToAB = false;
                 if (isAB)
                     yMin = Math.Min(Math.Abs(p1.Y), Math.Abs(p2.Y)); // Best true residual of the bracket.
                 else if (double.IsFinite(p2.Y - p1.Y)) // Avoids overflow in the calculations below.
@@ -58,14 +59,8 @@ namespace Proektsoft.Root
                     var ym = 0.5 * (p1.Y + p2.Y);
                     var r = 1 - Math.Abs(ym / (p2.Y - p1.Y)); // Symmetry factor
                     var k = r * r; // Deviation factor
-                    if (Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3))
-                    {   // k·|ym| + k·|y3| cannot overflow; an infinite y3 fails the test.
-                        isAB = true;
-                        residualSteps = 0;
-                        fallbackThreshold = C * (p2.X - p1.X);
-                        f1 = p1.Y;
-                        f2 = p2.Y;
-                    }
+                    switchToAB = Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3);
+                    // k·|ym| + k·|y3| cannot overflow; an infinite y3 fails the test.
                 }
                 var p3 = new Node(x3, y3);
                 if (isAB) // Anderson-Björck step
@@ -109,6 +104,15 @@ namespace Proektsoft.Root
                         p1 = p3;
                     else
                         p2 = p3;
+
+                    if (switchToAB)
+                    {
+                        isAB = true;
+                        residualSteps = 0;
+                        fallbackThreshold = C * (p2.X - p1.X);
+                        f1 = p1.Y;
+                        f2 = p2.Y;
+                    }
                 }
             }
             returnCode = ReturnCode.MaxIterationsExceeded;

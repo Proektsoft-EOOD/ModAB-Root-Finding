@@ -1,0 +1,96 @@
+﻿namespace Proektsoft.Root
+{
+    // This class provides methods for solving the equation f(x) = 0 numerically.
+    // All methods are of bracketing type. They require a continuous function and
+    // an initial interval whose endpoint values have opposite signs.
+
+    public static partial class Solver
+    {
+        public enum ReturnCode
+        {
+            Success = 0,
+            Invalid = 1,
+            MaxIterationsExceeded = 2,
+            FalseConvergence = 3
+        }
+
+        public const int MaxIterations = 200;
+
+        /// <summary>
+        /// Number of function evaluations performed by the latest completed
+        /// call. This remains a lightweight diagnostic property rather than a
+        /// concurrency-safe result object.
+        /// </summary>
+        /// <remarks>
+        /// CORRECTION: the function delegate itself is no longer stored in a
+        /// mutable static field. Consequently, parallel or nested calls cannot
+        /// replace the function being solved midway through another algorithm.
+        /// EvaluationCount is still a shared diagnostic value; callers that need
+        /// per-call counts under concurrency should return the count as part of a
+        /// dedicated result structure in a future API revision.
+        /// </remarks>
+        public static int EvaluationCount { get; private set; }
+
+        private static double EvaluateAndCount(
+            Func<double, double> f,
+            double x)
+        {
+            ++EvaluationCount;
+            return f(x);
+        }
+
+        private static bool SameSign(double x, double y) =>
+            (x < 0.0 && y < 0.0) ||
+            (x > 0.0 && y > 0.0);
+
+        private static bool Initialize(
+            Func<double, double> f,
+            double x1, double x2,
+            double aTol, double rTol,
+            out Node p1, out Node p2,
+            out Func<double, double> F)
+        {
+            EvaluationCount = 0;
+            ArgumentNullException.ThrowIfNull(f);
+            F = x => EvaluateAndCount(f, x);
+
+            if (!double.IsFinite(aTol) || aTol < 0.0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(aTol),
+                    "The absolute tolerance must be finite and non-negative.");
+
+            if (!double.IsFinite(rTol) || rTol < 0.0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(rTol),
+                    "The relative tolerance must be finite and non-negative.");
+
+            if (double.IsNaN(x1))
+                throw new ArgumentOutOfRangeException(
+                    nameof(x1),
+                    "The left endpoint must not be NaN.");
+
+            if (double.IsNaN(x2))
+                throw new ArgumentOutOfRangeException(
+                    nameof(x2),
+                    "The right endpoint must not be NaN.");
+
+            if (double.IsInfinity(x1) || double.IsInfinity(x2))
+            {
+                p1 = p2 = default;
+                return false;
+            }
+
+            if (x1 > x2)
+                (x1, x2) = (x2, x1);
+
+            p1 = new Node(x1, F);
+            p2 = new Node(x2, F);
+
+            // NaN has no usable sign. Infinite residuals are allowed here: a
+            // bisection-capable method can often shrink the bracket until finite
+            // values are reached. Each solver decides how aggressively it uses
+            // interpolation while such values remain present.
+            return !(double.IsNaN(p1.Y) || double.IsNaN(p2.Y) || SameSign(p1.Y, p2.Y));
+        }
+    }
+}

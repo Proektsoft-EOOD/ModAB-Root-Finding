@@ -35,39 +35,38 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/435c4fb9-7f79-4a58-a33b-23a84d82311a" />
 
 ### Times
-| Method        | Mean      | Error    | StdDev   |
-|-------------- |----------:|---------:|---------:|
-| Bisection     | 105.77 us | 1.800 us | 3.246 us |
-| FalsePosition | 379.02 us | 4.851 us | 4.538 us |
-| Illinois      | 157.61 us | 1.998 us | 1.668 us |
-| AndersonBjork | 225.40 us | 1.217 us | 1.016 us |
-| ITP           | 246.71 us | 3.727 us | 3.304 us |
-| Ridders       | 110.09 us | 2.127 us | 2.364 us |
-| Brent         | 125.04 us | 2.383 us | 2.112 us |
-| ModAB         |  59.34 us | 0.728 us | 0.645 us |
-| SGModab       |  61.32 us | 1.221 us | 1.588 us |
-| <mark>**SGModab**</mark>|  <mark>61.32 us</mark> | <mark>1.221 us</mark> |  <mark>1.588 us</mark> |
+| Method        | Mean      | Error    | StdDev   | Median    |
+|-------------- |----------:|---------:|---------:|----------:|
+| Bisection     |  95.50 us | 0.806 us | 0.673 us |  95.38 us |
+| FalsePosition | 370.83 us | 7.344 us | 7.542 us | 374.59 us |
+| Illinois      | 160.40 us | 3.161 us | 3.640 us | 160.53 us |
+| AndersonBjork | 225.74 us | 2.502 us | 2.218 us | 225.50 us |
+| ITP           | 244.70 us | 2.759 us | 2.445 us | 245.08 us |
+| Ridders       | 108.69 us | 1.210 us | 1.132 us | 108.14 us |
+| Brent         | 126.79 us | 2.502 us | 2.457 us | 126.16 us |
+| ModAB         |  59.62 us | 0.614 us | 0.544 us |  59.74 us |
+| **SGModab**   | **60.73 us** | **1.209 us** | **2.576 us** | **59.64 us** |
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.12 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.9457/25H2/2025Update/HudsonValley2)  
 Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 ### Number of Evaluations
-|Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | <mark>**SGModAB**</mark>
+|Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | **SGModAB**
 | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: 
-| SumAll |  4882 | 11192 |  4087 |  5267 |  3337 |  3354 |  3141 |  1992 |  <mark>2000</mark>
-|  Valid |  4475 | 10715 |  3486 |  4666 |  2925 |  2897 |  2699 |  1705 |  <mark>1715</mark>
-|    Ave |  48.1 | 115.2 |  37.5 |  50.2 |  31.5 |  31.2 |  29.0 |  18.3 |  <mark>18.4</mark>
-|   Mean |  46.5 |  68.4 |  22.1 |  22.6 |  24.8 |  22.2 |  17.2 |  14.7 |  <mark>14.9</mark>
-| StdDev |   7.6 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |  <mark>15.0</mark>
-| Median |  49.0 | 202.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |  <mark>12.0</mark>
-|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |  <mark>&emsp;87</mark>
-| BestAt |    14 |     6 |     2 |    26 |     7 |     5 |    35 |    44 |  <mark>&emsp;42</mark>
-|WorstAt |    38 |    50 |     5 |    13 |     2 |     3 |     0 |     1 |  <mark>&emsp;&ensp;1</mark>
-|   Succ |    93 |    46 |    88 |    80 |    93 |    91 |    93 |    93 |  <mark>&emsp;93</mark>
-|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |  <mark>&emsp;&ensp;8</mark>
-|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |  <mark>&emsp;&ensp;0</mark>
-|MaxIter |     0 |    28 |     5 |    13 |     0 |     0 |     0 |     0 |  <mark>&emsp;&ensp;0</mark>
+| SumAll |  4835 | 11192 |  4087 |  5267 |  3337 |  3354 |  3141 |  1992 |  **1973**
+|  Valid |  4428 | 10715 |  3486 |  4666 |  2925 |  2897 |  2699 |  1705 |  **1686**
+|    Ave |  47.6 | 115.2 |  37.5 |  50.2 |  31.5 |  31.2 |  29.0 |  18.3 |  **18.1**
+|   Mean |  45.2 |  68.4 |  22.1 |  22.6 |  24.8 |  22.2 |  17.2 |  14.7 |  **14.6**
+| StdDev |   8.9 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |  **14.6**
+| Median |  49.0 | 202.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |  **12.0**
+|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |    **77**
+| BestAt |    14 |     6 |     2 |    27 |     7 |     5 |    36 |    46 |    **52**
+|WorstAt |    38 |    50 |     5 |    13 |     2 |     3 |     0 |     1 |     **1**
+|   Succ |    93 |    46 |    88 |    80 |    93 |    91 |    93 |    93 |    **93**
+|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     **8**
+|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |     **0**
+|MaxIter |     0 |    28 |     5 |    13 |     0 |     0 |     0 |     0 |     **0**
 
 
 [Detailed results](Benchmark%20results%20Safeguarded.md)
