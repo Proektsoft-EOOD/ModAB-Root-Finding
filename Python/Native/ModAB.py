@@ -81,6 +81,8 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     bisection = True
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     C = 2  # Threshold safety factor
+    MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
+    residual_steps = 0
     # Best residual of the bracket.
     ymin = 0
     for _ in range(maxiter):
@@ -99,6 +101,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 if abs(ym - y3) < k * abs(ym) + k * abs(y3):
                     bisection = False
                     threshold = C * (x2 - x1)  # Safety factor: skips two AB steps before the first fallback
+                    residual_steps = 0
                     y1, y2 = f1, f2  # A&B starts from the true residuals
         else:
             # If x3 got clamped, reuse the true residual stored at the endpoint.
@@ -137,9 +140,13 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                     side = -1
                 x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
-            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-            if x2 - x1 > threshold and abs(y3) > 0.5 * ymin:
+            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            # but for no more than MAX_RESIDUAL_STEPS consecutive steps
+            width_failed = x2 - x1 > threshold
+            if width_failed and (abs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
                 bisection = True
                 side = 0
+            else:
+                residual_steps = residual_steps + 1 if width_failed else 0
 
     return _NAN

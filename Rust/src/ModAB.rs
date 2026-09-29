@@ -128,6 +128,8 @@ where
     let mut bisection = true;
     let mut threshold = x2 - x1;
     let mut ymin = 0.0; // Best true residual of the bracket
+    const MAX_RESIDUAL_STEPS: u32 = 3; // Max consecutive A&B steps kept by the residual test alone
+    let mut residual_steps: u32 = 0;
     for _ in 0..maxiter {
         let x3 = if bisection {
             safe_midpoint(x1, x2)
@@ -150,6 +152,7 @@ where
                 if (ym - y3).abs() < k * ym.abs() + k * y3.abs() {
                     bisection = false;
                     threshold = 2.0 * (x2 - x1);
+                    residual_steps = 0;
                     (y1, y2) = (f1, f2); // A&B starts from the true residuals
                 }
             }
@@ -194,9 +197,14 @@ where
                 }
                 (x2, y2, f2) = (x3, y3, y3);
             }
-            if x2 - x1 > threshold && y3.abs() > 0.5 * ymin {
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            // but for no more than MAX_RESIDUAL_STEPS consecutive steps
+            let width_failed = x2 - x1 > threshold;
+            if width_failed && (y3.abs() >= 0.5 * ymin || residual_steps >= MAX_RESIDUAL_STEPS) {
                 bisection = true;
                 side = 0;
+            } else {
+                residual_steps = if width_failed { residual_steps + 1 } else { 0 };
             }
         }
     }

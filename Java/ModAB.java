@@ -138,6 +138,8 @@ public class ModAB {
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
+        final int MAX_RESIDUAL_STEPS = 3; // Max consecutive A&B steps kept by the residual test alone
+        int residualSteps = 0;
         for (int i = 0; i < maxiter; i++) {
             double x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
             if (x2 - x1 <= xtol * Math.max(Math.abs(x3), 1)) // x-convergence check
@@ -154,6 +156,7 @@ public class ModAB {
                     if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
                         bisection = false;
                         threshold = 2.0 * (x2 - x1);
+                        residualSteps = 0;
                         y1 = f1; y2 = f2; // A&B starts from the true residuals
                     }
                 }
@@ -195,10 +198,14 @@ public class ModAB {
                     }
                     x2 = x3; y2 = y3; f2 = y3;
                 } 
-                if (x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
+                // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+                // but for no more than MAX_RESIDUAL_STEPS consecutive steps
+                boolean widthFailed = x2 - x1 > threshold;
+                if (widthFailed && (Math.abs(y3) >= 0.5 * ymin || residualSteps >= MAX_RESIDUAL_STEPS)) {
                     bisection = true;
                     side = 0;
-                } 
+                } else
+                    residualSteps = widthFailed ? residualSteps + 1 : 0;
             }
         }
         return Double.NaN;

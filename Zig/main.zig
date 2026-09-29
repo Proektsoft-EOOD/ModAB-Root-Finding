@@ -1,12 +1,13 @@
 //! ModAB Root-Finding Test Suite
 //!
-//! Tests the modified Anderson-Bjork algorithm against 100 benchmark functions
+//! Tests the modified Anderson-Bjork algorithm against 101 benchmark functions
 //! from various academic sources:
 //!   - Sergio Galdino: Regula falsi methods (f01-f33)
 //!   - Steven A. Stage: Brent's method improvements (f34-f40)
 //!   - Swift & Lindfield: Continuation methods (f41-f62)
 //!   - Oliveira & Takahashi: Bisection enhancement (f63-f83)
 //!   - SciML project: Benchmark suite (f84-f100)
+//!   - L. Tomov counterexample (f101)
 
 const std = @import("std");
 const modAB = @import("ModAB.zig").modAB;
@@ -365,6 +366,10 @@ fn f_99(x: f64) f64 {
 fn f_100(x: f64) f64 {
     return std.math.cbrt((4.0 * x - 3.0) / x);
 }
+// L. Tomov counterexample: A&B keeps halving the residual without shrinking the bracket
+fn f_101(x: f64) f64 {
+    return if (x < 0.0) -x * x else 7.0 * x * x;
+}
 
 // ============================================================================
 // All problems array
@@ -476,6 +481,7 @@ const all_problems = [_]Problem{
     .{ .name = "f_98", .f = f_98, .a = -10.0, .b = 10.0 },
     .{ .name = "f_99", .f = f_99, .a = -10.0, .b = 10.0 },
     .{ .name = "f_100", .f = f_100, .a = 0.0, .b = std.math.e },
+    .{ .name = "f_101", .f = f_101, .a = -3.0, .b = 1.0 },
 };
 
 pub fn main() void {

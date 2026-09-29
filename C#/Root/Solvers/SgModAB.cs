@@ -27,6 +27,8 @@ namespace Proektsoft.Root
             var fallbackThreshold = 0.0; // The threshold for switching back to the bisection method.
             var yMin = 0.0;
             const double C = 2.0;
+            const int MaxResidualSteps = 3;
+            var residualSteps = 0;
             for (var i = 1; i <= MaxIterations; ++i)
             {
                 var x3 = isAB
@@ -81,13 +83,19 @@ namespace Proektsoft.Root
 
                         p2 = p3; f2 = y3;
                     }
-                    if (p2.X - p1.X > fallbackThreshold && Math.Abs(y3) > 0.5 * yMin)
+                    var widthFailed = p2.X - p1.X > fallbackThreshold;
+                    var fallBack = widthFailed &&
+                    (Math.Abs(y3) >= 0.5 * yMin || residualSteps >= MaxResidualSteps);
+                    if (fallBack)
                     {
                         isAB = false;
                         sideMoved = 0;
                     }
                     else
+                    {
+                        residualSteps = widthFailed ? residualSteps + 1 : 0;
                         fallbackThreshold *= 0.5;
+                    }
                 }
                 else // Bisection step
                 {
@@ -99,6 +107,7 @@ namespace Proektsoft.Root
                     if (switchToAB)
                     {
                         isAB = true;
+                        residualSteps = 0;
                         fallbackThreshold = C * (p2.X - p1.X);
                         f1 = p1.Y;
                         f2 = p2.Y;

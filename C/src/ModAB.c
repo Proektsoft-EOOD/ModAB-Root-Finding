@@ -134,6 +134,8 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     double f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
     double ymin = 0.0; // Best true residual of the bracket
     const double C = 2.0; // Safety factor
+    const int MAX_RESIDUAL_STEPS = 3; // Max consecutive A&B steps kept by the residual test alone
+    int residual_steps = 0;
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? safe_midpoint(x1, x2) : safe_secant(x1, y1, x2, y2);
         // Check for x-convergence
@@ -150,6 +152,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 if (fabs(ym - y3) < k * fabs(ym) + k * fabs(y3)) {
                     bisection = false;
                     threshold = C * (x2 - x1);
+                    residual_steps = 0;
                     y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
             }
@@ -188,11 +191,14 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 }
                 x2 = x3; f2 = y2 = y3;
             }
-            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-            if (x2 - x1 > threshold && fabs(y3) > 0.5 * ymin) {
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            // but for no more than MAX_RESIDUAL_STEPS consecutive steps
+            bool width_failed = x2 - x1 > threshold;
+            if (width_failed && (fabs(y3) >= 0.5 * ymin || residual_steps >= MAX_RESIDUAL_STEPS)) {
                 bisection = true;
                 side = 0;
-            }
+            } else
+                residual_steps = width_failed ? residual_steps + 1 : 0;
         }
     }
     return NAN;

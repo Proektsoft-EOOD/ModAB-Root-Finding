@@ -57,6 +57,9 @@ program modab_edge_tests
     call ck_root('infinite residuals',          f_inf_both,  -1.0_wp, 1.0_wp, 0.1_wp)
     ! Subnormal residuals: A&B corrections underflow towards zero.
     call ck_root('subnormal residuals',         f_subnormal, -1.0_wp, 1.0_wp, 0.2_wp**(1.0_wp/3.0_wp))
+    ! f101, L. Tomov counterexample: A&B keeps halving the residual without shrinking
+    ! the bracket; it needs the max_residual_steps cap to fall back to bisection.
+    call ck_root('residual cap',                f_tomov,     -3.0_wp, 1.0_wp, 0.0_wp)
 
     write(*,'(A,I0,A,I0,A)') 'Fortran edge-cases: ', passed, '/', total, &
         merge(' PASS', ' FAIL', passed == total)
@@ -164,6 +167,17 @@ contains
     real(wp) :: f
     f = 1.0e-300_wp*(x*x*x - 0.2_wp)
     end function f_subnormal
+
+    !! f101: -x**2 for x < 0, 7x**2 otherwise; the root is 0.
+    function f_tomov(x) result(f)
+    real(wp),intent(in) :: x
+    real(wp) :: f
+    if (x < 0.0_wp) then
+        f = -x*x
+    else
+        f = 7.0_wp*x*x
+    end if
+    end function f_tomov
 
     !! Asserts the solver reports success and lands on the expected root.
     subroutine ck_root(name, fun, ax, bx, want)

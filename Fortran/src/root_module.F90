@@ -2785,8 +2785,10 @@
 
     real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ymin,ym,r,k,threshold
     integer :: i  !! iteration counter
-    logical :: root_found, bis
+    logical :: root_found, bis, width_failed
     integer :: side !! for tracking the side
+    integer,parameter :: max_residual_steps = 3 !! max consecutive A&B steps kept by the residual test alone
+    integer :: residual_steps
 
     iflag = 0
     side = 0
@@ -2795,6 +2797,7 @@
     bis = .true.
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
     ymin = 0.0_wp   ! best true residual of the bracket
+    residual_steps = 0
     do i = 1, me%maxiter
         if (bis) then
             x3 = safe_midpoint(x1,x2)
@@ -2808,6 +2811,7 @@
                 if (abs(ym-y3) < k*abs(ym) + k*abs(y3)) then
                     bis = .false.
                     threshold = 2.0_wp*(x2-x1)   ! safety factor
+                    residual_steps = 0
                     y1 = f1; y2 = f2             ! A&B starts from the true residuals
                 end if
             end if
@@ -2862,9 +2866,16 @@
                 side = 2
                 x2 = x3; y2 = y3; f2 = y3
             end if
-            if (x2-x1>threshold .and. abs(y3) > 0.5_wp*ymin) then ! if Anderson-Bjork is not shrinking the interval fast enough
+            ! if Anderson-Bjork is not shrinking the interval fast enough, fall back to bisection,
+            ! unless it still halves the residual, but for no more than max_residual_steps consecutive steps
+            width_failed = x2-x1 > threshold
+            if (width_failed .and. (abs(y3) >= 0.5_wp*ymin .or. residual_steps >= max_residual_steps)) then
                 bis  = .true. ! reset to bisection.
                 side = 0
+            else if (width_failed) then
+                residual_steps = residual_steps + 1
+            else
+                residual_steps = 0
             end if
         end if
 

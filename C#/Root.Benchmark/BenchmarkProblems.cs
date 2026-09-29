@@ -665,12 +665,18 @@ namespace Root.Benchmark
                 a = -10, b = 10,
                 Roots = [0.6660846290809158] // 0.001^(1/17)
             },
-            new() { // Verti.cal tangent at root
+            new() { // Vertical tangent at root
                 Name = "f100",
                 F = (x) => Math.Cbrt((4*x - 3)/x),
                 a = 0, b = Math.E,
                 Roots = [0.75]
-            },        
+            },
+            new() { // L. Tomov counterexample
+                Name = "f101",
+                F = (x) => x < 0d ? - x * x : 7 * x * x,
+                a = -3d, b = 1d,
+                Roots = [0]
+            },
         };
     }
 }

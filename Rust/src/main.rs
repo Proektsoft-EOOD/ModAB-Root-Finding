@@ -215,6 +215,8 @@ fn all_problems() -> Vec<Problem> {
     v.push(make("f99", |x| x.powi(17) - 0.001, -10.0, 10.0));
     // Vertical tangent at the root x = 0.75; f(0) = cbrt(-3/0.0) = -inf
     v.push(make("f100", |x| ((4.0 * x - 3.0) / x).cbrt(), 0.0, E));
+    // L. Tomov counterexample: A&B keeps halving the residual without shrinking the bracket
+    v.push(make("f101", |x| if x < 0.0 { -x * x } else { 7.0 * x * x }, -3.0, 1.0));
     v
 }
 

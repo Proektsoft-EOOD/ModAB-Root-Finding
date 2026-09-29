@@ -78,7 +78,8 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     """
     cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, r, k, threshold, ymin
     cdef double C = 2.0  # Threshold safety factor
-    cdef int side, bisection, _
+    cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
+    cdef int side, bisection, residual_steps, width_failed, _
     if x2 < x1:
         x1, x2 = x2, x1
 
@@ -102,6 +103,7 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     bisection = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     ymin = 0.0  # Best residual of the bracket.
+    residual_steps = 0
     for _ in range(maxiter):
         if bisection:
             x3 = safe_midpoint(x1, x2)
@@ -122,6 +124,7 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                 if fabs(ym - y3) < k * fabs(ym) + k * fabs(y3):
                     bisection = 0
                     threshold = C * (x2 - x1)  # Safety factor: skips two AB steps before the first fallback
+                    residual_steps = 0
                     y1 = f1  # A&B starts from the true residuals
                     y2 = f2
         else:
@@ -162,10 +165,14 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                     side = -1
                 x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
-            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-            if x2 - x1 > threshold and fabs(y3) > 0.5 * ymin:
+            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            # but for no more than MAX_RESIDUAL_STEPS consecutive steps
+            width_failed = x2 - x1 > threshold
+            if width_failed and (fabs(y3) >= 0.5 * ymin or residual_steps >= MAX_RESIDUAL_STEPS):
                 bisection = 1
                 side = 0
+            else:
+                residual_steps = residual_steps + 1 if width_failed else 0
     return NAN
 
 

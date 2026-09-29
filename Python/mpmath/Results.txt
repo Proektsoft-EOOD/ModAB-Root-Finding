@@ -1,14 +1,14 @@
 mpmath Root-Finding Benchmark
 ====================================================================================================
 Precision: 30 decimal places
-Number of test problems: 100
+Number of test problems: 101
 
-Running bisect... done (91/100 passed, 6935 evals, 0.245s)
-Running illinois... done (90/100 passed, 3627 evals, 0.156s)
-Running pegasus... done (90/100 passed, 3910 evals, 0.178s)
-Running anderson... done (83/100 passed, 6146 evals, 0.291s)
-Running ridder... done (91/100 passed, 2630 evals, 0.115s)
-Running modAB... done (91/100 passed, 2555 evals, 0.126s)
+Running bisect... done (92/101 passed, 6940 evals, 0.260s)
+Running illinois... done (91/101 passed, 3667 evals, 0.166s)
+Running pegasus... done (91/101 passed, 3976 evals, 0.183s)
+Running anderson... done (84/101 passed, 6199 evals, 0.310s)
+Running ridder... done (92/101 passed, 2679 evals, 0.117s)
+Running modAB... done (92/101 passed, 2659 evals, 0.136s)
 
 ====================================================================================================
 SUMMARY: Function evaluations by solver
@@ -115,17 +115,18 @@ Func |     bisect |   illinois |    pegasus |   anderson |     ridder |      mod
  f98 |        74  |        72  |        69  |       403F |        23  |        25  |
  f99 |        74  |        85  |        82  |       403F |        21  |        26  |
 f100 |        71  |       403F |       403F |       403F |        65  |        61  |
+f101 |         5  |        40  |        66  |        53  |        49  |       104  |
 ----------------------------------------------------------------------------------------------------
-Total|       6935 |       3627 |       3910 |       6146 |       2630 |       2555 |
-Pass |         91 |         90 |         90 |         83 |         91 |         91 |
+Total|       6940 |       3667 |       3976 |       6199 |       2679 |       2659 |
+Pass |         92 |         91 |         91 |         84 |         92 |         92 |
 Fail |          9 |         10 |         10 |         17 |          9 |          9 |
-Time |     0.245s |     0.156s |     0.178s |     0.291s |     0.115s |     0.126s |
+Time |     0.260s |     0.166s |     0.183s |     0.310s |     0.117s |     0.136s |
 ====================================================================================================
 
 Average evaluations per solve:
-      bisect: 69.35
-    illinois: 36.27
-     pegasus: 39.10
-    anderson: 61.46
-      ridder: 26.30
-       modAB: 25.55
+      bisect: 68.71
+    illinois: 36.31
+     pegasus: 39.37
+    anderson: 61.38
+      ridder: 26.52
+       modAB: 26.33

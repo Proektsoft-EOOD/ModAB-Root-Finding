@@ -12,7 +12,8 @@ Two modAB columns are reported side by side in the same run:
   `upstream/master` `b15bf2b1`), vendored by `modab_release.jl` under the name
   `ModABRelease` so both can run in one pass.
 
-100 test problems (`f01`–`f100`), `abstol = 1e-14`, `maxiters = 200`.
+101 test problems (`f01`–`f101`), `abstol = 1e-14`, `maxiters = 200`. f101 is L. Tomov's
+counterexample that needs the `MaxResidualSteps` cap in `modAB_sg`.
 
 ## Count of function evaluations — NonlinearSolve.jl solvers
 
@@ -20,12 +21,11 @@ Two modAB columns are reported side by side in the same run:
 
 Func | bisect | brent | ridder | alefeld |  ITP | modAB_rel | modAB_sg
 ---  | -----: | ----: | -----: | ------: | ---: | --------: | ----:
-SUM  |   4890 |  6194 |   4026 |   98050 | 2773 |      1978 |  1945
-AVE  |   48,9 |  61,9 |   40,3 |   980,5 | 27,7 |      19,8 |  19,5
-REL  |   251% |  318% |   207% |   5041% | 143% |      102% |  100%
+SUM  |   4894 |  3118 |   4094 |   72940 | 2834 |      2056 |  2022
+AVE  |   48,5 |  30,9 |   40,5 |   722,2 | 28,1 |      20,4 |  20,0
+REL  |   242% |  154% |   202% |   3607% | 140% |      102% |  100%
 
-Failures: `alefeld` returns `NaN` on f43, f44, f45, f78, f91 and f100; `brent` on f100.
-Both modAB versions solve all 100.
+Failures: `alefeld` returns `NaN` on f100. Both modAB versions solve all 101.
 
 ## Count of function evaluations — Roots.jl solvers vs. modAB
 
@@ -33,17 +33,17 @@ Both modAB versions solve all 100.
 
 Func | bisect | brent | ridder | alefeld |  ITP |  A42 | modAB_rel | modAB_sg
 ---  | -----: | ----: | -----: | ------: | ---: | ---: | --------: | ----:
-SUM  |   4786 |  1944 |   3238 |    1826 | 2515 | 2069 |      1978 |  1945
-AVE  |   47,9 |  19,4 |   32,4 |    18,3 | 25,1 | 20,7 |      19,8 |  19,5
-REL  |   246% |  100% |   166% |     94% | 129% | 106% |      102% |  100%
+SUM  |   4789 |  1950 |   3268 |    1829 | 2519 | 2072 |      2056 |  2022
+AVE  |   47,4 |  19,3 |   32,4 |    18,1 | 24,9 | 20,5 |      20,4 |  20,0
+REL  |   237% |   96% |   162% |     90% | 125% | 102% |      102% |  100%
 
 Failures: `ridder` returns `NaN` on f72 and f73; on f100 `alefeld` and `A42` return `NaN`,
 while `brent`, `ridder` and `ITP` return the right endpoint `ℯ`, which is not a root.
-Both modAB versions solve all 100.
+Both modAB versions solve all 101.
 
-Across the 100 problems the two versions differ on 32 evaluation counts: the local
-version is cheaper on 20, dearer on 12. Its largest gains are on the odd-power
-problems and f80 — f94 30→21, f80 26→19, f92 26→22.
+Across the 101 problems the two versions differ on 33 evaluation counts: the local
+version is cheaper on 21, dearer on 12. Its largest gains are on the odd-power
+problems and f80 — f94 30→21, f80 26→19, f92 26→22; on f101 it needs 77 against 78.
 
 ## Wall-clock time — NonlinearSolve.jl solvers
 
@@ -54,16 +54,16 @@ timing loop.
 
 Func | bisect   | brent   | ridder  | alefeld   |   ITP   | modAB_rel |  modAB_sg
 ---- | -------: | ------: | ------: | --------: | ------: | --------: | ------:
-SUM  | 117,3 μs | 95,9 μs | 58,1 μs | 382,1 μs* | 95,5 μs |   34,2 μs | 32,8 μs
-AVE  |   967 ns |  870 ns |  521 ns |  3821 ns* |  795 ns |    310 ns |  304 ns
-AVE  |     318% |    286% |    171% |    1257%* |    262% |      102% |    100%
+SUM  |  96,5 μs | 99,4 μs | 52,6 μs | 329,4 μs* | 79,5 μs |   31,1 μs | 30,5 μs
+AVE  |   955 ns |  984 ns |  521 ns |  3294 ns* |  787 ns |    308 ns |  302 ns
+REL  |     316% |    326% |    172% |    1091%* |    261% |      102% |    100%
 
-\* `alefeld` errors on f43, f44, f45, f78, f91 and f100, so its total covers only the
-94 problems it solved and understates the true cost. Every other solver completed all 100.
+\* `alefeld` errors on f100, so its total covers only the 100 problems it solved
+and understates the true cost. Every other solver completed all 101.
 
 The local version no longer trades speed for its safeguards. Per function
-evaluation the release costs 17,3 ns and the local version 16,9 ns. The local
-version needs 1,7% fewer evaluations and is 4,1% faster in wall-clock. The time
+evaluation the release and the local version both cost 15,1 ns. The local
+version needs 1,7% fewer evaluations and is 1,9% faster in wall-clock. The time
 difference is close to the run-to-run spread on this machine, so the fair reading
 is that the two are equivalent in speed, with the local version ahead on
 evaluation count — which is what matters when the objective function is expensive.

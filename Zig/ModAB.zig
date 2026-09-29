@@ -107,6 +107,8 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
     var threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
     const C: f64 = 2.0; // Threshold safety factor
     var ymin: f64 = 0.0; // Best true residual of the bracket
+    const max_residual_steps: u32 = 3; // Max consecutive A&B steps kept by the residual test alone
+    var residual_steps: u32 = 0;
     var i: usize = 0;
 
     while (i < maxiter) : (i += 1) {
@@ -128,6 +130,7 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 if (@abs(ym - y3) < k * @abs(ym) + k * @abs(y3)) {
                     bisecting = false;
                     threshold = C * (x2 - x1);
+                    residual_steps = 0;
                     y1 = f1; // A&B starts from the true residuals
                     y2 = f2;
                 }
@@ -181,10 +184,14 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 y2 = y3;
                 f2 = y3; // Also store the unmodified y2 value to be used for bisection fallback
             }
-            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-            if (x2 - x1 > threshold and @abs(y3) > 0.5 * ymin) {
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            // but for no more than max_residual_steps consecutive steps
+            const width_failed = x2 - x1 > threshold;
+            if (width_failed and (@abs(y3) >= 0.5 * ymin or residual_steps >= max_residual_steps)) {
                 bisecting = true;
                 side = 0;
+            } else {
+                residual_steps = if (width_failed) residual_steps + 1 else 0;
             }
         }
     }

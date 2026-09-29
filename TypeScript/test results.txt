@@ -102,6 +102,7 @@ Func |                   Root |         f(root) |  Evals | Status
  f98 |      0.630957344480193 |     0.000000e+0 |     18 | PASS
  f99 |      0.666084629080916 |     0.000000e+0 |     17 | PASS
 f100 |      0.750000000000001 |     1.809129e-5 |     43 | WEAK
+f101 |  -6.40267987381486e-16 |   -4.099431e-31 |     77 | PASS
 ----------------------------------------------------------------------
-Total: 100 tests, 100 passed, 0 failed
-Total evaluations: 1900
+Total: 101 tests, 101 passed, 0 failed
+Total evaluations: 1977

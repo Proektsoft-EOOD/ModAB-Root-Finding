@@ -126,6 +126,8 @@ export function modABRoot(
     let ymin = 0.0; // Best true residual of the bracket
     let bisection = true;
     let threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
+    const MAX_RESIDUAL_STEPS = 3; // Max consecutive A&B steps kept by the residual test alone
+    let residualSteps = 0;
     for (let i = 0; i < maxiter; i++) {
         const x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
         const epsx = xtol * Math.max(Math.abs(x3), 1);
@@ -143,6 +145,7 @@ export function modABRoot(
                 if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
                     bisection = false;
                     threshold = 2 * (x2 - x1); // Safety factor
+                    residualSteps = 0;
                     y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
             }
@@ -184,10 +187,14 @@ export function modABRoot(
                 }
                 x2 = x3; f2 = y2 = y3;
             }        
-            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual
-            if (x2 - x1 > threshold && Math.abs(y3) > 0.5 * ymin) {
+            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            // but for no more than MAX_RESIDUAL_STEPS consecutive steps
+            const widthFailed = x2 - x1 > threshold;
+            if (widthFailed && (Math.abs(y3) >= 0.5 * ymin || residualSteps >= MAX_RESIDUAL_STEPS)) {
                 bisection = true;
                 side = 0;
+            } else {
+                residualSteps = widthFailed ? residualSteps + 1 : 0;
             }
         }
     }

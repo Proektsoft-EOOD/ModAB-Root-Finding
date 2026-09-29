@@ -87,6 +87,8 @@ function SciMLBase.__solve(
     C = 2 # Safety factor for threshold corresponding to 2 iterations (2^2 * 0.5)
     f1, f2 = y1, y2 # The unmodified function values for correct calculation of symmetry factor after bisection fallback
     yMin = zero(y1) # The smallest unmodified residual of the bracket at the previous AB step
+    MaxResidualSteps = 3 # Max consecutive AB steps kept by the residual test alone
+    residualSteps = 0
     while i < maxiters
         local x3, y3
         if bisecting # Bisection method is used
@@ -99,6 +101,7 @@ function SciMLBase.__solve(
                 if abs(ym - y3) < k * abs(y3) + k * abs(ym) # Check if the function is close enough to linear
                     bisecting = false
                     threshold = C * (x2 - x1) # Initialize the bisection fallback threshold
+                    residualSteps = 0
                     y1, y2 = f1, f2  # A&B starts from the true residuals
                 end
             end
@@ -133,9 +136,14 @@ function SciMLBase.__solve(
                 end
                 x2, y2, f2, side = x3, y3, y3, -1
             end
-            if x2 - x1 > threshold && abs(y3) > yMin / 2
+            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
+            # but for no more than MaxResidualSteps consecutive steps
+            widthFailed = x2 - x1 > threshold
+            if widthFailed && (abs(y3) >= yMin / 2 || residualSteps >= MaxResidualSteps)
                 bisecting = true   # reset to bisection
                 side = 0
+            else
+                residualSteps = widthFailed ? residualSteps + 1 : 0
             end
         end
         if nextfloat(x1) == x2
