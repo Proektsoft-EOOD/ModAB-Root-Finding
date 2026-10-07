@@ -58,6 +58,8 @@ Version 1.1.0 simplifies these safeguards without weakening them. The test that 
 
 Version 1.1.1 separates the bisection and Anderson-Björck steps in the solver loop. A bisection step now updates only the bracket and the true residuals. The Anderson-Björck corrections and the fallback test run only on secant steps, and the auxiliary ordinates start from the true residuals whenever the search switches to secant steps. It also caps the residual exception of 1.0.8: a secant step that does not shrink the bracket fast enough is kept on the strength of halving the residual for at most three consecutive steps (`MAX_RESIDUAL_STEPS`), after which the search falls back to bisection anyway. Without the cap, `f(x) = -x*x` for `x < 0` and `7*x*x` for `x >= 0` on `[-π, 1]`, a counterexample by L. Tomov, keeps halving the residual while the bracket never gets narrower than 1, and the search runs out of iterations; with the cap it converges in 76 evaluations. This function is now problem f101 of the benchmark. The other 100 problems give the same roots and evaluation counts as with 1.1.0; all 101 need 1971 evaluations in total.
 
+Version 1.1.2 streamlines the solver loop. The bracket width and the difference of the true residuals are computed once per step and reused. The exits on a zero and on a `NaN` residual share a single test on the hot path. The best true residual of the bracket, which the fallback test needs, is now computed only when a secant step fails to shrink the bracket fast enough, instead of on every secant step, and the test is written as `2·|y3| >= ymin` instead of `|y3| >= 0.5·ymin`. The 101 benchmark problems give the same roots and evaluation counts as with 1.1.1.
+
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
 ```python
@@ -130,7 +132,7 @@ FACTOR|  16.513x|   9.799x|   9.681x|  12.165x| 688.344x|   1.309x|   1.948x|<ma
 
 #### Notes:  
 
-Last Run on: 29.09.2026  
+Last Run on: 06.10.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -138,4 +140,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB_SG: pymodab version 1.1.1 - the latest implementation of the safeguarded modab as native C extension  
+modAB_SG: pymodab version 1.1.2 - the latest implementation of the safeguarded modab as native C extension  

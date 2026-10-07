@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: pymodab
-Version: 1.1.1
+Version: 1.1.2
 Summary: Fast and robust root-finding library using the Modified Anderson-Bjork method
 Author: Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
 License-Expression: MIT
@@ -88,6 +88,8 @@ Version 1.1.0 simplifies these safeguards without weakening them. The test that 
 
 Version 1.1.1 separates the bisection and Anderson-Björck steps in the solver loop. A bisection step now updates only the bracket and the true residuals. The Anderson-Björck corrections and the fallback test run only on secant steps, and the auxiliary ordinates start from the true residuals whenever the search switches to secant steps. It also caps the residual exception of 1.0.8: a secant step that does not shrink the bracket fast enough is kept on the strength of halving the residual for at most three consecutive steps (`MAX_RESIDUAL_STEPS`), after which the search falls back to bisection anyway. Without the cap, `f(x) = -x*x` for `x < 0` and `7*x*x` for `x >= 0` on `[-π, 1]`, a counterexample by L. Tomov, keeps halving the residual while the bracket never gets narrower than 1, and the search runs out of iterations; with the cap it converges in 76 evaluations. This function is now problem f101 of the benchmark. The other 100 problems give the same roots and evaluation counts as with 1.1.0; all 101 need 1971 evaluations in total.
 
+Version 1.1.2 streamlines the solver loop. The bracket width and the difference of the true residuals are computed once per step and reused. The exits on a zero and on a `NaN` residual share a single test on the hot path. The best true residual of the bracket, which the fallback test needs, is now computed only when a secant step fails to shrink the bracket fast enough, instead of on every secant step, and the test is written as `2·|y3| >= ymin` instead of `|y3| >= 0.5·ymin`. The 101 benchmark problems give the same roots and evaluation counts as with 1.1.1.
+
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
 ```python
@@ -151,12 +153,12 @@ FACTOR|   2.477x|   1.426x|   1.405x|   1.738x|   1.072x|   1.426x|   1.011x| <m
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1385.66|   841.73|   814.23|   976.14| 57729.06|   114.57|   165.90| <mark>**87.27**</mark>| 
-   AVG|  13.7194|   8.3340|   8.0617|   9.6647| 571.5749|   1.1344|   1.6426| <mark>**0.8641**</mark>| 
-MEDIAN|  13.9073|   4.3587|   4.2225|   5.4357| 336.8105|   0.6225|   1.3061| <mark>**0.6450**</mark>| 
-   MIN|   1.4121|   1.6385|   1.7789|   1.3487|  64.7960|   0.1986|   0.5643| <mark>**0.1897**</mark>| 
-   MAX|  17.2491|  31.5796|  32.1298|  53.2028|2002.6788|   5.4763|   4.3412| <mark>**2.7929**</mark>| 
-FACTOR|  15.877x|   9.645x|   9.330x|  11.185x| 661.479x|   1.313x|   1.901x| <mark>**1.000x**</mark>| 
+   SUM|  1497.81|   888.81|   878.13|  1103.39| 62435.64|   118.77|   176.71|<mark>**90.70**</mark>| 
+   AVG|  14.8298|   8.8001|   8.6944|  10.9246| 618.1747|   1.1759|   1.7496|<mark>**0.8981**</mark>| 
+MEDIAN|  14.1046|   4.5237|   4.4239|   5.5108| 366.5141|   0.6629|   1.3385|<mark>**0.6881**</mark>| 
+   MIN|   1.6523|   1.6333|   1.8243|   1.4128|  68.0820|   0.1926|   0.5485|<mark>**0.1625**</mark>| 
+   MAX|  39.1626|  36.7848|  31.6445| 121.3956| 2159.4610|   5.8503|   5.9590|<mark>**3.2718**</mark>| 
+FACTOR|  16.513x|   9.799x|   9.681x|  12.165x| 688.344x|   1.309x|   1.948x|<mark>**1.000x**</mark>| 
 
 #### Notes:  
 

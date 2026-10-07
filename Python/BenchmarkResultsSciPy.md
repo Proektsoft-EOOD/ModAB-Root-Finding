@@ -449,7 +449,7 @@ FACTOR|  16.513x|   9.799x|   9.681x|  12.165x| 688.344x|   1.309x|   1.948x|   
 
 #### Notes:
 
-Last Run on: 29.09.2026  
+Last Run on: 06.10.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -457,4 +457,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB_SG: pymodab version 1.1.1 - the safeguarded modab as native C extension built with MSVC 14.51  
+modAB_SG: pymodab version 1.1.2 - the safeguarded modab as native C extension built with MSVC 14.51  

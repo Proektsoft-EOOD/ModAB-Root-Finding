@@ -451,12 +451,12 @@ FACTOR|  24.079x|  14.536x|  12.496x|  11.751x|  10.375x|  11.545x|   1.000x|
 
 #### Notes:
 
-Last Run on: 29.09.2026  
+Last Run on: 06.10.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
 PyRoot Version: 0.2.0 - by Jack Nguyen (https://github.com/SimpleArt/pyroot), pure Python  
-modAB_SG: pymodab version 1.1.1 - the safeguarded modab as native C extension built with MSVC 14.51  
+modAB_SG: pymodab version 1.1.2 - the safeguarded modab as native C extension built with MSVC 14.51  
 
 PyRoot 0.3.1, the latest release on PyPI (identical to the GitHub master branch), was not benchmarked, because it does not work correctly:
 its `chandrupatla`, `secant` and `non-simple` methods do not converge on most of the test problems (e.g. f05, x^3 - 2x - 5 on [2, 3], stalls at x = 2.0845 and never terminates),
