@@ -1,7 +1,7 @@
 # Uses the local NonlinearSolve.jl checkout (../../NonlinearSolve.jl) via the
 # Project.toml in this directory. Run with:  julia --project=. <this file>
 using BracketingNonlinearSolve
-include("modab_release.jl")  # defines ModABRelease, the registered v1.12.7 algorithm
+include("modab_release.jl")  # defines ModABRelease, the registered v1.12.8 algorithm
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function

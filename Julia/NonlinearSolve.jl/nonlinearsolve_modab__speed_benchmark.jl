@@ -3,7 +3,7 @@
 using Printf
 using BracketingNonlinearSolve
 using BenchmarkTools
-include(joinpath(@__DIR__, "..", "modab_release.jl"))  # defines ModABRelease, the registered v1.12.7 algorithm
+include(joinpath(@__DIR__, "..", "modab_release.jl"))  # defines ModABRelease, the registered v1.12.8 algorithm
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function

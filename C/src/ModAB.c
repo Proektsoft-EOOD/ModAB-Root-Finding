@@ -132,26 +132,27 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     int side = 0; // -1 for left, 1 for right, 0 for none
     double threshold = x2 - x1; // Bisection fallback threshold
     double f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
-    double ymin = 0.0; // Best true residual of the bracket
     const double C = 2.0; // Safety factor
     const int MAX_RESIDUAL_STEPS = 3; // Max consecutive A&B steps kept by the residual test alone
     int residual_steps = 0;
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? safe_midpoint(x1, x2) : safe_secant(x1, y1, x2, y2);
+        double dx = x2 - x1; // Bracket width
         // Check for x-convergence
-        if (x2 - x1 <= aTol + rTol * fabs(x3)) return x3;
+        if (dx <= aTol + rTol * fabs(x3)) return x3;
         double y3;
         if (bisection) {
             y3 = eval(f, x3);
-            if (isfinite(f2 - f1)) { // Avoids overflow in the calculations below
+            double dy = f2 - f1;
+            if (isfinite(dy)) { // Avoids overflow in the calculations below
                 double ym = (f1 + f2) * 0.5; // Ordinate of chord at midpoint; f1, f2 have opposite signs
-                double r = 1.0 - fabs(ym / (f2 - f1)); // Symmetry factor
+                double r = 1.0 - fabs(ym / dy); // Symmetry factor
                 double k = r * r; // Deviation factor
                 // Check if function is close enough to straight line.
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if (fabs(ym - y3) < k * fabs(ym) + k * fabs(y3)) {
                     bisection = false;
-                    threshold = C * (x2 - x1);
+                    threshold = C * dx;
                     residual_steps = 0;
                     y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
@@ -162,10 +163,11 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                  (x3 == x2) ? f2 : 
                  eval(f, x3);
             threshold *= 0.5;
-            ymin = fmin(fabs(f1), fabs(f2));
         }
-        if (y3 == 0.0) return x3; // Check for y-convergence
-        if (isnan(y3)) return NAN; // A NaN residual has no usable sign, so the bracket cannot be updated.
+        if (!(fabs(y3) > 0.0)) { // Exit on zero or NaN with a single branch on the hot path
+            if (y3 == 0.0) return x3; // Check for y-convergence
+            return NAN; // A NaN residual has no usable sign, so the bracket cannot be updated.
+        }
         if (bisection)
         {
             if (same_sign(f1, y3)) {
@@ -176,6 +178,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
         }
         else
         {
+            double yl = f1, yr = f2; // True residuals of the bracket before the update
             if (same_sign(f1, y3)) {
                 if (side == 1) {
                     y2 *= ab_factor(y3, y1); // Anderson-Bjork correction
@@ -194,7 +197,8 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than MAX_RESIDUAL_STEPS consecutive steps
             if (x2 - x1 > threshold) {
-                if (residual_steps >= MAX_RESIDUAL_STEPS || fabs(y3) >= 0.5 * ymin) {
+                double ymin = fmin(fabs(yl), fabs(yr)); // Best true residual of the bracket
+                if (residual_steps >= MAX_RESIDUAL_STEPS || 2.0 * fabs(y3) >= ymin) {
                     bisection = true;
                     side = 0;
                 } else

@@ -106,30 +106,31 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
     var side: i32 = 0;
     var threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
     const C: f64 = 2.0; // Threshold safety factor
-    var ymin: f64 = 0.0; // Best true residual of the bracket
     const max_residual_steps: u32 = 3; // Max consecutive A&B steps kept by the residual test alone
     var residual_steps: u32 = 0;
     var i: usize = 0;
 
     while (i < maxiter) : (i += 1) {
         const x3 = if (bisecting) safeMidpoint(x1, x2) else safeSecant(x1, y1, x2, y2);
+        const dx = x2 - x1; // Bracket width
         const epsx = xtol * @max(@abs(x3), 1.0);
-        if (x2 - x1 <= epsx) { // x-convergence check
+        if (dx <= epsx) { // x-convergence check
             return x3;
         }
 
         var y3: f64 = undefined;
         if (bisecting) {
             y3 = F(x3) - y0; // Function value at midpoint
-            if (std.math.isFinite(f2 - f1)) { // Avoids overflow in the calculations below
+            const dy = f2 - f1;
+            if (std.math.isFinite(dy)) { // Avoids overflow in the calculations below
                 const ym = (f1 + f2) * 0.5; // Chord ordinate at midpoint; f1, f2 have opposite signs
-                const r = 1.0 - @abs(ym / (f2 - f1)); // Symmetry factor
+                const r = 1.0 - @abs(ym / dy); // Symmetry factor
                 const k = r * r; // Deviation factor
                 // Check if function is close enough to straight line.
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if (@abs(ym - y3) < k * @abs(ym) + k * @abs(y3)) {
                     bisecting = false;
-                    threshold = C * (x2 - x1);
+                    threshold = C * dx;
                     residual_steps = 0;
                     y1 = f1; // A&B starts from the true residuals
                     y2 = f2;
@@ -145,15 +146,14 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 y3 = F(x3) - y0;
             }
             threshold *= 0.5;
-            ymin = @min(@abs(f1), @abs(f2));
         }
 
-        if (@abs(y3) <= epsy) { // y-convergence check
-            return x3;
-        }
-
-        // A NaN residual has no usable sign, so the bracket cannot be updated.
-        if (std.math.isNan(y3)) {
+        const ay3 = @abs(y3);
+        if (!(ay3 > epsy)) { // Exit on y-convergence or NaN with a single branch on the hot path
+            if (ay3 <= epsy) {
+                return x3;
+            }
+            // A NaN residual has no usable sign, so the bracket cannot be updated.
             return std.math.nan(f64);
         }
         if (bisecting) {
@@ -165,10 +165,12 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 f2 = y3; // Also store the unmodified y2 value to be used for bisection fallback
             }
         } else {
+            const yl = f1; // True residuals of the bracket before the update
+            const yr = f2;
             if (sameSign(f1, y3)) { // Same sign check
                 if (side == 1) { // Anderson-Bjork correction
                     y2 *= abFactor(y3, y1);
-                } else if (!bisecting) {
+                } else {
                     side = 1;
                 }
                 x1 = x3;
@@ -177,7 +179,7 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
             } else {
                 if (side == -1) { // Anderson-Bjork correction
                     y1 *= abFactor(y3, y2);
-                } else if (!bisecting) {
+                } else {
                     side = -1;
                 }
                 x2 = x3;
@@ -187,7 +189,8 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than max_residual_steps consecutive steps
             if (x2 - x1 > threshold) {
-                if (residual_steps >= max_residual_steps or @abs(y3) >= 0.5 * ymin) {
+                const ymin = @min(@abs(yl), @abs(yr)); // Best true residual of the bracket
+                if (residual_steps >= max_residual_steps or 2.0 * ay3 >= ymin) {
                     bisecting = true;
                     side = 0;
                 } else {

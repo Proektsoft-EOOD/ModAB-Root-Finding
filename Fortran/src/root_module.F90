@@ -2783,7 +2783,7 @@
     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-1`=NaN residual, `-2`=max iterations reached)
 
-    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,ymin,ym,r,k,threshold
+    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,yl,yr,ymin,ym,r,k,threshold,dy
     integer :: i  !! iteration counter
     logical :: root_found, bis
     integer :: side !! for tracking the side
@@ -2796,16 +2796,16 @@
     x2 = bx; y2 = fbx; f2 = y2
     bis = .true.
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
-    ymin = 0.0_wp   ! best true residual of the bracket
     residual_steps = 0
     do i = 1, me%maxiter
         if (bis) then
             x3 = safe_midpoint(x1,x2)
             y3 = me%f(x3)
             if (me%solution(x3,y3,xzero,fzero)) return
-            if (ieee_is_finite(f2-f1)) then   ! avoids overflow in the calculations below
+            dy = f2-f1
+            if (ieee_is_finite(dy)) then      ! avoids overflow in the calculations below
                 ym = (f1+f2)*0.5_wp            ! chord ordinate at the midpoint; f1, f2 have opposite signs
-                r = 1.0_wp - abs(ym/(f2-f1))   ! symmetry factor
+                r = 1.0_wp - abs(ym/dy)        ! symmetry factor
                 k = r*r                        ! deviation factor
                 ! k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if (abs(ym-y3) < k*abs(ym) + k*abs(y3)) then
@@ -2827,7 +2827,6 @@
                 if (me%solution(x3,y3,xzero,fzero)) return
             end if
             threshold = 0.5_wp * threshold
-            ymin = min(abs(f1),abs(f2))
         end if
 
         ! convergence check:
@@ -2857,6 +2856,7 @@
                 x2 = x3; f2 = y3
             end if
         else ! Anderson-Bjork step
+            yl = f1; yr = f2   ! true residuals of the bracket before the update
             if (same_sign(f1,y3)) then
                 if (side == 1) y2 = y2*ab_factor(y3,y1) ! A&B correction of the right side
                 side = 1
@@ -2869,7 +2869,8 @@
             ! if Anderson-Bjork is not shrinking the interval fast enough, fall back to bisection,
             ! unless it still halves the residual, but for no more than max_residual_steps consecutive steps
             if (x2-x1 > threshold) then
-                if (residual_steps >= max_residual_steps .or. abs(y3) >= 0.5_wp*ymin) then
+                ymin = min(abs(yl),abs(yr))   ! best true residual of the bracket
+                if (residual_steps >= max_residual_steps .or. 2.0_wp*abs(y3) >= ymin) then
                     bis  = .true. ! reset to bisection.
                     side = 0
                 else

@@ -4,7 +4,7 @@
 using Roots
 import BracketingNonlinearSolve as BNS
 using SciMLBase: IntervalNonlinearProblem, solve
-include("modab_release.jl")  # defines ModABRelease, the registered v1.12.7 algorithm
+include("modab_release.jl")  # defines ModABRelease, the registered v1.12.8 algorithm
 
 # Function-call counting wrapper
 mutable struct CountedFunc{F} <: Function

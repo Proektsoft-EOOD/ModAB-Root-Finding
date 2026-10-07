@@ -83,24 +83,24 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     C = 2  # Threshold safety factor
     MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
     residual_steps = 0
-    # Best residual of the bracket.
-    ymin = 0
     for _ in range(maxiter):
         x3 = safe_midpoint(x1, x2) if bisection else safe_secant(x1, y1, x2, y2)
+        dx = x2 - x1  # Bracket width
         epsx = xtol * max(abs(x3), 1)
-        if x2 - x1 <= epsx:  # x-convergence check
+        if dx <= epsx:  # x-convergence check
             return x3
 
         if bisection:
             y3 = f(x3) - y  # Function value at midpoint
-            if math.isfinite(f2 - f1):  # Avoids overflow in the calculations below
+            dy = f2 - f1
+            if math.isfinite(dy):  # Avoids overflow in the calculations below
                 ym = (f1 + f2) * 0.5  # Ordinate of chord at midpoint; f1, f2 have opposite signs
-                r = 1.0 - abs(ym / (f2 - f1))  # Symmetry factor
+                r = 1.0 - abs(ym / dy)  # Symmetry factor
                 k = r * r  # Deviation factor
                 # k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if abs(ym - y3) < k * abs(ym) + k * abs(y3):
                     bisection = False
-                    threshold = C * (x2 - x1)  # Safety factor: skips two AB steps before the first fallback
+                    threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
                     residual_steps = 0
                     y1, y2 = f1, f2  # A&B starts from the true residuals
         else:
@@ -113,13 +113,12 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 y3 = f(x3) - y
 
             threshold *= 0.5
-            ymin = min(abs(f1), abs(f2)) # Best true residual of the bracket.
 
-        if abs(y3) <= epsy:  # y-convergence check
-            return x3
-
-        # A NaN residual has no usable sign, so the bracket cannot be updated.
-        if math.isnan(y3):
+        ay3 = abs(y3)
+        if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path
+            if ay3 <= epsy:
+                return x3
+            # A NaN residual has no usable sign, so the bracket cannot be updated.
             return _NAN
         if bisection:
             if same_sign(f1, y3):  # Same sign check
@@ -127,6 +126,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             else:
                 x2, f2 = x3, y3
         else:
+            yl, yr = f1, f2  # True residuals of the bracket before the update
             if same_sign(f1, y3):  # Same sign check
                 if side == 1:
                     y2 *= ab_factor(y3, y1)
@@ -143,7 +143,8 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
             if x2 - x1 > threshold:
-                if residual_steps >= MAX_RESIDUAL_STEPS or abs(y3) >= 0.5 * ymin:
+                ymin = min(abs(yl), abs(yr))  # Best true residual of the bracket
+                if residual_steps >= MAX_RESIDUAL_STEPS or 2 * ay3 >= ymin:
                     bisection = True
                     side = 0
                 else:

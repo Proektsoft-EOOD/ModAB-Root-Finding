@@ -76,7 +76,7 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     safeguards above; the switching test is written so that it cannot overflow.
     F(x) must be continuous and sign(F(x1)) != sign(F(x2))
     """
-    cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ym, r, k, threshold, ymin
+    cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ay3, ym, r, k, threshold, ymin, dx, dy, yl, yr
     cdef double C = 2.0  # Threshold safety factor
     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
     cdef int side, bisection, residual_steps, _
@@ -102,7 +102,6 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     side = 0
     bisection = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
-    ymin = 0.0  # Best residual of the bracket.
     residual_steps = 0
     for _ in range(maxiter):
         if bisection:
@@ -110,20 +109,22 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
         else:
             x3 = safe_secant(x1, y1, x2, y2)
 
+        dx = x2 - x1  # Bracket width
         epsx = xtol * c_max(fabs(x3), 1.0)
-        if x2 - x1 <= epsx:  # x-convergence check
+        if dx <= epsx:  # x-convergence check
             return x3
 
         if bisection:
             y3 = f(x3) - y  # Function value at midpoint
-            if isfinite(f2 - f1):  # Avoids overflow in the calculations below
+            dy = f2 - f1
+            if isfinite(dy):  # Avoids overflow in the calculations below
                 ym = (f1 + f2) * 0.5  # Ordinate of chord at midpoint; f1, f2 have opposite signs
-                r = 1.0 - fabs(ym / (f2 - f1))  # Symmetry factor
+                r = 1.0 - fabs(ym / dy)  # Symmetry factor
                 k = r * r  # Deviation factor
                 # k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if fabs(ym - y3) < k * fabs(ym) + k * fabs(y3):
                     bisection = 0
-                    threshold = C * (x2 - x1)  # Safety factor: skips two AB steps before the first fallback
+                    threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
                     residual_steps = 0
                     y1 = f1  # A&B starts from the true residuals
                     y2 = f2
@@ -137,21 +138,21 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                 y3 = f(x3) - y
 
             threshold *= 0.5
-            ymin = c_min(fabs(f1), fabs(f2))  # Best true residual of the bracket.
 
-        if fabs(y3) <= epsy:  # y-convergence check
-            return x3
-
-        # A NaN residual has no usable sign, so the bracket cannot be updated.
-        if isnan(y3):
+        ay3 = fabs(y3)
+        if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path
+            if ay3 <= epsy:
+                return x3
+            # A NaN residual has no usable sign, so the bracket cannot be updated.
             return NAN
-        
+
         if bisection:
             if same_sign(f1, y3):  # Same sign check
                 x1, f1 = x3, y3
             else:
                 x2, f2 = x3, y3
         else:
+            yl, yr = f1, f2  # True residuals of the bracket before the update
             if same_sign(f1, y3):  # Same sign check
                 if side == 1:
                     y2 *= ab_factor(y3, y1)
@@ -161,14 +162,15 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
             else:
                 if side == -1:
                     y1 *= ab_factor(y3, y2)
-                elif not bisection:
+                else:
                     side = -1
                 x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
             # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             # but for no more than MAX_RESIDUAL_STEPS consecutive steps
             if x2 - x1 > threshold:
-                if residual_steps >= MAX_RESIDUAL_STEPS or fabs(y3) >= 0.5 * ymin:
+                ymin = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket
+                if residual_steps >= MAX_RESIDUAL_STEPS or 2.0 * ay3 >= ymin:
                     bisection = 1
                     side = 0
                 else:

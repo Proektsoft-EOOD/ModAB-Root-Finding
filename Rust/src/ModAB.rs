@@ -127,7 +127,6 @@ where
     let mut side: i32 = 0;
     let mut bisection = true;
     let mut threshold = x2 - x1;
-    let mut ymin = 0.0; // Best true residual of the bracket
     const MAX_RESIDUAL_STEPS: u32 = 3; // Max consecutive A&B steps kept by the residual test alone
     let mut residual_steps: u32 = 0;
     for _ in 0..maxiter {
@@ -136,22 +135,24 @@ where
         } else {
             safe_secant(x1, y1, x2, y2)
         };
+        let dx = x2 - x1; // Bracket width
         let epsx = xtol * x3.abs().max(1.0);
-        if x2 - x1 <= epsx {
+        if dx <= epsx {
             return x3;
         }
         let y3: f64;
         if bisection {
             y3 = f(x3) - y;
-            if (f2 - f1).is_finite() {
+            let dy = f2 - f1;
+            if dy.is_finite() {
                 // Avoids overflow in the calculations below
                 let ym = (f1 + f2) * 0.5; // Chord ordinate at midpoint; f1, f2 have opposite signs
-                let r = 1.0 - (ym / (f2 - f1)).abs(); // Symmetry factor
+                let r = 1.0 - (ym / dy).abs(); // Symmetry factor
                 let k = r * r; // Deviation factor
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if (ym - y3).abs() < k * ym.abs() + k * y3.abs() {
                     bisection = false;
-                    threshold = 2.0 * (x2 - x1);
+                    threshold = 2.0 * dx;
                     residual_steps = 0;
                     (y1, y2) = (f1, f2); // A&B starts from the true residuals
                 }
@@ -166,13 +167,14 @@ where
                 y3 = f(x3) - y;
             }
             threshold *= 0.5;
-            ymin = f1.abs().min(f2.abs());
         }
-        if y3.abs() <= epsy {
-            return x3;
-        }
-        // A NaN residual has no usable sign, so the bracket cannot be updated.
-        if y3.is_nan() {
+        let ay3 = y3.abs();
+        if !(ay3 > epsy) {
+            // Exit on y-convergence or NaN with a single branch on the hot path
+            if ay3 <= epsy {
+                return x3;
+            }
+            // A NaN residual has no usable sign, so the bracket cannot be updated.
             return f64::NAN;
         }
         if bisection {
@@ -182,17 +184,18 @@ where
                 (x2, f2) = (x3, y3);
             }
         } else {
+            let (yl, yr) = (f1, f2); // True residuals of the bracket before the update
             if same_sign(f1, y3) {
                 if side == 1 {
                     y2 *= ab_factor(y3, y1);
-                } else if !bisection {
+                } else {
                     side = 1;
                 }
                 (x1, y1, f1) = (x3, y3, y3);
             } else {
                 if side == -1 {
                     y1 *= ab_factor(y3, y2);
-                } else if !bisection {
+                } else {
                     side = -1;
                 }
                 (x2, y2, f2) = (x3, y3, y3);
@@ -200,7 +203,8 @@ where
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than MAX_RESIDUAL_STEPS consecutive steps
             if x2 - x1 > threshold {
-                if residual_steps >= MAX_RESIDUAL_STEPS || y3.abs() >= 0.5 * ymin {
+                let ymin = yl.abs().min(yr.abs()); // Best true residual of the bracket
+                if residual_steps >= MAX_RESIDUAL_STEPS || 2.0 * ay3 >= ymin {
                     bisection = true;
                     side = 0;
                 } else {

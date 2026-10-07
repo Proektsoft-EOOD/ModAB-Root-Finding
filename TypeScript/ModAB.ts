@@ -123,28 +123,29 @@ export function modABRoot(
     }
     let side = 0;
     let f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
-    let ymin = 0.0; // Best true residual of the bracket
     let bisection = true;
     let threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
     const MAX_RESIDUAL_STEPS = 3; // Max consecutive A&B steps kept by the residual test alone
     let residualSteps = 0;
     for (let i = 0; i < maxiter; i++) {
         const x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
+        const dx = x2 - x1; // Bracket width
         const epsx = xtol * Math.max(Math.abs(x3), 1);
-        if (x2 - x1 <= epsx) { // x-convergence check
+        if (dx <= epsx) { // x-convergence check
             return x3;
         }
         let y3: number;
         if (bisection) {
             y3 = f(x3) - y; // Function value at midpoint
-            if (Number.isFinite(f2 - f1)) { // Avoids overflow in the calculations below
+            const dy = f2 - f1;
+            if (Number.isFinite(dy)) { // Avoids overflow in the calculations below
                 const ym = (f1 + f2) * 0.5; // Chord ordinate at midpoint; f1, f2 have opposite signs
-                const r = 1 - Math.abs(ym / (f2 - f1)); // Symmetry factor
+                const r = 1 - Math.abs(ym / dy); // Symmetry factor
                 const k = r * r; // Deviation factor
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                 if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
                     bisection = false;
-                    threshold = 2 * (x2 - x1); // Safety factor
+                    threshold = 2 * dx; // Safety factor
                     residualSteps = 0;
                     y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
@@ -156,13 +157,13 @@ export function modABRoot(
                  f(x3) - y;
 
             threshold *= 0.5;
-            ymin = Math.min(Math.abs(f1), Math.abs(f2));
         }
-        if (Math.abs(y3) <= epsy) { // y-convergence check
-            return x3;
-        }
-        // A NaN residual has no usable sign, so the bracket cannot be updated.
-        if (Number.isNaN(y3)) {
+        const ay3 = Math.abs(y3);
+        if (!(ay3 > epsy)) { // Exit on y-convergence or NaN with a single branch on the hot path
+            if (ay3 <= epsy) {
+                return x3;
+            }
+            // A NaN residual has no usable sign, so the bracket cannot be updated.
             return NaN;
         }
         if (bisection) {
@@ -172,17 +173,18 @@ export function modABRoot(
             x2 = x3; f2 = y3;
         }
         } else {
+            const yl = f1, yr = f2; // True residuals of the bracket before the update
             if (sameSign(f1, y3)) { // Same sign check
                 if (side === 1) {
                     y2 *= abFactor(y3, y1);
-                } else if (!bisection) {
+                } else {
                     side = 1;
                 }
                 x1 = x3; f1 = y1 = y3;
             } else {
                 if (side === -1) {
                     y1 *= abFactor(y3, y2);
-                } else if (!bisection) {
+                } else {
                     side = -1;
                 }
                 x2 = x3; f2 = y2 = y3;
@@ -190,7 +192,8 @@ export function modABRoot(
             // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
             // but for no more than MAX_RESIDUAL_STEPS consecutive steps
             if (x2 - x1 > threshold) {
-                if (residualSteps >= MAX_RESIDUAL_STEPS || Math.abs(y3) >= 0.5 * ymin) {
+                const ymin = Math.min(Math.abs(yl), Math.abs(yr)); // Best true residual of the bracket
+                if (residualSteps >= MAX_RESIDUAL_STEPS || 2 * ay3 >= ymin) {
                     bisection = true;
                     side = 0;
                 } else {

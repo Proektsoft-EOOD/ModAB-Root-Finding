@@ -134,7 +134,6 @@ public class ModAB {
             return Double.NaN; // No sign change - no root guaranteed
         
         double f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
-        double ymin = 0.0; // Best true residual of the bracket
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
@@ -142,20 +141,22 @@ public class ModAB {
         int residualSteps = 0;
         for (int i = 0; i < maxiter; i++) {
             double x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
-            if (x2 - x1 <= xtol * Math.max(Math.abs(x3), 1)) // x-convergence check
+            double dx = x2 - x1; // Bracket width
+            if (dx <= xtol * Math.max(Math.abs(x3), 1)) // x-convergence check
                 return x3;
 
             double y3;
             if (bisection) {
                 y3 = f.applyAsDouble(x3) - y;
-                if (Double.isFinite(f2 - f1)) { // Avoids overflow in the calculations below
+                double dy = f2 - f1;
+                if (Double.isFinite(dy)) { // Avoids overflow in the calculations below
                     double ym = (f1 + f2) * 0.5; // Chord ordinate at midpoint; f1, f2 have opposite signs
-                    double r = 1.0 - Math.abs(ym / (f2 - f1)); // Symmetry factor
+                    double r = 1.0 - Math.abs(ym / dy); // Symmetry factor
                     double k = r * r; // Deviation factor
                     // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
                     if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
                         bisection = false;
-                        threshold = 2.0 * (x2 - x1);
+                        threshold = 2.0 * dx;
                         residualSteps = 0;
                         y1 = f1; y2 = f2; // A&B starts from the true residuals
                     }
@@ -166,16 +167,16 @@ public class ModAB {
                      x3 == x2 ? f2 :
                      f.applyAsDouble(x3) - y;
                 threshold *= 0.5;
-                ymin = Math.min(Math.abs(f1), Math.abs(f2));
             }
 
-            if (Math.abs(y3) <= epsy)
-                return x3;
-
-            // A NaN residual has no usable sign, so the bracket cannot be updated.
-            if (Double.isNaN(y3))
+            double ay3 = Math.abs(y3);
+            if (!(ay3 > epsy)) { // Exit on y-convergence or NaN with a single branch on the hot path
+                if (ay3 <= epsy)
+                    return x3;
+                // A NaN residual has no usable sign, so the bracket cannot be updated.
                 return Double.NaN;
-            
+            }
+
             if (bisection) {
                 if (sameSign(f1, y3)) {
                     x1 = x3; f1 = y3;
@@ -183,17 +184,18 @@ public class ModAB {
                     x2 = x3; f2 = y3;
                 }
             } else {
+                double yl = f1, yr = f2; // True residuals of the bracket before the update
                 if (sameSign(f1, y3)) {
                     if (side == 1) {
                         y2 *= abFactor(y3, y1);
-                    } else if (!bisection) {
+                    } else {
                         side = 1;
                     }
                     x1 = x3; y1 = y3; f1 = y3;
                 } else {
                     if (side == -1) {
                         y1 *= abFactor(y3, y2);
-                    } else if (!bisection) {
+                    } else {
                         side = -1;
                     }
                     x2 = x3; y2 = y3; f2 = y3;
@@ -201,7 +203,8 @@ public class ModAB {
                 // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
                 // but for no more than MAX_RESIDUAL_STEPS consecutive steps
                 if (x2 - x1 > threshold) {
-                    if (residualSteps >= MAX_RESIDUAL_STEPS || Math.abs(y3) >= 0.5 * ymin) {
+                    double ymin = Math.min(Math.abs(yl), Math.abs(yr)); // Best true residual of the bracket
+                    if (residualSteps >= MAX_RESIDUAL_STEPS || 2.0 * ay3 >= ymin) {
                         bisection = true;
                         side = 0;
                     } else

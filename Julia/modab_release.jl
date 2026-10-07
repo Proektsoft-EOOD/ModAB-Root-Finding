@@ -1,10 +1,10 @@
-# ModAB exactly as shipped in the registered BracketingNonlinearSolve release
-# (v1.12.7, identical to SciML upstream/master b15bf2b1), vendored here under a
-# distinct name so the released algorithm and the local development version can
-# be benchmarked side by side in a single run.
+# ModAB exactly as shipped in the latest registered BracketingNonlinearSolve release
+# (v1.12.8, SciML tag BracketingNonlinearSolve-v1.12.8 at c5f0d24f), vendored here
+# under a distinct name so the released algorithm and the local development version
+# can be benchmarked side by side in a single run.
 #
-# The body below is a verbatim copy of the release's SciMLBase.__solve; only the
-# algorithm type in the signature is renamed.
+# The code below is a verbatim copy of the release's modAB.jl, except that the
+# algorithm type is renamed and the helpers carry a `rel_` prefix.
 using BracketingNonlinearSolve
 using BracketingNonlinearSolve: build_exact_solution, build_bracketing_solution
 using NonlinearSolveBase: NonlinearVerbosity
@@ -13,6 +13,27 @@ import NonlinearSolveBase
 import SciMLBase
 using SciMLBase: IntervalNonlinearProblem, ReturnCode
 using SciMLLogging: @SciMLMessage
+
+@inline rel_same_signs(x, y) = (x < 0 && y < 0) || (x > 0 && y > 0)
+
+@inline rel_safe_midpoint(x1, x2) = x1 / 2 + x2 / 2
+
+@inline function rel_safe_secant(x1, y1, x2, y2)
+    a, b = abs(y1), abs(y2)
+    den = a + b
+    if isinf(den) # fast path
+        (isinf(a) || isinf(b)) && return rel_safe_midpoint(x1, x2)
+        a /= 2
+        b /= 2
+        den = a + b
+    end
+    return clamp((b / den) * x1 + (a / den) * x2, x1, x2)
+end
+
+@inline function rel_get_ab_factor(y3, y)
+    m = 1 - y3 / y
+    return m > 0 ? m : inv(2 * one(m))
+end
 
 struct ModABRelease <: AbstractBracketingAlgorithm end
 
@@ -30,6 +51,12 @@ function SciMLBase.__solve(
         x1, abstol, promote_type(eltype(x1), eltype(x2))
     )
 
+    # The secant step mixes abscissae with residual ratios, so promote the bracket to that
+    # type once (e.g. Float32 tspan with Float64 residuals, or Dual residuals from a
+    # closure-captured Dual) to keep x1 and x2 the same type throughout the iterations.
+    T = typeof(abs(y1) / (abs(y1) + abs(y2)) * x1)
+    x1, x2 = convert(T, x1), convert(T, x2)
+
     if iszero(y1)
         return build_exact_solution(prob, alg, x1, y1, ReturnCode.ExactSolutionLeft)
     end
@@ -38,7 +65,7 @@ function SciMLBase.__solve(
         return build_exact_solution(prob, alg, x2, y2, ReturnCode.ExactSolutionRight)
     end
 
-    if sign(y1) == sign(y2)
+    if rel_same_signs(y1, y2)
         @SciMLMessage(
             "The interval is not an enclosing interval, opposite signs at the \
         boundaries are required.",
@@ -52,57 +79,64 @@ function SciMLBase.__solve(
     ϵ = abstol
     i = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
-    C = 16 # safety factor for threshold corresponding to 4 iterations = 2^4
+    C = 2 # Safety factor for threshold corresponding to 2 iterations (2^2 * 0.5)
+    f1, f2 = y1, y2 # The unmodified function values for correct calculation of symmetry factor after bisection fallback
+    yMin = zero(y1) # The smallest unmodified residual of the bracket at the previous AB step
     while i < maxiters
         local x3, y3
         if bisecting # Bisection method is used
-            x3 = (x1 + x2) / 2
+            x3 = rel_safe_midpoint(x1, x2) # Avoids possible overflow in x1 + x2
             y3 = f(x3) # Function value at midpoint
-            ym = (y1 + y2) / 2 # Ordinate of chord at midpoint
-            # calculate k on each bisection step with account for local function properties and symmetry
-            r = 1 - abs(ym / (y2 - y1)) # Symmetry factor
-            k = r * r # Deviation factor
-            # Check if the function is close enough to linear
-            if abs(ym - y3) < k * (abs(ym) + abs(y3))
-                bisecting = false
-                threshold = (x2 - x1) * C
+            if isfinite(f2 - f1)
+                ym = (f1 + f2) / 2 # Ordinate of chord at midpoint
+                r = 1 - abs(ym / (f2 - f1)) # Symmetry factor
+                k = r * r # Deviation factor
+                if abs(ym - y3) < k * abs(y3) + k * abs(ym) # Check if the function is close enough to linear
+                    bisecting = false
+                    threshold = C * (x2 - x1) # Initialize the bisection fallback threshold
+                    y1, y2 = f1, f2  # A&B starts from the true residuals
+                end
             end
         else # Anderson-Bjork method is used
-            x3 = (x1 * y2 - y1 * x2) / (y2 - y1)
-            x3 = clamp(x3, nextfloat(x1), prevfloat(x2))
-            y3 = f(x3)
+            x3 = rel_safe_secant(x1, y1, x2, y2)
+            y3 = x3 == x1 ? f1 : x3 == x2 ? f2 : f(x3)
             threshold /= 2
+            yMin = min(abs(f1), abs(f2))
         end
         if iszero(y3)
             return build_exact_solution(prob, alg, x3, y3, ReturnCode.Success)
+        elseif isnan(y3)
+            return build_bracketing_solution(prob, alg, x3, y3, x1, x2, ReturnCode.Failure)
         elseif (x2 - x1) < 2ϵ
             return build_bracketing_solution(prob, alg, x3, y3, x1, x2, ReturnCode.Success)
         end
-        if sign(y1) == sign(y3)
-            if side == 1  # Apply Anderson-Bjork correction on the right side
-                m = 1 - y3 / y1
-                y2 *= m <= 0 ? inv(2 * one(y1)) : m
-            elseif !bisecting
-                side = 1
+        if bisecting
+            if rel_same_signs(f1, y3)
+                x1, f1 = x3, y3
+            else
+                x2, f2 = x3, y3
             end
-            x1, y1 = x3, y3
         else
-            if side == -1  # Apply Anderson-Bjork correction on the left side
-                m = 1 - y3 / y2
-                y1 *= m <= 0 ? inv(2 * one(y1)) : m
-            elseif !bisecting
-                side = -1
+            if rel_same_signs(f1, y3)
+                if side == 1  # Apply Anderson-Bjork correction on the right side
+                    y2 *= rel_get_ab_factor(y3, y1)
+                end
+                x1, y1, f1, side = x3, y3, y3, 1
+            else
+                if side == -1  # Apply Anderson-Bjork correction on the left side
+                    y1 *= rel_get_ab_factor(y3, y2)
+                end
+                x2, y2, f2, side = x3, y3, y3, -1
             end
-            x2, y2 = x3, y3
+            if x2 - x1 > threshold && abs(y3) > yMin / 2
+                bisecting = true   # reset to bisection
+                side = 0
+            end
         end
         if nextfloat(x1) == x2
             return build_bracketing_solution(prob, alg, x2, f(x2), x1, x2, ReturnCode.FloatingPointLimit)
         end
         i += 1
-        if x2 - x1 > threshold # Ff AB fails to shrink the interval enough
-            bisecting = true   # reset to bisection
-            side = 0
-        end
     end
-    return build_bracketing_solution(prob, alg, x1, y1, x1, x2, ReturnCode.MaxIters)
+    return build_bracketing_solution(prob, alg, x1, f1, x1, x2, ReturnCode.MaxIters)
 end

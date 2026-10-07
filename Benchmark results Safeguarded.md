@@ -450,17 +450,17 @@ List of algorithms:
 
 ### Wall clock times
 
-| Method        | Mean      | Error    | StdDev   | Median    |
-|-------------- |----------:|---------:|---------:|----------:|
-| Bisection     |  95.50 us | 0.806 us | 0.673 us |  95.38 us |
-| FalsePosition | 370.83 us | 7.344 us | 7.542 us | 374.59 us |
-| Illinois      | 160.40 us | 3.161 us | 3.640 us | 160.53 us |
-| AndersonBjork | 225.74 us | 2.502 us | 2.218 us | 225.50 us |
-| ITP           | 244.70 us | 2.759 us | 2.445 us | 245.08 us |
-| Ridders       | 108.69 us | 1.210 us | 1.132 us | 108.14 us |
-| Brent         | 126.79 us | 2.502 us | 2.457 us | 126.16 us |
-| ModAB         |  59.62 us | 0.614 us | 0.544 us |  59.74 us |
-| SGModab       |  60.73 us | 1.209 us | 2.576 us |  59.64 us |
+| Method        | Mean      | Error    | StdDev   |
+|-------------- |----------:|---------:|---------:|
+| Bisection     |  94.67 us | 0.817 us | 0.682 us |
+| FalsePosition | 367.55 us | 2.915 us | 2.727 us |
+| Illinois      | 151.69 us | 0.887 us | 0.786 us |
+| AndersonBjork | 216.75 us | 1.314 us | 1.165 us |
+| ITP           | 238.44 us | 0.611 us | 0.477 us |
+| Ridders       | 103.27 us | 0.656 us | 0.581 us |
+| Brent         | 124.64 us | 2.466 us | 2.839 us |
+| ModAB         |  59.44 us | 1.083 us | 1.779 us |
+| SGModab       |  58.05 us | 1.080 us | 1.200 us |
 
 Benchmark Process Environment Information:  
 BenchmarkDotNet v0.15.8  
