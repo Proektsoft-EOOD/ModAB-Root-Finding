@@ -13,7 +13,7 @@
         //     2. The original function values y1 and y2 (without A&B corrections) 
         //        are stored for later use in bisection fallback
         // f(x) must be continuous and sign(f(x1)) ≠ sign(f(x2))
-        public static double ModAB(Func<double, double> f, 
+        public static double OldModAB(Func<double, double> f, 
             double x1, double x2,
             out ReturnCode returnCode,
             double aTol = 1e-14, double rTol = 1e-14)

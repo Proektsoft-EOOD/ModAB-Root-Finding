@@ -4,7 +4,8 @@ namespace Proektsoft.Root
 {
     public static partial class Solver
     {
-        public static double SgModAB(Func<double, double> f, double x1, double x2, out ReturnCode returnCode,
+        public static double SgModAB(Func<double, double> f, 
+            double x1, double x2, out ReturnCode returnCode,
             double aTol = 1e-14, double rTol = 1e-14)
         {
             if (!Initialize(f, x1, x2, aTol, rTol, out Node p1, out Node p2, out var F))

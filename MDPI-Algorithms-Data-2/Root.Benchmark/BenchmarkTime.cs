@@ -60,10 +60,10 @@ namespace Root.Benchmark
         }
         
         [Benchmark]
-        public void ModAB()
+        public void OldModAB()
         {
             foreach (Problem p in _problems) 
-                Solver.ModAB(p.F, p.a, p.b, out _, tol, tol);
+                Solver.OldModAB(p.F, p.a, p.b, out _, tol, tol);
         }
 
         [Benchmark]

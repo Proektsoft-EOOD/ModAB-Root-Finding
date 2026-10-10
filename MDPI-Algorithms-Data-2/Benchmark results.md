@@ -8,12 +8,12 @@ List of algorithms:
 - ITP    - Interpolate. truncate. project
 - Rid    - Ridders
 - Brе    - Brent
-- modAB  - Modified Anderson-Bjorck April 2026 MDPI Algorithms + fixes
-- SGModab - Safeguarded Modified Anderson-Bjorck Corrected Sept 2026
+- OldModAB - The old Modified Anderson-Bjorck April 2026 MDPI Algorithms + fixes
+- SGModab - Safeguarded Modified Anderson-Bjorck Corrected October 2026
 
 ### Results
 
-|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br | modAB | SGModab
+|   Func |    bs |    fp |   ill |    ab |   ITP |   rid |    br |OldModAB| SGModab
 | ------ | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------
 |    f01 | 1 | 0.9999999999999962 | 1 | 1 | 1 | 1 | 1 | 1 | 1
 |    f02 | 0.3994222917109682 | 0.3994222917109571 | 0.39942229171096816 | 0.39942229171096816 | 0.3994222917109682 | 0.39942229171097166 | 0.39942229171096805 | 0.39942229171096816 | 0.39942229171096816
@@ -452,15 +452,15 @@ List of algorithms:
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     | 108.27 us | 1.656 us | 1.468 us |
-| FalsePosition | 379.41 us | 7.445 us | 6.964 us |
-| Illinois      | 157.18 us | 1.711 us | 1.600 us |
-| AndersonBjork | 226.04 us | 1.730 us | 1.618 us |
-| ITP           | 248.44 us | 1.955 us | 1.733 us |
-| Ridders       | 108.08 us | 0.857 us | 0.802 us |
-| Brent         | 123.25 us | 1.620 us | 1.436 us |
-| ModAB         |  59.47 us | 0.562 us | 0.525 us |
-| SGModab       |  60.18 us | 0.496 us | 0.464 us |
+| Bisection     |  92.11 us | 1.214 us | 1.136 us |
+| FalsePosition | 361.31 us | 3.552 us | 3.322 us |
+| Illinois      | 149.59 us | 0.905 us | 0.756 us |
+| AndersonBjork | 218.89 us | 3.160 us | 2.801 us |
+| ITP           | 240.76 us | 3.623 us | 3.025 us |
+| Ridders       | 101.77 us | 0.292 us | 0.244 us |
+| Brent         | 118.75 us | 0.832 us | 0.738 us |
+| OldModAB      |  59.22 us | 1.010 us | 0.896 us |
+| SGModab       |  57.84 us | 0.523 us | 0.463 us |
 
 Benchmark Process Environment Information:  
 BenchmarkDotNet v0.15.8  
