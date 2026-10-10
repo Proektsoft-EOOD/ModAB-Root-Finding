@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="../../src/ModAB.Switching/ModAB.Switching.csproj" />
-    <None Update="Data/cases.csv" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-</Project>

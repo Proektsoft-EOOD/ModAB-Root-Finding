@@ -1,5 +1,8 @@
 import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Deriv.Inv
 
 /-!+# Rounding errors in the ModAB switching criterion
 
@@ -81,24 +84,60 @@ lemma kappa_identity {r : ℝ} (hr : 0 ≤ r) :
   field_simp
   ; ring
 
+lemma kappa_hasDerivAt (r : ℝ) (hr : 0 ≤ r) :
+    HasDerivAt kappa ((1+3*r)/(1+r)^3) r := by
+  have hd : 2*(1+r) ≠ 0 := by positivity
+  have h := (((hasDerivAt_const r (1:ℝ)).add
+    ((hasDerivAt_id r).const_mul 3)).div
+    (((hasDerivAt_const r (1:ℝ)).add (hasDerivAt_id r)).const_mul 2) hd).pow 2
+  convert h using 1 <;> (try funext x) <;> (try dsimp [kappa]) <;> field_simp <;> ring
+
+lemma kappa_derivative_bounds {r : ℝ} (hr : 0 ≤ r) :
+    0 < (1+3*r)/(1+r)^3 ∧ (1+3*r)/(1+r)^3 ≤ 1 := by
+  have hp : 0 < (1+r)^3 := by positivity
+  constructor
+  · positivity
+  · apply (div_le_iff₀ hp).mpr
+    nlinarith [mul_nonneg (sq_nonneg r) (by linarith : 0 ≤ 3+r)]
+
+lemma kappa_lipschitz_ordered {x y : ℝ} (hx : 0 ≤ x) (hxy : x < y) :
+    |kappa y-kappa x| ≤ y-x := by
+  have hc : ContinuousOn kappa (Set.Icc x y) := fun r hr =>
+    (kappa_hasDerivAt r (hx.trans hr.1)).continuousAt.continuousWithinAt
+  obtain ⟨c,hc',hslope⟩ := exists_hasDerivAt_eq_slope kappa
+    (fun r => (1+3*r)/(1+r)^3) hxy hc
+    (fun r hr => kappa_hasDerivAt r (by linarith [hr.1]))
+  have hd := kappa_derivative_bounds (show 0≤c by linarith [hc'.1])
+  have habs : |(1+3*c)/(1+c)^3| ≤ 1 := by rw [abs_of_pos hd.1]; exact hd.2
+  rw [hslope,abs_div,abs_of_pos (sub_pos.mpr hxy)] at habs
+  simpa using (div_le_iff₀ (sub_pos.mpr hxy)).mp habs
+
+/-- The manuscript's derivative and mean-value argument, also valid for r≥0. -/
 lemma kappa_lipschitz {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) :
-    |kappa x - kappa y| ≤ |x-y| := by
-  let d := (1+x)^2 * (1+y)^2
-  let c := (1+2*x+2*y+3*x*y) / d
-  have hxp : 0 < 1+x := by linarith
-  have hyp : 0 < 1+y := by linarith
-  have hd : 0 < d := by dsimp [d]; positivity
-  have hc0 : 0 ≤ c := by dsimp [c]; positivity
-  have hc1 : c ≤ 1 := by
+    |kappa x-kappa y| ≤ |x-y| := by
+  rcases lt_trichotomy x y with h|h|h
+  · simpa only [abs_sub_comm (kappa x),abs_sub_comm x,
+      abs_of_pos (sub_pos.mpr h)] using kappa_lipschitz_ordered hx h
+  · subst y; simp
+  · simpa only [abs_of_pos (sub_pos.mpr h)] using kappa_lipschitz_ordered hy h
+
+/-- The separate algebraic proof printed in `thm:formal_switching`. -/
+lemma kappa_lipschitz_algebraic {x y : ℝ} (hx : 0≤x) (hy : 0≤y) :
+    |kappa x-kappa y|≤|x-y| := by
+  let d:=(1+x)^2*(1+y)^2
+  let c:=(1+2*x+2*y+3*x*y)/d
+  have hd : 0<d:=by dsimp [d]; positivity
+  have hc0 : 0≤c:=by dsimp [c]; positivity
+  have hc1 : c≤1:=by
     apply (div_le_iff₀ hd).mpr
     dsimp [d]
-    have hp : 0 ≤ x*y + x^2 + y^2 + 2*x^2*y + 2*x*y^2 + x^2*y^2 := by positivity
+    have hp : 0≤x*y+x^2+y^2+2*x^2*y+2*x*y^2+x^2*y^2:=by positivity
     nlinarith only [hp]
-  have hid : kappa x - kappa y = (x-y)*c := by
-    dsimp [kappa, c, d]
+  have hid : kappa x-kappa y=(x-y)*c:=by
+    dsimp [kappa,c,d]
     field_simp
-    ; ring
-  rw [hid, abs_mul, abs_of_nonneg hc0]
+    ring
+  rw [hid,abs_mul,abs_of_nonneg hc0]
   nlinarith [abs_nonneg (x-y)]
 
 lemma ratio_range {r : ℝ} (hr : r ∈ Set.Icc (0:ℝ) 1) :
@@ -157,8 +196,8 @@ structure FactorTrace (e rho : ℝ) where
   r_error : Within rHat (1-vHat) e
   k_error : Within kHat (rHat^2) e
 
-theorem factor_error {e rho : ℝ} (he : 0 ≤ e)
-    (hrho : rho ∈ Set.Icc (0:ℝ) 1) (t : FactorTrace e rho) :
+theorem factor_error_from_coefficient {e rho : ℝ} (he : 0≤e)
+    (t : FactorTrace e rho) (hp : Within (kappa t.rhoHat) (kappa rho) e) :
     Within t.kHat (kappa rho) (8*e) := by
   let v₀ := (1-t.rhoHat)/(2*(1+t.rhoHat))
   have hv₀ := ratio_range t.rho_range
@@ -180,10 +219,24 @@ theorem factor_error {e rho : ℝ} (he : 0 ≤ e)
     rw [kappa_identity t.rho_range.1]
     have ht := within_trans t.k_error hs
     convert ht using 1 ; ring
-  have hp : Within (kappa t.rhoHat) (kappa rho) e :=
-    le_trans (kappa_lipschitz t.rho_range.1 hrho.1) t.rho_error
   have ht := within_trans hk hp
   convert ht using 1 ; ring
+
+/-- The first scaled-error proof uses the derivative/mean-value coefficient bound. -/
+theorem factor_error {e rho : ℝ} (he : 0≤e)
+    (hrho : rho∈Set.Icc (0:ℝ) 1) (t : FactorTrace e rho) :
+    Within t.kHat (kappa rho) (8*e) := by
+  have hp : Within (kappa t.rhoHat) (kappa rho) e:=
+    le_trans (kappa_lipschitz t.rho_range.1 hrho.1) t.rho_error
+  exact factor_error_from_coefficient he t hp
+
+/-- The later executable proof uses its own algebraic coefficient argument. -/
+theorem factor_error_algebraic {e rho : ℝ} (he : 0≤e)
+    (hrho : rho∈Set.Icc (0:ℝ) 1) (t : FactorTrace e rho) :
+    Within t.kHat (kappa rho) (8*e) := by
+  have hp : Within (kappa t.rhoHat) (kappa rho) e:=
+    le_trans (kappa_lipschitz_algebraic t.rho_range.1 hrho.1) t.rho_error
+  exact factor_error_from_coefficient he t hp
 
 /-- Local absolute-error contracts for the remaining scaled operations. -/
 structure ScaledTrace (e rho p1 p2 p3 : ℝ) where
@@ -211,16 +264,14 @@ def exactR (rho p1 p2 p3 : ℝ) : ℝ := kappa rho*(|exactH p1 p2|+|p3|)
 def exactG (rho p1 p2 p3 : ℝ) : ℝ := exactR rho p1 p2 p3 - exactL p1 p2 p3
 
 /-- The constants 8, 3, 5, 19 and 25 follow from the local contracts. -/
-theorem scaled_errors {e rho p1 p2 p3 : ℝ} (he : 0 ≤ e)
-    (hrho : rho ∈ Set.Icc (0:ℝ) 1)
+theorem scaled_errors_from_factor {e rho p1 p2 p3 : ℝ} (he : 0 ≤ e)
     (hh : |exactH p1 p2| ≤ 1/2) (hp3 : |p3| ≤ 1)
-    (t : ScaledTrace e rho p1 p2 p3) :
+    (t : ScaledTrace e rho p1 p2 p3) (hk : Within t.factor.kHat (kappa rho) (8*e)) :
     Within t.factor.kHat (kappa rho) (8*e) ∧
     Within t.hHat (exactH p1 p2) (3*e) ∧
     Within |t.diffHat| (exactL p1 p2 p3) (5*e) ∧
     Within t.rightHat (exactR rho p1 p2 p3) (19*e) ∧
     Within t.gapHat (exactG rho p1 p2 p3) (25*e) := by
-  have hk := factor_error he hrho t.factor
   have hsum := within_trans t.sum_error (within_add t.p1_error t.p2_error)
   have hmid := within_trans t.h_error (within_half hsum)
   have hm : Within t.hHat (exactH p1 p2) (3*e) := by
@@ -232,13 +283,13 @@ theorem scaled_errors {e rho p1 p2 p3 : ℝ} (he : 0 ≤ e)
   have hkb : |t.factor.kHat| ≤ 1 := by
     rw [abs_of_nonneg (by linarith [t.factor.k_range.1] : 0 ≤ t.factor.kHat)]
     exact t.factor.k_range.2
-  have ph₀ := product_error hkb (within_abs hm) hk (by simpa using hh)
-  have ph : Within t.productH (kappa rho*|exactH p1 p2|) (8*e) := by
-    have ha := within_trans t.productH_error ph₀
-    convert ha using 1 ; ring
   have pp₀ := product_error hkb (within_abs t.p3_error) hk (by simpa using hp3)
   have pp : Within t.productP (kappa rho*|p3|) (10*e) := by
     have ha := within_trans t.productP_error pp₀
+    convert ha using 1 ; ring
+  have ph₀ := product_error hkb (within_abs hm) hk (by simpa using hh)
+  have ph : Within t.productH (kappa rho*|exactH p1 p2|) (8*e) := by
+    have ha := within_trans t.productH_error ph₀
     convert ha using 1 ; ring
   have hright : Within t.rightHat (exactR rho p1 p2 p3) (19*e) := by
     have ha := within_trans t.right_error (within_add ph pp)
@@ -247,6 +298,26 @@ theorem scaled_errors {e rho p1 p2 p3 : ℝ} (he : 0 ≤ e)
     have ha := within_trans t.gap_error (within_sub hright hl)
     convert ha using 1 <;> (try dsimp [exactG]) <;> ring
   exact ⟨hk, hm, hl, hright, hgap⟩
+
+theorem scaled_errors {e rho p1 p2 p3 : ℝ} (he : 0≤e)
+    (hrho : rho∈Set.Icc (0:ℝ) 1) (hh : |exactH p1 p2|≤1/2) (hp3 : |p3|≤1)
+    (t : ScaledTrace e rho p1 p2 p3) :
+    Within t.factor.kHat (kappa rho) (8*e) ∧
+    Within t.hHat (exactH p1 p2) (3*e) ∧
+    Within |t.diffHat| (exactL p1 p2 p3) (5*e) ∧
+    Within t.rightHat (exactR rho p1 p2 p3) (19*e) ∧
+    Within t.gapHat (exactG rho p1 p2 p3) (25*e) :=
+  scaled_errors_from_factor he hh hp3 t (factor_error he hrho t.factor)
+
+theorem scaled_errors_algebraic {e rho p1 p2 p3 : ℝ} (he : 0≤e)
+    (hrho : rho∈Set.Icc (0:ℝ) 1) (hh : |exactH p1 p2|≤1/2) (hp3 : |p3|≤1)
+    (t : ScaledTrace e rho p1 p2 p3) :
+    Within t.factor.kHat (kappa rho) (8*e) ∧
+    Within t.hHat (exactH p1 p2) (3*e) ∧
+    Within |t.diffHat| (exactL p1 p2 p3) (5*e) ∧
+    Within t.rightHat (exactR rho p1 p2 p3) (19*e) ∧
+    Within t.gapHat (exactG rho p1 p2 p3) (25*e) :=
+  scaled_errors_from_factor he hh hp3 t (factor_error_algebraic he hrho t.factor)
 
 theorem guard_positive {e G g : ℝ} (he : 0 < e)
     (herr : Within g G (25*e)) (hguard : 32*e < g) : 0 < G := by

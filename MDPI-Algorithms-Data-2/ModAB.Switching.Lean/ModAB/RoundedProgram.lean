@@ -159,6 +159,15 @@ theorem concrete_gap_error (rho p1 p2 p3 : ℝ) (hr : rho ∈ Set.Icc (0:ℝ) 1)
     (hs : (p1 ≤ 0 ∧ 0 ≤ p2) ∨ (p2 ≤ 0 ∧ 0 ≤ p1)) :
     Within (scaledTrace rho p1 p2 p3 hr h1 h2 h3 hs).gapHat
       (exactG rho p1 p2 p3) (25*binary64Epsilon) :=
+  (scaled_errors_algebraic (le_of_lt binary64Epsilon_pos) hr
+    (normalized_midpoint_bound h1 h2 hs) h3 (scaledTrace rho p1 p2 p3 hr h1 h2 h3 hs)).2.2.2.2
+
+/-- The earlier scaled-error proof uses the derivative/mean-value route for κ. -/
+theorem concrete_gap_error_mean_value (rho p1 p2 p3 : ℝ) (hr : rho ∈ Set.Icc (0:ℝ) 1)
+    (h1 : |p1| ≤ 1) (h2 : |p2| ≤ 1) (h3 : |p3| ≤ 1)
+    (hs : (p1 ≤ 0 ∧ 0 ≤ p2) ∨ (p2 ≤ 0 ∧ 0 ≤ p1)) :
+    Within (scaledTrace rho p1 p2 p3 hr h1 h2 h3 hs).gapHat
+      (exactG rho p1 p2 p3) (25*binary64Epsilon) :=
   (scaled_errors (le_of_lt binary64Epsilon_pos) hr
     (normalized_midpoint_bound h1 h2 hs) h3 (scaledTrace rho p1 p2 p3 hr h1 h2 h3 hs)).2.2.2.2
 

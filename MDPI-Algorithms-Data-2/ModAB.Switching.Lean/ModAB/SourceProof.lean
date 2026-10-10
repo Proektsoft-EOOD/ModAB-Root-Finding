@@ -166,5 +166,25 @@ theorem binary64_program_error (env : Nat → Word) (hi : ∀ i, valid (env i))
   obtain ⟨hf,he⟩ := expression_refines gapExpr env hi (source_safe _ hd)
   exact ⟨hf,by rw [he]; exact source_error _ hd⟩
 
+/-- Source-level error bound retaining the main theorem's mean-value proof route. -/
+theorem source_error_mean_value (env : Nat → ℝ) (hd : Domain env) :
+    Within (gapExpr.real env)
+      (exactG (rho env) (normalized env 0) (normalized env 1) (normalized env 2))
+      (25*binary64Epsilon) := by
+  rw [source_eq_trace env hd]
+  obtain ⟨_,hr,h1,h2,h3,hs⟩ := input_facts env hd
+  exact concrete_gap_error_mean_value _ _ _ _ hr h1 h2 h3 hs
+
+/-- The concrete binary64 theorem with the derivative/mean-value κ argument. -/
+theorem binary64_program_error_mean_value (env : Nat → Word) (hi : ∀ i, valid (env i))
+    (hd : Domain (fun i => value (env i))) :
+    valid (gapExpr.bits env) ∧ Within (value (gapExpr.bits env))
+      (exactG (rho (fun i => value (env i)))
+        (normalized (fun i => value (env i)) 0)
+        (normalized (fun i => value (env i)) 1)
+        (normalized (fun i => value (env i)) 2)) (25*binary64Epsilon) := by
+  obtain ⟨hf,he⟩ := expression_refines gapExpr env hi (source_safe _ hd)
+  exact ⟨hf,by rw [he]; exact source_error_mean_value _ hd⟩
+
 end
 end ModAB.Source

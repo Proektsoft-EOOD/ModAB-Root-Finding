@@ -1,5 +1,5 @@
 name = "modab_switching"
-version = "0.2.0"
+version = "0.4.0"
 defaultTargets = ["ModAB"]
 
 [[lean_lib]]
