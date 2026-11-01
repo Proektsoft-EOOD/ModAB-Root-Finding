@@ -106,8 +106,6 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
     var side: i32 = 0;
     var threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
     const C: f64 = 2.0; // Threshold safety factor
-    const max_residual_steps: u32 = 3; // Max consecutive A&B steps kept by the residual test alone
-    var residual_steps: u32 = 0;
     var i: usize = 0;
 
     while (i < maxiter) : (i += 1) {
@@ -131,7 +129,6 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 if (@abs(ym - y3) < k * @abs(ym) + k * @abs(y3)) {
                     bisecting = false;
                     threshold = C * dx;
-                    residual_steps = 0;
                     y1 = f1; // A&B starts from the true residuals
                     y2 = f2;
                 }
@@ -186,18 +183,11 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 y2 = y3;
                 f2 = y3; // Also store the unmodified y2 value to be used for bisection fallback
             }
-            // Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
-            // but for no more than max_residual_steps consecutive steps
-            if (x2 - x1 > threshold) {
-                const ymin = @min(@abs(yl), @abs(yr)); // Best true residual of the bracket
-                if (residual_steps >= max_residual_steps or 2.0 * ay3 >= ymin) {
-                    bisecting = true;
-                    side = 0;
-                } else {
-                    residual_steps += 1;
-                }
-            } else {
-                residual_steps = 0;
+            // Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
+            // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
+            if (x2 - x1 > threshold and 42.0 * ay3 >= @min(@abs(yl), @abs(yr))) {
+                bisecting = true;
+                side = 0;
             }
         }
     }

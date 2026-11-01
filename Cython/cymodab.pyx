@@ -76,10 +76,9 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     safeguards above; the switching test is written so that it cannot overflow.
     F(x) must be continuous and sign(F(x1)) != sign(F(x2))
     """
-    cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ay3, ym, r, k, threshold, ymin, dx, dy, yl, yr
+    cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ay3, ym, r, k, threshold, dx, dy, yl, yr
     cdef double C = 2.0  # Threshold safety factor
-    cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
-    cdef int side, bisection, residual_steps, _
+    cdef int side, bisection, _
     if x2 < x1:
         x1, x2 = x2, x1
 
@@ -102,7 +101,6 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     side = 0
     bisection = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
-    residual_steps = 0
     for _ in range(maxiter):
         if bisection:
             x3 = safe_midpoint(x1, x2)
@@ -125,7 +123,6 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                 if fabs(ym - y3) < k * fabs(ym) + k * fabs(y3):
                     bisection = 0
                     threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
-                    residual_steps = 0
                     y1 = f1  # A&B starts from the true residuals
                     y2 = f2
         else:
@@ -166,17 +163,11 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                     side = -1
                 x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
-            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
-            # but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            if x2 - x1 > threshold:
-                ymin = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket
-                if residual_steps >= MAX_RESIDUAL_STEPS or 2.0 * ay3 >= ymin:
-                    bisection = 1
-                    side = 0
-                else:
-                    residual_steps += 1
-            else:
-                residual_steps = 0
+            # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
+            # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
+            if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):
+                bisection = 1
+                side = 0
     return NAN
 
 

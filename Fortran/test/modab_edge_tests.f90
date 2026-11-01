@@ -58,8 +58,8 @@ program modab_edge_tests
     ! Subnormal residuals: A&B corrections underflow towards zero.
     call ck_root('subnormal residuals',         f_subnormal, -1.0_wp, 1.0_wp, 0.2_wp**(1.0_wp/3.0_wp))
     ! f101, L. Tomov counterexample: A&B keeps halving the residual without shrinking
-    ! the bracket; it needs the max_residual_steps cap to fall back to bisection.
-    call ck_root('residual cap',                f_tomov,     -acos(-1.0_wp), 1.0_wp, 0.0_wp)  ! [-pi, 1]
+    ! the bracket; the residual test must not keep it on A&B, but fall back to bisection.
+    call ck_root('residual test',               f_tomov,     -acos(-1.0_wp), 1.0_wp, 0.0_wp)  ! [-pi, 1]
 
     write(*,'(A,I0,A,I0,A)') 'Fortran edge-cases: ', passed, '/', total, &
         merge(' PASS', ' FAIL', passed == total)

@@ -49,7 +49,7 @@ static double f_inf_both(double x) {
 /* Subnormal residuals: AB corrections underflow towards zero. */
 static double f_subnormal(double x) { return 1e-300 * (x * x * x - 0.2); }
 /* f101, L. Tomov counterexample: A&B keeps halving the residual without shrinking
-   the bracket; it needs the MAX_RESIDUAL_STEPS cap to fall back to bisection. */
+   the bracket; the residual test must not keep it on A&B, but fall back to bisection. */
 static double f_tomov(double x) { return x < 0.0 ? -x * x : 7.0 * x * x; }
 
 static void ck_root(const char *n, double (*f)(double), double a, double b, double want) {
@@ -105,7 +105,7 @@ int main(void) {
     ck_root("inf left", f_inf_left, -1.0, 1.0, 0.1);
     ck_root("inf both", f_inf_both, -1.0, 1.0, 0.1);
     ck_root("subnormal", f_subnormal, -1.0, 1.0, cbrt(0.2));
-    ck_root("residual cap", f_tomov, -acos(-1.0), 1.0, 0.0); /* [-pi, 1] */
+    ck_root("residual test", f_tomov, -acos(-1.0), 1.0, 0.0); /* [-pi, 1] */
 
     printf("C edge-cases: %d/%d %s\n", passed, total, passed == total ? "PASS" : "FAIL");
     return passed == total ? 0 : 1;

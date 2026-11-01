@@ -2783,12 +2783,10 @@
     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-1`=NaN residual, `-2`=max iterations reached)
 
-    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,yl,yr,ymin,ym,r,k,threshold,dy
+    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,yl,yr,ym,r,k,threshold,dy
     integer :: i  !! iteration counter
     logical :: root_found, bis
     integer :: side !! for tracking the side
-    integer,parameter :: max_residual_steps = 3 !! max consecutive A&B steps kept by the residual test alone
-    integer :: residual_steps
 
     iflag = 0
     side = 0
@@ -2796,7 +2794,6 @@
     x2 = bx; y2 = fbx; f2 = y2
     bis = .true.
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
-    residual_steps = 0
     do i = 1, me%maxiter
         if (bis) then
             x3 = safe_midpoint(x1,x2)
@@ -2811,7 +2808,6 @@
                 if (abs(ym-y3) < k*abs(ym) + k*abs(y3)) then
                     bis = .false.
                     threshold = 2.0_wp*(x2-x1)   ! safety factor
-                    residual_steps = 0
                     y1 = f1; y2 = f2             ! A&B starts from the true residuals
                 end if
             end if
@@ -2867,17 +2863,11 @@
                 x2 = x3; y2 = y3; f2 = y3
             end if
             ! if Anderson-Bjork is not shrinking the interval fast enough, fall back to bisection,
-            ! unless it still halves the residual, but for no more than max_residual_steps consecutive steps
-            if (x2-x1 > threshold) then
-                ymin = min(abs(yl),abs(yr))   ! best true residual of the bracket
-                if (residual_steps >= max_residual_steps .or. 2.0_wp*abs(y3) >= ymin) then
-                    bis  = .true. ! reset to bisection.
-                    side = 0
-                else
-                    residual_steps = residual_steps + 1
-                end if
-            else
-                residual_steps = 0
+            ! unless it still shrinks the residual more than 42 times
+            ! (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
+            if (x2-x1 > threshold .and. 42.0_wp*abs(y3) >= min(abs(yl),abs(yr))) then
+                bis  = .true. ! reset to bisection.
+                side = 0
             end if
         end if
 

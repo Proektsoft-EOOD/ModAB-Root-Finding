@@ -86,8 +86,6 @@ function SciMLBase.__solve(
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     C = 2 # Safety factor for threshold corresponding to 2 iterations (2^2 * 0.5)
     f1, f2 = y1, y2 # The unmodified function values for correct calculation of symmetry factor after bisection fallback
-    MaxResidualSteps = 3 # Max consecutive AB steps kept by the residual test alone
-    residualSteps = 0
     while i < maxiters
         local x3, y3
         dx = x2 - x1 # Bracket width
@@ -120,7 +118,6 @@ function SciMLBase.__solve(
                 if abs(ym - y3) < k * abs(y3) + k * abs(ym) # Check if the function is close enough to linear
                     bisecting = false
                     threshold = C * dx # Initialize the bisection fallback threshold
-                    residualSteps = 0
                     y1, y2 = f1, f2  # A&B starts from the true residuals
                 end
             end
@@ -144,18 +141,11 @@ function SciMLBase.__solve(
                 end
                 x2, y2, f2, side = x3, y3, y3, -1
             end
-            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
-            # but for no more than MaxResidualSteps consecutive steps
-            if x2 - x1 > threshold
-                yMin = min(abs(yl), abs(yr)) # Best true residual of the bracket
-                if residualSteps >= MaxResidualSteps || 2abs(y3) >= yMin
-                    bisecting = true   # reset to bisection
-                    side = 0
-                else
-                    residualSteps += 1
-                end
-            else
-                residualSteps = 0
+            # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
+            # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
+            if x2 - x1 > threshold && 42abs(y3) >= min(abs(yl), abs(yr))
+                bisecting = true   # reset to bisection
+                side = 0
             end
             threshold /= 2
         end

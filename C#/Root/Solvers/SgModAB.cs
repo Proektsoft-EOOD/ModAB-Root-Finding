@@ -2,6 +2,7 @@
 
 namespace Proektsoft.Root
 {
+
     public static partial class Solver
     {
         public static double SgModAB(Func<double, double> f, double x1, double x2, out ReturnCode returnCode,
@@ -24,10 +25,8 @@ namespace Proektsoft.Root
             var isAB = false;
             var sideMoved = 0; // The side that was moved on the previous Anderson-Björck step.
             const int LEFT = -1, RIGHT = 1;
-            var fallbackThreshold = 0.0; // The threshold for switching back to the bisection method.
             const double C = 2.0;
-            const int MaxResidualSteps = 3;
-            var residualSteps = 0;
+            var fallbackThreshold = 0.0; // The threshold for switching back to the bisection method.
             for (var i = 1; i <= MaxIterations; ++i)
             {
                 var x3 = isAB
@@ -57,12 +56,11 @@ namespace Proektsoft.Root
                     if (double.IsFinite(dy)) // Avoids overflow in the calculations below.
                     {
                         var ym = 0.5 * (p1.Y + p2.Y);
-                        var r = 1 - Math.Abs(ym / dy); // Symmetry factor
+                        var r = 1d - Math.Abs(ym / dy); // Symmetry factor
                         var k = r * r; // Deviation factor
                         if (Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3))
                         {   // k·|ym| + k·|y3| cannot overflow; an infinite y3 fails the test.
                             isAB = true;
-                            residualSteps = 0;
                             fallbackThreshold = C * dx;
                             f1 = p1.Y;
                             f2 = p2.Y;
@@ -92,20 +90,12 @@ namespace Proektsoft.Root
                         p2 = p3; f2 = y3;
                     }
                     dx = p2.X - p1.X;
-                    if (dx > fallbackThreshold)
+                    if (dx > fallbackThreshold && 
+                        42 * Math.Abs(y3) >= Math.Min(Math.Abs(y1), Math.Abs(y2)))
                     {
-                        var yMin = Math.Min(Math.Abs(y1), Math.Abs(y2)); // Best true residual of the bracket.
-                        if (residualSteps >= MaxResidualSteps || 2d * Math.Abs(y3) >= yMin)
-                        {
-                            isAB = false;
-                            sideMoved = 0;
-                        }
-                        else
-                            ++residualSteps;
+                        isAB = false;
+                        sideMoved = 0;
                     }
-                    else
-                        residualSteps = 0;
-
                     fallbackThreshold *= 0.5;
                 }
                 else if (SameSign(p1.Y, y3)) // Bisection step

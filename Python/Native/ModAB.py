@@ -81,8 +81,6 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
     bisection = True
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     C = 2  # Threshold safety factor
-    MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by the residual test alone
-    residual_steps = 0
     for _ in range(maxiter):
         x3 = safe_midpoint(x1, x2) if bisection else safe_secant(x1, y1, x2, y2)
         dx = x2 - x1  # Bracket width
@@ -101,7 +99,6 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                 if abs(ym - y3) < k * abs(ym) + k * abs(y3):
                     bisection = False
                     threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
-                    residual_steps = 0
                     y1, y2 = f1, f2  # A&B starts from the true residuals
         else:
             # If x3 got clamped, reuse the true residual stored at the endpoint.
@@ -140,16 +137,10 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                     side = -1
                 x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
-            # Fallback if AB fails to reduce the bracket width, unless it still halves the residual,
-            # but for no more than MAX_RESIDUAL_STEPS consecutive steps
-            if x2 - x1 > threshold:
-                ymin = min(abs(yl), abs(yr))  # Best true residual of the bracket
-                if residual_steps >= MAX_RESIDUAL_STEPS or 2 * ay3 >= ymin:
-                    bisection = True
-                    side = 0
-                else:
-                    residual_steps += 1
-            else:
-                residual_steps = 0
+            # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
+            # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
+            if x2 - x1 > threshold and 42 * ay3 >= min(abs(yl), abs(yr)):
+                bisection = True
+                side = 0
 
     return _NAN
