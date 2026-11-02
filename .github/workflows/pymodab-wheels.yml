@@ -39,7 +39,7 @@ jobs:
             os: macos-15
             archs: universal2
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # One abi3 wheel per platform; build settings live in pyproject.toml
       - uses: pypa/cibuildwheel@v4.2.1
@@ -49,7 +49,7 @@ jobs:
         env:
           CIBW_ARCHS: ${{ matrix.archs }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.label }}
           path: Python/PyModAB/wheelhouse/*.whl
@@ -58,9 +58,9 @@ jobs:
     name: sdist and pure wheel
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -76,7 +76,7 @@ jobs:
         env:
           PYMODAB_PURE: '1'
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: |
@@ -91,7 +91,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true

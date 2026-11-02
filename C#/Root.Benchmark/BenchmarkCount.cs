@@ -171,9 +171,9 @@ List of algorithms:
                     : sorted.Length % 2 == 1 ? sorted[sorted.Length / 2]
                     : 0.5 * (sorted[sorted.Length / 2 - 1] + sorted[sorted.Length / 2]);
             }
-            static void WriteRow<T>(string label, IEnumerable<T> values, string format = null) =>
+            static void WriteRow<T>(string label, IEnumerable<T> values, string? format = null) where T : IFormattable =>
                 Console.WriteLine($"|{label,7} | " + string.Join(" | ",
-                    values.Select(v => (format == null ? v.ToString() : ((IFormattable)v).ToString(format, null)).PadLeft(5))));
+                    values.Select(v => v.ToString(format, null).PadLeft(5))));
 
             WriteRow("SumAll", sumAll);
             WriteRow("Valid", sumValid);
