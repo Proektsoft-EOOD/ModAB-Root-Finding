@@ -32,7 +32,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 &emsp;&emsp;[For 101 functions test set](Test%20functions.pdf)
 
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/224d5fee-18a8-484d-9ae7-74347c049eb1" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/59d28c98-f094-48ea-9a54-f14c0c629de3" />
 
 ### Times
 
