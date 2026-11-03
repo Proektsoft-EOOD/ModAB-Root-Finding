@@ -24,3 +24,42 @@ Rel | 3.82 | 33.65 | 1.92 | 3.25 | 1.47 | 1.32 | 2.01 | 2.38 | 1.48 | 1.32 | 9.1
 
 Detailed results are available here:
 [Test_results.pdf](/Fortran/results/Test_results.pdf)
+
+### Timing results
+
+Wall-clock time of each solver over the 223 cases, median of 35 passes over the whole
+set, with the per-call overhead of the library API removed (see below):
+
+| Method | Evals | Time, µs | Rel |
+|---|--:|--:|--:|
+| chandr | 2634 | 72.2 | 0.98 |
+| **modab** | **2651** | **73.8** | **1.00** |
+| brenth | 3167 | 83.7 | 1.13 |
+| brentq | 3227 | 84.1 | 1.14 |
+| brent | 3229 | 89.0 | 1.20 |
+| zhang | 3884 | 91.6 | 1.24 |
+| ridders | 3489 | 93.6 | 1.27 |
+| bdqrf | 3503 | 106.0 | 1.44 |
+| abkk | 5080 | 122.9 | 1.66 |
+| toms748 | 3482 | 126.8 | 1.72 |
+| blendtf | 6322 | 131.9 | 1.79 |
+| illinois | 5319 | 150.6 | 2.04 |
+| muller | 4371 | 155.3 | 2.10 |
+| itp | 3925 | 181.3 | 2.46 |
+| barycentr | 8605 | 184.6 | 2.50 |
+| pegasus | 5995 | 205.2 | 2.78 |
+| bisection | 10130 | 226.6 | 3.07 |
+| A&B | 13968 | 451.1 | 6.11 |
+| rbp | 24279 | 830.5 | 11.25 |
+| false pos | 89207 | 2799.2 | 37.91 |
+
+Rel is relative to modab. ModAB and Chandrupatla are the fastest, within 2 %, because
+they need the fewest evaluations, at a similar cost of about 28 ns per evaluation.
+
+Through the library API every call also pays a fixed 3–7 µs (stack trampolines for
+internal procedures; a system call on Windows), which is 10–20 times modab's own run
+time and makes the methods hard to tell apart: 1609 µs per pass through `root_scalar`
+and 766 µs through `solver%solve` for modab, against 1611 µs and 762 µs for Chandrupatla.
+
+Intel Core i7-1065G7, Windows 11, gfortran 16.1, fpm `--profile release`.
+Details and method: [Timing_results.md](/Fortran/results/Timing_results.md)
