@@ -32,7 +32,7 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 &emsp;&emsp;[For 101 functions test set](Test%20functions.pdf)
 
-<img height="300" alt="image" src="https://github.com/user-attachments/assets/435c4fb9-7f79-4a58-a33b-23a84d82311a" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/59d28c98-f094-48ea-9a54-f14c0c629de3" />
 
 ### Times
 
@@ -61,13 +61,13 @@ Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 |   Mean |  45.2 |  68.4 |  22.1 |  22.6 |  24.8 |  22.2 |  17.2 |  14.7 |**14.6**
 | StdDev |   8.9 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |**13.8**
 | Median |  49.0 | 202.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |**12.0**
-|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |**  56**
-| BestAt |    14 |     6 |     2 |    27 |     7 |     5 |    36 |    46 |**  52**
-|WorstAt |    38 |    50 |     5 |    13 |     2 |     3 |     0 |     1 |**   1**
-|   Succ |    93 |    46 |    88 |    80 |    93 |    91 |    93 |    93 |**  93**
-|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |**   8**
-|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |**   0**
-|MaxIter |     0 |    28 |     5 |    13 |     0 |     0 |     0 |     0 |**   0**
+|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |**71**
+| BestAt |    14 |     6 |     2 |    27 |     7 |     5 |    36 |    46 |**52**
+|WorstAt |    38 |    50 |     5 |    13 |     2 |     3 |     0 |     1 |**1**
+|   Succ |    93 |    46 |    88 |    80 |    93 |    91 |    93 |    93 |**93**
+|Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |**8**
+|  False |     0 |    19 |     0 |     0 |     0 |     2 |     0 |     0 |**0**
+|MaxIter |     0 |    28 |     5 |    13 |     0 |     0 |     0 |     0 |**0**
 
 
 [Detailed results](Benchmark%20results%20Safeguarded.md)
