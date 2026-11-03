@@ -2770,8 +2770,6 @@
 !    2. The original function values y1 and y2 (without A&B corrections) are stored for later use in bisection fallback
     subroutine ModAB(me,ax,bx,fax,fbx,xzero,fzero,iflag)
 
-    use ieee_arithmetic, only: ieee_is_nan, ieee_is_finite
-
     implicit none
 
     class(modab_solver),intent(inout) :: me
@@ -2809,7 +2807,7 @@
             y3 = me%f(x3)
             if (me%solution(x3,y3,xzero,fzero)) return
             dy = f2-f1
-            if (ieee_is_finite(dy)) then      ! avoids overflow in the calculations below
+            if (is_finite(dy)) then           ! avoids overflow in the calculations below
                 ym = (f1+f2)*0.5_wp            ! chord ordinate at the midpoint; f1, f2 have opposite signs
                 r = 1.0_wp - abs(ym/dy)        ! symmetry factor
                 k = r*r                        ! deviation factor
@@ -2846,7 +2844,7 @@
 
         ! A NaN residual has no usable sign, so the bracket cannot be updated
         ! and [[same_sign]] must not be reached with it.
-        if (ieee_is_nan(y3)) then
+        if (is_nan(y3)) then
             xzero = x3
             fzero = y3
             iflag = -1   ! error: the function returned NaN
@@ -2902,8 +2900,44 @@
 !  `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,SgModAB}.cs`, so a change to
 !  the numerics belongs in one place rather than inline in the solver.
 !
-!  `ieee_is_nan` / `ieee_is_finite` are used instead of `x /= x` style tests so
-!  the predicates stay correct under aggressive optimisation.
+!  NaN and infinity are detected with ordered comparisons ([[is_nan]],
+!  [[is_finite]]) rather than `ieee_arithmetic`. A procedure that uses that
+!  module must save and restore the floating-point environment on every call,
+!  which cost ModAB 1.3 us per solve (5x its run time) with gfortran on Windows.
+!  Ordered comparisons are exact under IEEE semantics; they would only break
+!  under `-ffast-math` / `-ffinite-math-only`, which no fpm profile uses.
+
+!*****************************************************************************************
+!>
+!  Returns true only when `x` is NaN: every ordered comparison with NaN is false.
+
+    elemental function is_nan(x) result(nan)
+
+    implicit none
+
+    real(wp),intent(in) :: x
+    logical :: nan
+
+    nan = .not. (abs(x) >= 0.0_wp)
+
+    end function is_nan
+!*****************************************************************************************
+
+!*****************************************************************************************
+!>
+!  Returns true only when `x` is neither infinite nor NaN.
+
+    elemental function is_finite(x) result(finite)
+
+    implicit none
+
+    real(wp),intent(in) :: x
+    logical :: finite
+
+    finite = abs(x) <= huge(x)
+
+    end function is_finite
+!*****************************************************************************************
 
 !*****************************************************************************************
 !>
@@ -2961,9 +2995,7 @@
 !  `[x1,x2]`. Where the secant geometry cannot deliver that, the safe midpoint
 !  is returned instead.
 
-    function safe_secant(x1,y1,x2,y2) result(x)
-
-    use ieee_arithmetic, only: ieee_is_finite
+    pure function safe_secant(x1,y1,x2,y2) result(x)
 
     implicit none
 
@@ -2989,11 +3021,11 @@
         return
     end if
 
-    if (.not. ieee_is_finite(den)) then
+    if (.not. is_finite(den)) then
         ! An infinite ordinate carries no usable slope. Otherwise a + b merely
         ! overflowed, and halving both restores it without changing the ratio
         ! that defines the weights.
-        if (.not. ieee_is_finite(a) .or. .not. ieee_is_finite(b)) then
+        if (.not. is_finite(a) .or. .not. is_finite(b)) then
             x = safe_midpoint(x1,x2)
             return
         end if
