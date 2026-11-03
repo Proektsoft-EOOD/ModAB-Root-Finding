@@ -127,6 +127,12 @@ where
     let mut side: i32 = 0;
     let mut bisection = true;
     let mut threshold = x2 - x1;
+    // A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+    // than 1 % lies on a plateau; the first A&B step is then not rescaled.
+    const PLATEAU_RATIO: f64 = 0.99;
+    // Each return from A&B to bisection halves the margin of the switching test, so that
+    // borderline switches are rejected after unsuccessful A&B phases.
+    let mut margin = 1.0;
     for _ in 0..maxiter {
         let x3 = if bisection {
             safe_midpoint(x1, x2)
@@ -139,6 +145,7 @@ where
             return x3;
         }
         let y3: f64;
+        let mut switching = false; // This bisection switches to A&B
         if bisection {
             y3 = f(x3) - y;
             let dy = f2 - f1;
@@ -148,8 +155,9 @@ where
                 let r = 1.0 - (ym / dy).abs(); // Symmetry factor
                 let k = r * r; // Deviation factor
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                if (ym - y3).abs() < k * ym.abs() + k * y3.abs() {
+                if (ym - y3).abs() < (k * ym.abs() + k * y3.abs()) * margin {
                     bisection = false;
+                    switching = true;
                     threshold = 2.0 * dx;
                     (y1, y2) = (f1, f2); // A&B starts from the true residuals
                 }
@@ -185,15 +193,15 @@ where
             if same_sign(f1, y3) {
                 if side == 1 {
                     y2 *= ab_factor(y3, y1);
-                } else {
-                    side = 1;
+                } else if !switching || ay3 <= PLATEAU_RATIO * yl.abs() {
+                    side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 (x1, y1, f1) = (x3, y3, y3);
             } else {
                 if side == -1 {
                     y1 *= ab_factor(y3, y2);
-                } else {
-                    side = -1;
+                } else if !switching || ay3 <= PLATEAU_RATIO * yr.abs() {
+                    side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 (x2, y2, f2) = (x3, y3, y3);
             }
@@ -202,6 +210,7 @@ where
             if x2 - x1 > threshold && 42.0 * ay3 >= yl.abs().min(yr.abs()) {
                 bisection = true;
                 side = 0;
+                margin *= 0.5;
             }
         }
     }

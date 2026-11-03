@@ -78,7 +78,13 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     """
     cdef double epsy, y1, y2, f1, f2, x3, epsx, y3, ay3, ym, r, k, threshold, dx, dy, yl, yr
     cdef double C = 2.0  # Threshold safety factor
-    cdef int side, bisection, _
+    cdef int side, bisection, switching, _
+    # A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+    # than 1 % lies on a plateau; the first A&B step is then not rescaled.
+    cdef double PLATEAU_RATIO = 0.99
+    # Each return from A&B to bisection halves the margin of the switching test, so that
+    # borderline switches are rejected after unsuccessful A&B phases.
+    cdef double margin = 1.0
     if x2 < x1:
         x1, x2 = x2, x1
 
@@ -112,6 +118,7 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
         if dx <= epsx:  # x-convergence check
             return x3
 
+        switching = 0  # This bisection switches to A&B
         if bisection:
             y3 = f(x3) - y  # Function value at midpoint
             dy = f2 - f1
@@ -120,8 +127,9 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                 r = 1.0 - fabs(ym / dy)  # Symmetry factor
                 k = r * r  # Deviation factor
                 # k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                if fabs(ym - y3) < k * fabs(ym) + k * fabs(y3):
+                if fabs(ym - y3) < (k * fabs(ym) + k * fabs(y3)) * margin:
                     bisection = 0
+                    switching = 1
                     threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
                     y1 = f1  # A&B starts from the true residuals
                     y2 = f2
@@ -153,14 +161,14 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
             if same_sign(f1, y3):  # Same sign check
                 if side == 1:
                     y2 *= ab_factor(y3, y1)
-                else:
-                    side = 1
+                elif not switching or ay3 <= PLATEAU_RATIO * fabs(yl):
+                    side = 1  # A switching bisection on a plateau starts the A&B phase afresh
                 x1, y1, f1 = x3, y3, y3  # Also store the unmodified y1 value to be used for bisection fallback
             else:
                 if side == -1:
                     y1 *= ab_factor(y3, y2)
-                else:
-                    side = -1
+                elif not switching or ay3 <= PLATEAU_RATIO * fabs(yr):
+                    side = -1  # A switching bisection on a plateau starts the A&B phase afresh
                 x2, y2, f2 = x3, y3, y3  # Also store the unmodified y2 value to be used for bisection fallback
 
             # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
@@ -168,6 +176,7 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
             if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):
                 bisection = 1
                 side = 0
+                margin *= 0.5
     return NAN
 
 

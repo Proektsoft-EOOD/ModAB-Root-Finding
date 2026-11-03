@@ -133,12 +133,19 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     double threshold = x2 - x1; // Bisection fallback threshold
     double f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
     const double C = 2.0; // Safety factor
+    // A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+    // than 1 % lies on a plateau; the first A&B step is then not rescaled.
+    const double PLATEAU_RATIO = 0.99;
+    // Each return from A&B to bisection halves the margin of the switching test, so that
+    // borderline switches are rejected after unsuccessful A&B phases.
+    double margin = 1.0;
     for (int i = 1; i <= maxIter; ++i) {
         double x3 = bisection ? safe_midpoint(x1, x2) : safe_secant(x1, y1, x2, y2);
         double dx = x2 - x1; // Bracket width
         // Check for x-convergence
         if (dx <= aTol + rTol * fabs(x3)) return x3;
         double y3;
+        bool switching = false; // This bisection switches to A&B
         if (bisection) {
             y3 = eval(f, x3);
             double dy = f2 - f1;
@@ -148,8 +155,9 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 double k = r * r; // Deviation factor
                 // Check if function is close enough to straight line.
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                if (fabs(ym - y3) < k * fabs(ym) + k * fabs(y3)) {
+                if (fabs(ym - y3) < (k * fabs(ym) + k * fabs(y3)) * margin) {
                     bisection = false;
+                    switching = true;
                     threshold = C * dx;
                     y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
@@ -179,15 +187,15 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             if (same_sign(f1, y3)) {
                 if (side == 1) {
                     y2 *= ab_factor(y3, y1); // Anderson-Bjork correction
-                } else {
-                    side = 1;
+                } else if (!switching || fabs(y3) <= PLATEAU_RATIO * fabs(yl)) {
+                    side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 x1 = x3; f1 = y1 = y3;
             } else {
                 if (side == -1) {
                     y1 *= ab_factor(y3, y2); // Anderson-Bjork correction
-                } else {
-                    side = -1;
+                } else if (!switching || fabs(y3) <= PLATEAU_RATIO * fabs(yr)) {
+                    side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 x2 = x3; f2 = y2 = y3;
             }
@@ -196,6 +204,7 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
             if (x2 - x1 > threshold && 42.0 * fabs(y3) >= fmin(fabs(yl), fabs(yr))) {
                 bisection = true;
                 side = 0;
+                margin *= 0.5;
             }
         }
     }
