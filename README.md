@@ -38,30 +38,30 @@ This hybrid approach achieves superlinear convergence while maintaining the wors
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     | 112.07 us | 1.128 us | 1.055 us |
-| FalsePosition | 368.87 us | 7.087 us | 5.918 us |
-| Illinois      | 154.92 us | 2.636 us | 2.930 us |
-| AndersonBjork | 220.73 us | 2.473 us | 2.313 us |
-| ITP           | 242.33 us | 3.414 us | 3.193 us |
-| Ridders       | 107.25 us | 2.101 us | 3.145 us |
-| Brent         | 121.41 us | 0.504 us | 0.447 us |
-| ModAB         |  56.67 us | 0.576 us | 0.539 us |
-| **SGModab**   |**55.94 us**|**0.894 us**|**0.836 us**|
+| Bisection     |  97.27 us | 0.419 us | 0.392 us |
+| FalsePosition | 383.15 us | 1.229 us | 1.027 us |
+| Illinois      | 159.04 us | 0.543 us | 0.508 us |
+| AndersonBjork | 228.09 us | 0.604 us | 0.535 us |
+| ITP           | 252.92 us | 4.808 us | 4.015 us |
+| Ridders       | 110.58 us | 0.402 us | 0.336 us |
+| Brent         | 125.58 us | 0.772 us | 0.603 us |
+| ModAB         |  59.62 us | 0.741 us | 0.657 us |
+| **SGModab**   |**58.23 us**|**0.422 us**|**0.395 us**|
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.12 x64 RyuJIT x86-64-v4  
-Windows 11 (10.0.26200.9457/25H2/2025Update/HudsonValley2)  
+Windows 11 (10.0.26200.9711/25H2/2025Update/HudsonValley2)  
 Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 ### Number of Evaluations
 |Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | **SGModAB**
 | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: 
-| SumAll |  4835 | 11192 |  4087 |  5267 |  3337 |  3354 |  3141 |  1992 |**1967**
-|  Valid |  4428 | 10715 |  3486 |  4666 |  2925 |  2897 |  2699 |  1705 |**1680**
-|    Ave |  47.6 | 115.2 |  37.5 |  50.2 |  31.5 |  31.2 |  29.0 |  18.3 |**18.1**
+| SumAll |  4835 | 11192 |  4087 |  5267 |  3337 |  3354 |  3141 |  1992 |**1952**
+|  Valid |  4428 | 10715 |  3486 |  4666 |  2925 |  2897 |  2699 |  1705 |**1667**
+|    Ave |  47.6 | 115.2 |  37.5 |  50.2 |  31.5 |  31.2 |  29.0 |  18.3 |**17.9**
 |   Mean |  45.2 |  68.4 |  22.1 |  22.6 |  24.8 |  22.2 |  17.2 |  14.7 |**14.6**
-| StdDev |   8.9 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |**14.3**
+| StdDev |   8.9 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |**13.8**
 | Median |  49.0 | 202.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |**12.0**
-|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |**  71**
+|    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |**  56**
 | BestAt |    14 |     6 |     2 |    27 |     7 |     5 |    36 |    46 |**  52**
 |WorstAt |    38 |    50 |     5 |    13 |     2 |     3 |     0 |     1 |**   1**
 |   Succ |    93 |    46 |    88 |    80 |    93 |    91 |    93 |    93 |**  93**

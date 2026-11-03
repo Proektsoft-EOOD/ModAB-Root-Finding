@@ -62,6 +62,8 @@ Version 1.1.2 streamlines the solver loop. The bracket width and the difference 
 
 Version 1.1.3 replaces the capped residual exception of 1.1.1 with a stricter test and removes the `MAX_RESIDUAL_STEPS` counter. A secant step that does not shrink the bracket fast enough is now kept only if it reduces the residual more than 42 times, that is `42·|y3| < ymin`, where `ymin` is the smaller true residual of the bracket. The factor comes from 2^(1074/200) ≈ 41.4: at this rate a residual that starts near 1 underflows to zero within the default limit of 200 iterations, because the smallest positive double is 2^-1074. A search that stays on secant steps this way therefore ends by itself, without a counter. The factor is a fixed constant and does not follow `max_iter`, so raising the limit does not weaken the test. On the benchmark, problem f101 now needs 65 evaluations instead of 76, and the other 100 problems give the same roots and evaluation counts as with 1.1.2; all 101 need 1960 evaluations in total instead of 1971.
 
+Version 1.1.4 makes the switch from bisection to secant steps more careful in two ways. First, every fallback from secant steps to bisection halves the margin of the switching test, so after n fallbacks it reads `|ym - y3| < (k·|ym| + k·|y3|)·2^-n`. A function on which the secant steps already failed must look more linear before it gets another try, and borderline switches are rejected. Second, if the bisection step that switches to secant steps reduces the residual of the endpoint it replaces by less than 1 %, the function is on a plateau there. That step then does not count as a move of that side, so the next secant step does not apply the Anderson-Björck correction to the opposite ordinate. On the benchmark, f81 needs 13 evaluations instead of 16 and f101 needs 56 instead of 65, while f76, f92 and f95 need one more each; the other 96 problems give the same evaluation counts as with 1.1.3. All 101 need 1951 evaluations in total instead of 1960.
+
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
 ```python
@@ -114,27 +116,27 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1960**</mark>| 
+   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1951**</mark>| 
    AVG|       48|       28|       27|       34|       21|       28|       20| <mark>**19**</mark>| 
 MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**13**</mark>| 
    MIN|        3|        4|        4|        3|        3|        4|        3| <mark>**3**</mark>| 
-   MAX|       53|      102|      102|      202|       70|      102|       78| <mark>**65**</mark>| 
-FACTOR|   2.491x|   1.434x|   1.413x|   1.747x|   1.078x|   1.434x|   1.017x| <mark>**1.000x**</mark>| 
+   MAX|       53|      102|      102|      202|       70|      102|       78| <mark>**56**</mark>| 
+FACTOR|   2.503x|   1.440x|   1.419x|   1.756x|   1.083x|   1.440x|   1.022x| <mark>**1.000x**</mark>| 
 
 #### Execution times  (ms per problem, 200 iterations)
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1535.42|   931.31|   878.87|  1047.95| 58524.74|   115.55|   175.60| <mark>**91.23**</mark>| 
-   AVG|  15.2021|   9.2209|   8.7017|  10.3758| 579.4528|   1.1440|   1.7386| <mark>**0.9033**</mark>| 
-MEDIAN|  14.7569|   5.1910|   4.9383|   6.4764| 345.7968|   0.5879|   1.3410| <mark>**0.6511**</mark>| 
-   MIN|   1.7242|   1.8918|   1.8852|   2.0780|  73.8264|   0.2071|   0.5655| <mark>**0.1677**</mark>| 
-   MAX|  70.1038|  32.1594|  41.2759|  53.5572|1979.9811|   6.4304|   5.1045| <mark>**3.8393**</mark>| 
-FACTOR|  16.829x|  10.208x|   9.633x|  11.486x| 641.480x|   1.266x|   1.925x| <mark>**1.000x**</mark>| 
+   SUM|  1414.31|   841.66|   817.12|   982.57| 58199.46|   118.47|   173.30| <mark>**87.38**</mark>| 
+   AVG|  14.0031|   8.3333|   8.0903|   9.7284| 576.2322|   1.1730|   1.7158| <mark>**0.8651**</mark>| 
+MEDIAN|  13.8669|   4.4447|   4.1354|   5.4038| 341.9733|   0.6342|   1.3461| <mark>**0.6657**</mark>| 
+   MIN|   1.7627|   1.5331|   2.0402|   1.4579|  74.3486|   0.2054|   0.5725| <mark>**0.2388**</mark>| 
+   MAX|  39.6453|  30.6501|  33.2314|  54.1355|1943.2977|   6.1242|   5.0479| <mark>**2.7570**</mark>| 
+FACTOR|  16.186x|   9.633x|   9.352x|  11.245x| 666.080x|   1.356x|   1.983x| <mark>**1.000x**</mark>| 
 
 #### Notes:  
 
-Last Run on: 01.11.2026  
+Last Run on: 03.11.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -142,4 +144,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB_SG: pymodab version 1.1.3 - the latest implementation of the safeguarded modab as native C extension  
+modAB_SG: pymodab version 1.1.4 - the latest implementation of the safeguarded modab as native C extension  

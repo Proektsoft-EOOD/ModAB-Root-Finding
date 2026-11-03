@@ -125,6 +125,12 @@ export function modABRoot(
     let f1 = y1, f2 = y2; // True residuals, kept unmodified by A&B corrections
     let bisection = true;
     let threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
+    // A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+    // than 1 % lies on a plateau; the first A&B step is then not rescaled.
+    const PLATEAU_RATIO = 0.99;
+    // Each return from A&B to bisection halves the margin of the switching test, so that
+    // borderline switches are rejected after unsuccessful A&B phases.
+    let margin = 1;
     for (let i = 0; i < maxiter; i++) {
         const x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
         const dx = x2 - x1; // Bracket width
@@ -133,6 +139,7 @@ export function modABRoot(
             return x3;
         }
         let y3: number;
+        let switching = false; // This bisection switches to A&B
         if (bisection) {
             y3 = f(x3) - y; // Function value at midpoint
             const dy = f2 - f1;
@@ -141,8 +148,9 @@ export function modABRoot(
                 const r = 1 - Math.abs(ym / dy); // Symmetry factor
                 const k = r * r; // Deviation factor
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
+                if (Math.abs(ym - y3) < (k * Math.abs(ym) + k * Math.abs(y3)) * margin) {
                     bisection = false;
+                    switching = true;
                     threshold = 2 * dx; // Safety factor
                     y1 = f1; y2 = f2; // A&B starts from the true residuals
                 }
@@ -174,15 +182,15 @@ export function modABRoot(
             if (sameSign(f1, y3)) { // Same sign check
                 if (side === 1) {
                     y2 *= abFactor(y3, y1);
-                } else {
-                    side = 1;
+                } else if (!switching || ay3 <= PLATEAU_RATIO * Math.abs(yl)) {
+                    side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 x1 = x3; f1 = y1 = y3;
             } else {
                 if (side === -1) {
                     y1 *= abFactor(y3, y2);
-                } else {
-                    side = -1;
+                } else if (!switching || ay3 <= PLATEAU_RATIO * Math.abs(yr)) {
+                    side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 x2 = x3; f2 = y2 = y3;
             }        
@@ -191,6 +199,7 @@ export function modABRoot(
             if (x2 - x1 > threshold && 42 * ay3 >= Math.min(Math.abs(yl), Math.abs(yr))) {
                 bisection = true;
                 side = 0;
+                margin *= 0.5;
             }
         }
     }

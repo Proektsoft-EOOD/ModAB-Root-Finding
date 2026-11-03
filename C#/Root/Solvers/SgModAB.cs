@@ -27,6 +27,12 @@ namespace Proektsoft.Root
             const int LEFT = -1, RIGHT = 1;
             const double C = 2.0;
             var fallbackThreshold = 0.0; // The threshold for switching back to the bisection method.
+            // A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+            // than 1 % lies on a plateau; the first AB step is then not rescaled.
+            const double PlateauRatio = 0.99;
+            // Each return from AB to bisection halves the margin of the switching test, so that
+            // borderline switches are rejected after unsuccessful AB phases.
+            var fallbacks = 0;
             for (var i = 1; i <= MaxIterations; ++i)
             {
                 var x3 = isAB
@@ -50,6 +56,7 @@ namespace Proektsoft.Root
                     returnCode = ReturnCode.Invalid;
                     return double.NaN;
                 }
+                var switching = false; // This bisection switches to AB.
                 if (!isAB)
                 {
                     var dy = p2.Y - p1.Y;
@@ -58,9 +65,10 @@ namespace Proektsoft.Root
                         var ym = 0.5 * (p1.Y + p2.Y);
                         var r = 1d - Math.Abs(ym / dy); // Symmetry factor
                         var k = r * r; // Deviation factor
-                        if (Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3))
+                        if (Math.Abs(ym - y3) < Math.ScaleB(k * Math.Abs(ym) + k * Math.Abs(y3), -fallbacks))
                         {   // k·|ym| + k·|y3| cannot overflow; an infinite y3 fails the test.
                             isAB = true;
+                            switching = true;
                             fallbackThreshold = C * dx;
                             f1 = p1.Y;
                             f2 = p2.Y;
@@ -75,8 +83,8 @@ namespace Proektsoft.Root
                     {
                         if (sideMoved == LEFT)
                             f2 *= GetABFactor(y3, f1); // Apply Anderson-Björck factor to the right side
-                        else
-                            sideMoved = LEFT;
+                        else if (!switching || Math.Abs(y3) <= PlateauRatio * Math.Abs(y1))
+                            sideMoved = LEFT; // A switching bisection on a plateau starts the AB phase afresh.
 
                         p1 = p3; f1 = y3;
                     }
@@ -84,17 +92,18 @@ namespace Proektsoft.Root
                     {
                         if (sideMoved == RIGHT)
                             f1 *= GetABFactor(y3, f2); // Apply Anderson-Björck factor to the left side
-                        else
-                            sideMoved = RIGHT;
+                        else if (!switching || Math.Abs(y3) <= PlateauRatio * Math.Abs(y2))
+                            sideMoved = RIGHT; // A switching bisection on a plateau starts the AB phase afresh.
 
                         p2 = p3; f2 = y3;
                     }
                     dx = p2.X - p1.X;
-                    if (dx > fallbackThreshold && 
+                    if (dx > fallbackThreshold &&
                         42 * Math.Abs(y3) >= Math.Min(Math.Abs(y1), Math.Abs(y2)))
                     {
                         isAB = false;
                         sideMoved = 0;
+                        ++fallbacks;
                     }
                     fallbackThreshold *= 0.5;
                 }

@@ -2787,14 +2787,23 @@
     integer :: i  !! iteration counter
     logical :: root_found, bis
     integer :: side !! for tracking the side
+    logical :: switching !! this bisection switches to A&B
+    real(wp) :: margin !! margin factor of the switching test
+    real(wp),parameter :: plateau_ratio = 0.99_wp
+        !! A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+        !! than 1 % lies on a plateau; the first A&B step is then not rescaled.
 
     iflag = 0
     side = 0
     x1 = ax; y1 = fax; f1 = y1   ! f1, f2: true residuals, kept unmodified by A&B corrections
     x2 = bx; y2 = fbx; f2 = y2
     bis = .true.
+    ! Each return from A&B to bisection halves the margin of the switching test, so that
+    ! borderline switches are rejected after unsuccessful A&B phases.
+    margin = 1.0_wp
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
     do i = 1, me%maxiter
+        switching = .false.
         if (bis) then
             x3 = safe_midpoint(x1,x2)
             y3 = me%f(x3)
@@ -2805,8 +2814,9 @@
                 r = 1.0_wp - abs(ym/dy)        ! symmetry factor
                 k = r*r                        ! deviation factor
                 ! k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                if (abs(ym-y3) < k*abs(ym) + k*abs(y3)) then
+                if (abs(ym-y3) < (k*abs(ym) + k*abs(y3))*margin) then
                     bis = .false.
+                    switching = .true.
                     threshold = 2.0_wp*(x2-x1)   ! safety factor
                     y1 = f1; y2 = f2             ! A&B starts from the true residuals
                 end if
@@ -2854,12 +2864,18 @@
         else ! Anderson-Bjork step
             yl = f1; yr = f2   ! true residuals of the bracket before the update
             if (same_sign(f1,y3)) then
-                if (side == 1) y2 = y2*ab_factor(y3,y1) ! A&B correction of the right side
-                side = 1
+                if (side == 1) then
+                    y2 = y2*ab_factor(y3,y1) ! A&B correction of the right side
+                else if (.not. switching .or. abs(y3) <= plateau_ratio*abs(yl)) then
+                    side = 1 ! a switching bisection on a plateau starts the A&B phase afresh
+                end if
                 x1 = x3; y1 = y3; f1 = y3
             else
-                if (side == 2) y1 = y1*ab_factor(y3,y2) ! A&B correction of the left side
-                side = 2
+                if (side == 2) then
+                    y1 = y1*ab_factor(y3,y2) ! A&B correction of the left side
+                else if (.not. switching .or. abs(y3) <= plateau_ratio*abs(yr)) then
+                    side = 2 ! a switching bisection on a plateau starts the A&B phase afresh
+                end if
                 x2 = x3; y2 = y3; f2 = y3
             end if
             ! if Anderson-Bjork is not shrinking the interval fast enough, fall back to bisection,
@@ -2868,6 +2884,7 @@
             if (x2-x1 > threshold .and. 42.0_wp*abs(y3) >= min(abs(yl),abs(yr))) then
                 bis  = .true. ! reset to bisection.
                 side = 0
+                margin = 0.5_wp*margin
             end if
         end if
 

@@ -106,6 +106,12 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
     var side: i32 = 0;
     var threshold = x2 - x1; // Threshold to fall back to bisection if AB fails to shrink the interval enough
     const C: f64 = 2.0; // Threshold safety factor
+    // A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+    // than 1 % lies on a plateau; the first A&B step is then not rescaled.
+    const PLATEAU_RATIO: f64 = 0.99;
+    // Each return from A&B to bisection halves the margin of the switching test, so that
+    // borderline switches are rejected after unsuccessful A&B phases.
+    var margin: f64 = 1.0;
     var i: usize = 0;
 
     while (i < maxiter) : (i += 1) {
@@ -117,6 +123,7 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
         }
 
         var y3: f64 = undefined;
+        var switching = false; // This bisection switches to A&B
         if (bisecting) {
             y3 = F(x3) - y0; // Function value at midpoint
             const dy = f2 - f1;
@@ -126,8 +133,9 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
                 const k = r * r; // Deviation factor
                 // Check if function is close enough to straight line.
                 // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                if (@abs(ym - y3) < k * @abs(ym) + k * @abs(y3)) {
+                if (@abs(ym - y3) < (k * @abs(ym) + k * @abs(y3)) * margin) {
                     bisecting = false;
+                    switching = true;
                     threshold = C * dx;
                     y1 = f1; // A&B starts from the true residuals
                     y2 = f2;
@@ -167,8 +175,8 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
             if (sameSign(f1, y3)) { // Same sign check
                 if (side == 1) { // Anderson-Bjork correction
                     y2 *= abFactor(y3, y1);
-                } else {
-                    side = 1;
+                } else if (!switching or ay3 <= PLATEAU_RATIO * @abs(yl)) {
+                    side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 x1 = x3;
                 y1 = y3;
@@ -176,8 +184,8 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
             } else {
                 if (side == -1) { // Anderson-Bjork correction
                     y1 *= abFactor(y3, y2);
-                } else {
-                    side = -1;
+                } else if (!switching or ay3 <= PLATEAU_RATIO * @abs(yr)) {
+                    side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
                 x2 = x3;
                 y2 = y3;
@@ -188,6 +196,7 @@ pub fn modAB(F: *const fn (f64) f64, x1_: f64, x2_: f64, y0: f64, xtol: f64, yto
             if (x2 - x1 > threshold and 42.0 * ay3 >= @min(@abs(yl), @abs(yr))) {
                 bisecting = true;
                 side = 0;
+                margin *= 0.5;
             }
         }
     }

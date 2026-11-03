@@ -137,6 +137,12 @@ public class ModAB {
         int side = 0;
         boolean bisection = true;
         double threshold = x2 - x1;
+        // A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
+        // than 1 % lies on a plateau; the first A&B step is then not rescaled.
+        final double PLATEAU_RATIO = 0.99;
+        // Each return from A&B to bisection halves the margin of the switching test, so that
+        // borderline switches are rejected after unsuccessful A&B phases.
+        double margin = 1.0;
         for (int i = 0; i < maxiter; i++) {
             double x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
             double dx = x2 - x1; // Bracket width
@@ -144,6 +150,7 @@ public class ModAB {
                 return x3;
 
             double y3;
+            boolean switching = false; // This bisection switches to A&B
             if (bisection) {
                 y3 = f.applyAsDouble(x3) - y;
                 double dy = f2 - f1;
@@ -152,8 +159,9 @@ public class ModAB {
                     double r = 1.0 - Math.abs(ym / dy); // Symmetry factor
                     double k = r * r; // Deviation factor
                     // k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
-                    if (Math.abs(ym - y3) < k * Math.abs(ym) + k * Math.abs(y3)) {
+                    if (Math.abs(ym - y3) < (k * Math.abs(ym) + k * Math.abs(y3)) * margin) {
                         bisection = false;
+                        switching = true;
                         threshold = 2.0 * dx;
                         y1 = f1; y2 = f2; // A&B starts from the true residuals
                     }
@@ -185,15 +193,15 @@ public class ModAB {
                 if (sameSign(f1, y3)) {
                     if (side == 1) {
                         y2 *= abFactor(y3, y1);
-                    } else {
-                        side = 1;
+                    } else if (!switching || ay3 <= PLATEAU_RATIO * Math.abs(yl)) {
+                        side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                     }
                     x1 = x3; y1 = y3; f1 = y3;
                 } else {
                     if (side == -1) {
                         y1 *= abFactor(y3, y2);
-                    } else {
-                        side = -1;
+                    } else if (!switching || ay3 <= PLATEAU_RATIO * Math.abs(yr)) {
+                        side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                     }
                     x2 = x3; y2 = y3; f2 = y3;
                 } 
@@ -202,6 +210,7 @@ public class ModAB {
                 if (x2 - x1 > threshold && 42.0 * ay3 >= Math.min(Math.abs(yl), Math.abs(yr))) {
                     bisection = true;
                     side = 0;
+                    margin *= 0.5;
                 }
             }
         }
