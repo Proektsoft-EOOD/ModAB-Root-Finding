@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-04",
+  "version": "0.5.0",
+  "kernel_audit_statements": 380,
+  "added_statements": 93,
+  "mapped_declarations": 511,
+  "build": "PASS",
+  "audit": "PASS",
+  "single_file_compile_and_audit": "PASS",
+  "coverage": "PASS",
+  "previous_modules_unchanged": [
+    "Uncapped.lean",
+    "Schedule.lean",
+    "Cubic.lean",
+    "Switching.lean",
+    "Bracketing.lean",
+    "Expressions.lean",
+    "ExamplesBase.lean",
+    "PaperBridges.lean",
+    "Global.lean",
+    "Residual.lean",
+    "Decision.lean",
+    "Phase.lean",
+    "SourceProof.lean",
+    "OneSided.lean",
+    "Convergence.lean",
+    "Source.lean",
+    "IEEE64.lean",
+    "Binary64.lean",
+    "RoundedProgram.lean",
+    "Correctness.lean",
+    "Unscaled.lean"
+  ],
+  "new_modules": [
+    "TopEntry",
+    "TopOneSided",
+    "TopUncapped",
+    "Eta42"
+  ],
+  "proof_scope": "Exact-real top initialization and actual example trajectories, eta=1/42 uncapped continuation and capped six-chord schedule; original binary64 switching proofs unchanged.",
+  "not_claimed": [
+    "Full C# loop verification",
+    "Compiler/runtime verification",
+    "Accuracy or signs of supplied function values",
+    "Interactive Lean Live UI validation"
+  ],
+  "warnings": "Existing deprecation/style warnings; no proof errors or extra axioms.",
+  "manuscript_pages": 41,
+  "supplement_pages": 4,
+  "review_pages": 5,
+  "pdf_validation": "Compiled with no unresolved references or overfull boxes; modified pages rendered and inspected.",
+  "map_validation": "All anchors, declaration coverage, and source hashes passed. Browser rendering was not tested: local browser startup denied Unix sockets."
+}
