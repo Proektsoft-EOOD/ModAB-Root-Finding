@@ -453,15 +453,15 @@ List of algorithms:
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     | 100.75 us | 1.570 us | 1.311 us |
-| FalsePosition | 361.31 us | 2.559 us | 2.137 us |
-| Illinois      | 151.70 us | 1.585 us | 1.482 us |
-| AndersonBjork | 219.17 us | 3.325 us | 3.110 us |
-| ITP           | 242.46 us | 4.140 us | 3.873 us |
-| Ridders       | 105.42 us | 1.917 us | 1.793 us |
-| Brent         | 120.31 us | 2.208 us | 1.957 us |
-| ModAB         |  57.44 us | 0.782 us | 0.732 us |
-| RModAB        |  59.75 us | 1.164 us | 1.777 us |
+| Bisection     | 103.51 us | 0.923 us | 0.721 us |
+| FalsePosition | 362.01 us | 1.612 us | 1.346 us |
+| Illinois      | 150.20 us | 0.452 us | 0.377 us |
+| AndersonBjork | 214.96 us | 0.651 us | 0.544 us |
+| ITP           | 256.18 us | 2.287 us | 2.028 us |
+| Ridders       | 104.32 us | 0.689 us | 0.645 us |
+| Brent         | 123.36 us | 1.506 us | 1.409 us |
+| ModAB         |  58.26 us | 0.482 us | 0.376 us |
+| RModAB        |  58.18 us | 0.728 us | 0.645 us |
 
 Benchmark Process Environment Information:  
 BenchmarkDotNet v0.15.8  
