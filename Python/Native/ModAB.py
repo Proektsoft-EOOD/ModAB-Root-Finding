@@ -145,7 +145,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                         t += x1
                         if t <= x2:
                             x3 = t
-            if x3 != x3:
+            if x3 != x3:  # NaN test: the rational step was rejected, fall back to the A&B secant
                 x3 = safe_secant(x1, y1, x2, y2)
             epsx = xtol * max(abs(x3), 1)
             # Closing step: when A&B converges from one side, its next point lands within epsx/2

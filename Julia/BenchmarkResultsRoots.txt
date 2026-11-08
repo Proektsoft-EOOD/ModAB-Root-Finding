@@ -1,4 +1,4 @@
-NonlinearSolve.jl: fix-modab-units-and-stagnation @ 78ed8c32 + modAB.jl from this repo (md5 92324810); modAB_rel = v1.12.8; 2026-11-08 15:10
+NonlinearSolve.jl: fix-modab-units-and-stagnation @ 78ed8c32 + modAB.jl from this repo (md5 ca366f9b); modAB_rel = v1.12.8; 2026-11-08 15:10
 Results
 Func;                 bisect;                  brent;                 ridder;                alefeld;                    ITP;                    A42;              modAB_rel;                 RModAB
  f01;     0.9999999999999982;                    1.0;                    1.0;                    1.0;     0.9999999999999999;                    1.0;                    1.0;                    1.0; 

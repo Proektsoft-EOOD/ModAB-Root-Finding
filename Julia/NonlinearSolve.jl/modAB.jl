@@ -1,4 +1,4 @@
-@inline same_signs(x, y) = (x < 0 && y < 0) || (x > 0 && y > 0)
+@inline same_signs(x, y) = (x < zero(x) && y < zero(y)) || (x > zero(x) && y > zero(y))
 
 @inline safe_midpoint(x1, x2) = x1 / 2 + x2 / 2
 
@@ -126,7 +126,9 @@ function SciMLBase.__solve(
 
     bisecting = true
     side = 0 # tracks the side that has moved at the previous iteration
-    ϵ = abstol
+    # Give ϵ the type of the bracket width; a zero tolerance also takes its units (e.g. a
+    # plain `abstol = 0.0` with a DynamicQuantities bracket)
+    ϵ = iszero(abstol) ? zero(x2 - x1) : oftype(x2 - x1, abstol)
     i = 1
     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
     C = 2 # Safety factor for threshold corresponding to 2 iterations (2^2 * 0.5)
