@@ -1,6 +1,4 @@
-============================================================
-Benchmark: cymodab vs pymodab vs cybrentq
-============================================================
+# Benchmark: cymodab vs pymodab vs cybrentq
 
 Results (root values)
 ===
@@ -320,7 +318,6 @@ Function evaluations
   f100|         36|         42|         43| 
   f101|         77|         56|         56| 
    SUM|       2810|       1881|       1885| 
-
    AVG|         28|         19|         19| 
 MEDIAN|         13|         11|         11| 
    MIN|          4|          3|          3| 
@@ -433,7 +430,6 @@ Execution times  (ms per problem, 200 iterations)
   f100|       1.69|       2.18|       2.15| 
   f101|       2.04|       2.29|       2.08| 
    SUM|     111.49|      83.04|      81.69| 
-
    AVG|     1.1039|     0.8222|     0.8088| 
 MEDIAN|     0.6125|     0.6160|     0.5900| 
    MIN|     0.2196|     0.1643|     0.1184| 
