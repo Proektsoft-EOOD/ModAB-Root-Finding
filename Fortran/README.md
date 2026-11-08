@@ -6,7 +6,7 @@ https://github.com/Proektsoft-EOOD/roots-fortran
 
 Relative number of evaluations to modAB:
 
-<img height="500" alt="image" src="https://github.com/user-attachments/assets/69749408-a623-4b3e-bff2-85c37de666a1" />
+<img height="500" alt="Relative number of evaluations to modAB" src="results/Relative_evaluations.png" />
  
  Summary of results from the 157 function tests (`modab` is the rational modab, RModAB):
 Method | bisection | false pos | abkk | barycentr | zhang | ridders | illinois | blendtf | itp | bdqrf | rbp | pegasus | toms748 | brent | brentq | A&B | brenth | muller | modab | chandr

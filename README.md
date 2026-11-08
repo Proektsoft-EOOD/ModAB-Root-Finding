@@ -35,7 +35,7 @@ The current version with steps 5 and 6 is called **Rational ModAB (RModAB)**.
 
 &emsp;&emsp;[For 101 functions test set](Test%20functions.pdf)
 
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/59d28c98-f094-48ea-9a54-f14c0c629de3" />
+<img width="600" alt="Function evaluations and execution time of each method relative to RModAB (C# benchmark, 101 test functions)" src="Benchmark_factors.png" />
 
 ### Times
 
