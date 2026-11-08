@@ -23,7 +23,7 @@ namespace Proektsoft.Root
             // The Anderson-Björck corrected ordinates, used only on the AB path.
             double f1 = 0.0, f2 = 0.0;
             var isAB = false;
-            var sideMoved = 0; // The side that was moved on the previous Anderson-Björck step.
+            var sideMoved = 0; // Last endpoint moved in this phase, including the switching bisection.
             const int LEFT = -1, RIGHT = 1;
             var fallbackThreshold = 0.0; // The threshold for switching back to the bisection method.
             var yMin = 0.0;
@@ -62,6 +62,14 @@ namespace Proektsoft.Root
                     var k = r * r; // Deviation factor
                     switchToAB = Math.Abs(ym - y3) < k * Math.Abs(ym) + k * Math.Abs(y3);
                     // k·|ym| + k·|y3| cannot overflow; an infinite y3 fails the test.
+                    if (switchToAB)
+                    {
+                        isAB = true;
+                        residualSteps = 0;
+                        fallbackThreshold = C * (p2.X - p1.X);
+                        f1 = p1.Y;
+                        f2 = p2.Y;
+                    }
                 }
                 var p3 = new Node(x3, y3);
                 if (isAB) // Anderson-Björck step
@@ -86,7 +94,7 @@ namespace Proektsoft.Root
                     }
                     if (p2.X - p1.X > fallbackThreshold)
                     {
-                        if (residualSteps >= MaxResidualSteps || Math.Abs(y3) >= 0.5 * yMin)
+                        if (residualSteps >= MaxResidualSteps || 42 * Math.Abs(y3) >= yMin)
                         {
                             isAB = false;
                             sideMoved = 0;
@@ -105,15 +113,6 @@ namespace Proektsoft.Root
                         p1 = p3;
                     else
                         p2 = p3;
-
-                    if (switchToAB)
-                    {
-                        isAB = true;
-                        residualSteps = 0;
-                        fallbackThreshold = C * (p2.X - p1.X);
-                        f1 = p1.Y;
-                        f2 = p2.Y;
-                    }
                 }
             }
             returnCode = ReturnCode.MaxIterationsExceeded;

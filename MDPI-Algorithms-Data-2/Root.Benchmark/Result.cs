@@ -1,4 +1,4 @@
-﻿using Proektsoft.Root;
+using Proektsoft.Root;
 namespace Root.Benchmark
 {
     internal struct Result
@@ -6,6 +6,7 @@ namespace Root.Benchmark
         internal double Root;
         internal double FunctionValue;
         internal int EvaluationCount;
-        internal Solver.ReturnCode ReturnCode;
+        internal Solver.ReturnCode ReturnCode; // validation/reporting classification
+        internal Solver.ReturnCode SolverReturnCode; // unchanged result from the solver
     }
 }

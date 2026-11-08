@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Root.Benchmark": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}

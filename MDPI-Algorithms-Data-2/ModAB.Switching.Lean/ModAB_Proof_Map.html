@@ -8875,8 +8875,8 @@ python3 tools/check_audit_coverage.py</pre><p>See AXIOM_CHECKLIST.md and review/
   },
   "publication_reference": {
     "file": "release-reference.tex",
-    "sha256": "d896312b262143b1f2239a3fe05b0e858b161523e4899c2d50bc853569cb27bd",
-    "commit": null,
+    "sha256": "e5e6328e36f905c7d8efa66b6e9a36030f50a830fae9e118d239dd2e27ecc364",
+    "commit": "ea64a126c9a06294733086824da95a0eec808051",
     "status": "See shared release-reference.tex; only a verified 0.5.0 commit may identify this source."
   }
 }</pre></details><script>const entries=[...document.querySelectorAll(".decl")];const search=document.getElementById("search"),moduleFilter=document.getElementById("module"),statusFilter=document.getElementById("status");function filter(){const q=search.value.toLowerCase().trim();let shown=0;for(const e of entries){const ok=(!q||e.dataset.search.includes(q))&&(!moduleFilter.value||e.dataset.module===moduleFilter.value)&&(!statusFilter.value||e.dataset.status===statusFilter.value);e.classList.toggle("hidden",!ok);if(ok)shown++;}document.getElementById("count").textContent=shown+" / "+entries.length;}search.addEventListener("input",filter);moduleFilter.addEventListener("change",filter);statusFilter.addEventListener("change",filter);document.getElementById("clear").addEventListener("click",()=>{search.value="";moduleFilter.value="";statusFilter.value="";filter();});function reveal(){const id=decodeURIComponent(location.hash.slice(1));if(id.startsWith("decl-")){search.value="";moduleFilter.value="";statusFilter.value="";filter();document.getElementById(id)?.scrollIntoView();}}window.addEventListener("hashchange",reveal);reveal();</script></main></body></html>
