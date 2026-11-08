@@ -202,7 +202,7 @@ const solvers = [
     ("    ITP", itp_solver),
     ("    A42", a42_solver),
     ("modAB_rel", modab_release_solver),
-    ("  modAB", modab_solver)]
+    (" RModAB", modab_solver)]
 
 # Benchmark runner
 function run_benchmark()

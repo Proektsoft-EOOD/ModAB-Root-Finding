@@ -64,6 +64,8 @@ Version 1.1.3 replaces the capped residual exception of 1.1.1 with a stricter te
 
 Version 1.1.4 makes the switch from bisection to secant steps more careful in two ways. First, every fallback from secant steps to bisection halves the margin of the switching test, so after n fallbacks it reads `|ym - y3| < (k·|ym| + k·|y3|)·2^-n`. A function on which the secant steps already failed must look more linear before it gets another try, and borderline switches are rejected. Second, if the bisection step that switches to secant steps reduces the residual of the endpoint it replaces by less than 1 %, the function is on a plateau there. That step then does not count as a move of that side, so the next secant step does not apply the Anderson-Björck correction to the opposite ordinate. On the benchmark, f81 needs 13 evaluations instead of 16 and f101 needs 56 instead of 65, while f76, f92 and f95 need one more each; the other 96 problems give the same evaluation counts as with 1.1.3. All 101 need 1951 evaluations in total instead of 1960.
 
+Version 1.2.0 is the rational modab (RModAB). It changes the secant steps in two ways. First, a rational correction: the secant step through the true residuals is corrected for the curvature of the function by the root of the 3-point model `f(x) = (x - r)/(p·x + q)` through the bracket and the endpoint it dropped last. The correction is capped at half the distance from the secant point to the nearer endpoint, and it is skipped, in favour of the Anderson-Björck secant, when the curvature changes sign within the bracket or the model is degenerate. The step takes two divisions, the same as the secant step, and the curvature test none, so a step costs little more than before. Second, a closing step: when the secant steps converge from one side, the next point is kept at least half the tolerance away from the endpoint just evaluated, so it crosses the root and closes the bracket. On the benchmark, 55 problems need fewer evaluations (39 one fewer, 15 two fewer, f35 three fewer), f37 and f80 need one more each, and the median drops from 13 to 11. All 101 need 1881 evaluations in total instead of 1951, and the benchmark runs about 6 % faster relative to cybrentq.
+
 For maximum speed, pass a compiled function, e.g. from [numba](https://numba.pydata.org/). It is then called from C with no Python overhead:
 
 ```python
@@ -109,34 +111,34 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 * `toms748` - Alefeld–Potra–Shi method (1995 - TOMS Algorithm 748)
 * `chandr` - Chandrupatla's method (1997) - `scipy.optimize.elementwise.find_root`
 * `cybrentq` - Cython implementation of brentq by Gledis Caushaj
-* `modAB_SG` - Safeguarded Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski)
+* `RModAB` - Rational Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski; rational correction and closing step added in November 2026)
 * `modAB_ct` - the old version of pymodab 1.0.5 implemented with ctypes
 
 #### Function evaluations
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**RModAB**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1951**</mark>| 
+   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1881**</mark>| 
    AVG|       48|       28|       27|       34|       21|       28|       20| <mark>**19**</mark>| 
-MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**13**</mark>| 
+MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**11**</mark>| 
    MIN|        3|        4|        4|        3|        3|        4|        3| <mark>**3**</mark>| 
    MAX|       53|      102|      102|      202|       70|      102|       78| <mark>**56**</mark>| 
-FACTOR|   2.503x|   1.440x|   1.419x|   1.756x|   1.083x|   1.440x|   1.022x| <mark>**1.000x**</mark>| 
+FACTOR|   2.596x|   1.494x|   1.472x|   1.821x|   1.123x|   1.494x|   1.060x| <mark>**1.000x**</mark>| 
 
 #### Execution times  (ms per problem, 200 iterations)
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**RModAB**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1403.03|   912.66|   874.82|  1019.26| 55976.50|   113.19|   174.27| <mark>**87.84**</mark>| 
-   AVG|  13.8914|   9.0362|   8.6616|  10.0917| 554.2228|   1.1207|   1.7255| <mark>**0.8697**</mark>| 
-MEDIAN|  13.8532|   5.0570|   4.6200|   5.6337| 320.1330|   0.6098|   1.3187| <mark>**0.6466**</mark>| 
-   MIN|   1.6277|   2.1929|   1.8391|   1.5002|  75.5227|   0.2048|   0.5864| <mark>**0.1627**</mark>| 
-   MAX|  19.5925|  34.1008|  39.7952|  52.4790|1878.9011|   6.4783|   4.8396| <mark>**2.9824**</mark>| 
-FACTOR|  15.972x|  10.390x|   9.959x|  11.603x| 637.233x|   1.289x|   1.984x| <mark>**1.000x**</mark>| 
+   SUM|  1377.01|   835.83|   819.48|   981.71| 58154.94|   116.80|   175.41| <mark>**85.42**</mark>| 
+   AVG|  13.6338|   8.2755|   8.1136|   9.7199| 575.7915|   1.1564|   1.7368| <mark>**0.8457**</mark>| 
+MEDIAN|  13.7756|   4.2841|   4.2259|   5.4295| 331.5251|   0.6410|   1.3860| <mark>**0.6582**</mark>| 
+   MIN|   1.4452|   1.7892|   2.0950|   1.3739|  66.0735|   0.2271|   0.6304| <mark>**0.1844**</mark>| 
+   MAX|  18.0682|  32.1124|  32.3811|  55.2827| 2097.4978|   6.1896|   5.5730| <mark>**3.0084**</mark>| 
+FACTOR|  16.121x|   9.785x|   9.594x|  11.493x| 680.824x|   1.367x|   2.054x| <mark>**1.000x**</mark>| 
 
 #### Notes:  
 
-Last Run on: 03.11.2026  
+Last Run on: 08.11.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -144,4 +146,4 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB_SG: pymodab version 1.1.4 - the latest implementation of the safeguarded modab as native C extension  
+RModAB: pymodab version 1.2.0 - the latest implementation, rational modab (RModAB), as native C extension  

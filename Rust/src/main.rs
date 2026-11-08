@@ -327,7 +327,7 @@ fn main() {
         ("invq",    solve_invq),
         ("regf",    solve_regf),
         ("secant",  solve_secant),
-        (" modAB",  solve_modab),
+        ("RModAB",  solve_modab),
     ];
     let n_solv = solvers.len();
     let eps = 1e-14;

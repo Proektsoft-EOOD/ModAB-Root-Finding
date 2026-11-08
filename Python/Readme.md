@@ -81,35 +81,35 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 * `toms748` - Alefeld–Potra–Shi method (1995 - TOMS Algorithm 748)
 * `chandr` - Chandrupatla's method (1997) - `scipy.optimize.elementwise.find_root`
 * `cybrentq` - Cython implementation of brentq by Gledis Caushaj
-* `modAB_SG` - Safeguarded Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski)
+* `RModAB` - Rational Modified Anderson Bjork's method (Ganchovski & Traykov, 2023; improved 2026 by L.Tomov and N.Ganchovski; rational correction and closing step added in November 2026)
 * `modAB_ct` - the old version of pymodab 1.0.5 implemented with ctypes
 
 #### Function evaluations
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**RModAB**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1951**</mark>| 
+   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1881**</mark>| 
    AVG|       48|       28|       27|       34|       21|       28|       20| <mark>**19**</mark>| 
-MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**13**</mark>| 
+MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**11**</mark>| 
    MIN|        3|        4|        4|        3|        3|        4|        3| <mark>**3**</mark>| 
    MAX|       53|      102|      102|      202|       70|      102|       78| <mark>**56**</mark>| 
-FACTOR|   2.503x|   1.440x|   1.419x|   1.756x|   1.083x|   1.440x|   1.022x| <mark>**1.000x**</mark>| 
+FACTOR|   2.596x|   1.494x|   1.472x|   1.821x|   1.123x|   1.494x|   1.060x| <mark>**1.000x**</mark>| 
 
 
 #### Execution times  (ms per problem, 200 iterations)
 
-  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**modAB_SG**</mark>|
+  Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**RModAB**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|  1414.31|   841.66|   817.12|   982.57| 58199.46|   118.47|   173.30| <mark>**87.38**</mark>| 
-   AVG|  14.0031|   8.3333|   8.0903|   9.7284| 576.2322|   1.1730|   1.7158| <mark>**0.8651**</mark>| 
-MEDIAN|  13.8669|   4.4447|   4.1354|   5.4038| 341.9733|   0.6342|   1.3461| <mark>**0.6657**</mark>| 
-   MIN|   1.7627|   1.5331|   2.0402|   1.4579|  74.3486|   0.2054|   0.5725| <mark>**0.2388**</mark>| 
-   MAX|  39.6453|  30.6501|  33.2314|  54.1355|1943.2977|   6.1242|   5.0479| <mark>**2.7570**</mark>| 
-FACTOR|  16.186x|   9.633x|   9.352x|  11.245x| 666.080x|   1.356x|   1.983x| <mark>**1.000x**</mark>| 
+   SUM|  1377.01|   835.83|   819.48|   981.71| 58154.94|   116.80|   175.41| <mark>**85.42**</mark>| 
+   AVG|  13.6338|   8.2755|   8.1136|   9.7199| 575.7915|   1.1564|   1.7368| <mark>**0.8457**</mark>| 
+MEDIAN|  13.7756|   4.2841|   4.2259|   5.4295| 331.5251|   0.6410|   1.3860| <mark>**0.6582**</mark>| 
+   MIN|   1.4452|   1.7892|   2.0950|   1.3739|  66.0735|   0.2271|   0.6304| <mark>**0.1844**</mark>| 
+   MAX|  18.0682|  32.1124|  32.3811|  55.2827| 2097.4978|   6.1896|   5.5730| <mark>**3.0084**</mark>| 
+FACTOR|  16.121x|   9.785x|   9.594x|  11.493x| 680.824x|   1.367x|   2.054x| <mark>**1.000x**</mark>| 
 
 #### Notes:
 
-Last Run on: 03.11.2026  
+Last Run on: 08.11.2026  
 Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz (1.50 GHz) with 16.0 GB RAM  
 Windows 11 Home  
 Python Version: 3.14.7  
@@ -117,7 +117,7 @@ numpy Version: 2.4.6
 scipy Version: 1.18.0  
 cybrentq Version: 0.1.5 - by Gledis Caushaj (https://github.com/gledi-ai/cybrentq)  
 modAB_ct: pymodab version 1.0.5 from PyPI - the previous implementation with ctypes  
-modAB_SG: pymodab version 1.1.4 - the latest implementation of the safeguarded modab as native C extension  
+RModAB: pymodab version 1.2.0 - the latest implementation, rational modab (RModAB), as native C extension  
 
 The complete source code to reproduce the above benchmarks is available in [RootBenchmarkSciPy.py](RootBenchmarkSciPy.py).  
 Detailed benchmark results are listed in [BenchmarkResultsSciPy.md](BenchmarkResultsSciPy.md).  

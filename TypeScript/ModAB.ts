@@ -3,7 +3,7 @@
  *
  * These helpers carry the overflow/NaN postconditions that the bracketing
  * solver relies on. They are the TypeScript form of the reference
- * implementation in C#/Root/Node.cs and C#/Root/Solvers/{Solver,SgModAB}.cs,
+ * implementation in C#/Root/Node.cs and C#/Root/Solvers/{Solver,RModAB}.cs,
  * so a change to the numerics belongs in one place rather than inline in the
  * solver.
  */
@@ -80,6 +80,54 @@ function abFactor(y3: number, yMoved: number): number {
     return m > 0 ? m : 0.5;
 }
 
+/**
+ * Root of the linear-fractional model  f(x) = (x - r) / (p*x + q)  through the bracket
+ * (x1, f1), (x2, f2) and a third point (x3, f3) outside it, or NaN when it is unusable.
+ * The model fits both nearly-quadratic shapes and functions with a pole; for a straight
+ * line it gives the secant point. With w = x2 - x1, u = x3 - x1 and the residuals relative
+ * to f2, q1 = f1/f2 and q3 = f3/f2 (so the step does not depend on the scale of f), and
+ * c = 1 - q1, the root is
+ *     r = x1 + t,   t = w*u*q1*(q3 - 1) / (w*(q3 - q1) - u*q3*c),
+ * two divisions per step, 1/f2 and this one. The step is used only if it moves the secant
+ * point xs = x1 - w*q1/c by at most half the distance to the nearer endpoint (on a plateau
+ * the model degenerates towards a step function). Multiplied by c, that test reads
+ *     |t*c + w*q1| <= w*min(|q1|, 1)/2,
+ * with no division; it also rejects NaN and infinite values.
+ * When the step is unusable, including a NaN third point (no endpoint dropped on that
+ * side yet), it returns the A&B secant point through (x1, y1), (x2, y2) instead.
+ */
+export function rationalStep(x1: number, f1: number, x2: number, f2: number,
+                             x3: number, f3: number, y1: number, y2: number): number {
+    const k = 1 / f2;
+    const q1 = f1 * k, q3 = f3 * k;
+    const c = 1 - q1;
+    const w = x2 - x1, u = x3 - x1;
+    const t = w * u * q1 * (q3 - 1) / (w * (q3 - q1) - u * q3 * c);
+    const a1 = Math.abs(q1);
+    const x = x1 + t;
+    if (Math.abs(t * c + w * q1) <= 0.5 * w * (a1 < 1 ? a1 : 1) && x <= x2) {
+        return x;
+    }
+    return safeSecant(x1, y1, x2, y2);
+}
+
+/**
+ * True if the second divided differences on the left (xl, x1, x2) and on the right
+ * (x1, x2, xr) have opposite signs: an inflection within the bracket, where a model with
+ * one-signed curvature does worse than the secant. Scaled by positive factors, they are
+ *     pl = (f2 - f1)*(x1 - xl) - (f1 - fl)*(x2 - x1),
+ *     pr = (fr - f2)*(x2 - x1) - (f2 - f1)*(xr - x2),
+ * so only their signs are compared, with no division or product of the two.
+ * False when xl or xr is NaN (no endpoint dropped on that side yet).
+ */
+export function curvatureChangesSign(xl: number, fl: number, x1: number, f1: number,
+                                     x2: number, f2: number, xr: number, fr: number): boolean {
+    const df = f2 - f1, w = x2 - x1;
+    const pl = df * (x1 - xl) - (f1 - fl) * w;
+    const pr = (fr - f2) * w - df * (xr - x2);
+    return (pl < 0 && pr > 0) || (pl > 0 && pr < 0);
+}
+
 /*
 * Finds the root of "F(x) = 0" within the interval [x1, x2]
 * with the specified precisions - absolute: aTol and relative: rTol,
@@ -93,6 +141,13 @@ function abFactor(y3: number, yMoved: number): number {
 *        are stored for later use in bisection fallback
 * The overflow- and NaN-safe form of the interpolation lives in the shared
 * safeguards above; the switching test is written so that it cannot overflow.
+* The A&B phase adds two changes:
+*     1. Rational correction: the A&B secant is replaced by the secant through the true
+*        residuals, corrected for curvature by a 3-point rational model through the bracket
+*        and the endpoint it most recently dropped. The A&B secant remains the fallback when
+*        the correction is unusable or the curvature changes sign within the bracket.
+*     2. Closing step: an A&B point is kept at least epsx/2 away from the endpoint that was
+*        just evaluated, so that one-sided convergence still closes the bracket.
 * F(x) must be continuous and sign(F(x1)) != sign(F(x2))
  */
 export function modABRoot(
@@ -131,10 +186,35 @@ export function modABRoot(
     // Each return from A&B to bisection halves the margin of the switching test, so that
     // borderline switches are rejected after unsuccessful A&B phases.
     let margin = 1;
+    let last = 0; // Endpoint set by the last evaluation: 1 = x1, -1 = x2, 0 = none
+    let xl = NaN, fl = NaN, xr = NaN, fr = NaN; // Last endpoints dropped on each side
     for (let i = 0; i < maxiter; i++) {
-        const x3 = bisection ? safeMidpoint(x1, x2) : safeSecant(x1, y1, x2, y2);
         const dx = x2 - x1; // Bracket width
-        const epsx = xtol * Math.max(Math.abs(x3), 1);
+        let x3: number, epsx: number;
+        if (bisection) {
+            x3 = safeMidpoint(x1, x2);
+            epsx = xtol * Math.max(Math.abs(x3), 1);
+        } else {
+            // Rational correction through the endpoint dropped by the last update, or the A&B
+            // secant when the curvature changes sign within the bracket. A missing endpoint is
+            // NaN, which fails both tests, so it needs no check of its own.
+            if (curvatureChangesSign(xl, fl, x1, f1, x2, f2, xr, fr)) {
+                x3 = safeSecant(x1, y1, x2, y2);
+            } else {
+                x3 = last === 1 ? rationalStep(x1, f1, x2, f2, xl, fl, y1, y2)
+                                : rationalStep(x1, f1, x2, f2, xr, fr, y1, y2);
+            }
+            epsx = xtol * Math.max(Math.abs(x3), 1);
+            // Closing step: when A&B converges from one side, its next point lands within epsx/2
+            // of the endpoint just evaluated and the bracket does not shrink. A step of epsx/2
+            // towards the far side then crosses the root and closes the bracket.
+            const h = 0.5 * epsx;
+            if (last === 1) {
+                if (x3 - x1 < h && x1 + h < x2) x3 = x1 + h;
+            } else if (x2 - x3 < h && x2 - h > x1) {
+                x3 = x2 - h;
+            }
+        }
         if (dx <= epsx) { // x-convergence check
             return x3;
         }
@@ -172,11 +252,13 @@ export function modABRoot(
             return NaN;
         }
         if (bisection) {
-        if (sameSign(f1, y3)) { // Same sign check
-            x1 = x3; f1 = y3;
-        } else {
-            x2 = x3; f2 = y3;
-        }
+            if (sameSign(f1, y3)) { // Same sign check
+                xl = x1; fl = f1;
+                x1 = x3; f1 = y3; last = 1;
+            } else {
+                xr = x2; fr = f2;
+                x2 = x3; f2 = y3; last = -1;
+            }
         } else {
             const yl = f1, yr = f2; // True residuals of the bracket before the update
             if (sameSign(f1, y3)) { // Same sign check
@@ -185,14 +267,16 @@ export function modABRoot(
                 } else if (!switching || ay3 <= PLATEAU_RATIO * Math.abs(yl)) {
                     side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
-                x1 = x3; f1 = y1 = y3;
+                if (x3 !== x1) { xl = x1; fl = f1; }
+                x1 = x3; f1 = y1 = y3; last = 1;
             } else {
                 if (side === -1) {
                     y1 *= abFactor(y3, y2);
                 } else if (!switching || ay3 <= PLATEAU_RATIO * Math.abs(yr)) {
                     side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
-                x2 = x3; f2 = y2 = y3;
+                if (x3 !== x2) { xr = x2; fr = f2; }
+                x2 = x3; f2 = y2 = y3; last = -1;
             }        
             // Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
             // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)

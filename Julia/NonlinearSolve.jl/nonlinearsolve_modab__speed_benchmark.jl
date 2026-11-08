@@ -166,7 +166,7 @@ const algorithms = [
     ("alefeld", Alefeld()),
     ("    ITP", ITP()),
     ("modAB_rel", ModABRelease()),
-    (" modAB_sg", ModAB()),
+    ("   RModAB", ModAB()),
 ]
 
 # Benchmark runner

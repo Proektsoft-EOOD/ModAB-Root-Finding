@@ -6,7 +6,7 @@
  * safe_secant, and the overflow cases of the switching test, are covered here.
  *
  * Expected values come from the C# reference in C#/Root/Node.cs and
- * C#/Root/Solvers/SgModAB.cs; every language port is held to the same table.
+ * C#/Root/Solvers/RModAB.cs; every language port is held to the same table.
  *
  * Build and run (from the TypeScript directory):
  *     npx tsc && node dist/ModAB_edge_test.js

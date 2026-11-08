@@ -200,7 +200,7 @@ solvers = [
     ("brent", pr_brent),
     ("chandr", pr_chandr),
     ("ch_mixed", pr_chmix),
-    ("modAB_SG", mod_ab),
+    ("RModAB", mod_ab),
 ]
 
 if not pymodab.NATIVE:

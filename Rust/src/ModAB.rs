@@ -2,7 +2,7 @@
 //!
 //! The `safe_*` helpers below carry the overflow/NaN postconditions the solver
 //! relies on. They are the Rust form of the reference implementation in
-//! `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,SgModAB}.cs`, so a change to
+//! `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,RModAB}.cs`, so a change to
 //! the numerics belongs in one place rather than inline in the solver.
 
 /// Returns true only when both values have the same non-zero sign.
@@ -79,6 +79,55 @@ fn ab_factor(y3: f64, y_moved: f64) -> f64 {
     if m > 0.0 { m } else { 0.5 }
 }
 
+// Root of the linear-fractional model  f(x) = (x - r) / (p*x + q)  through the bracket
+// (x1, f1), (x2, f2) and a third point (x3, f3) outside it, or NaN when it is unusable.
+// The model fits both nearly-quadratic shapes and functions with a pole; for a straight
+// line it gives the secant point. With w = x2 - x1, u = x3 - x1 and the residuals relative
+// to f2, q1 = f1/f2 and q3 = f3/f2 (so the step does not depend on the scale of f), and
+// c = 1 - q1, the root is
+//     r = x1 + t,   t = w*u*q1*(q3 - 1) / (w*(q3 - q1) - u*q3*c),
+// two divisions per step, 1/f2 and this one. The step is used only if it moves the secant
+// point xs = x1 - w*q1/c by at most half the distance to the nearer endpoint (on a plateau
+// the model degenerates towards a step function). Multiplied by c, that test reads
+//     |t*c + w*q1| <= w*min(|q1|, 1)/2,
+// with no division; it also rejects NaN and infinite values.
+// When the step is unusable, including a NaN third point (no endpoint dropped on that
+// side yet), it returns the A&B secant point through (x1, y1), (x2, y2) instead.
+#[inline]
+#[allow(clippy::too_many_arguments)]
+pub fn rational_step(x1: f64, f1: f64, x2: f64, f2: f64, x3: f64, f3: f64, y1: f64, y2: f64) -> f64 {
+    let k = 1.0 / f2;
+    let (q1, q3) = (f1 * k, f3 * k);
+    let c = 1.0 - q1;
+    let (w, u) = (x2 - x1, x3 - x1);
+    let t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+    let a1 = q1.abs();
+    let x = x1 + t;
+    if (t * c + w * q1).abs() <= 0.5 * w * (if a1 < 1.0 { a1 } else { 1.0 }) && x <= x2 {
+        x
+    } else {
+        safe_secant(x1, y1, x2, y2)
+    }
+}
+
+// True if the second divided differences on the left (xl, x1, x2) and on the right
+// (x1, x2, xr) have opposite signs: an inflection within the bracket, where a model with
+// one-signed curvature does worse than the secant. Scaled by positive factors, they are
+//     pl = (f2 - f1)*(x1 - xl) - (f1 - fl)*(x2 - x1),
+//     pr = (fr - f2)*(x2 - x1) - (f2 - f1)*(xr - x2),
+// so only their signs are compared, with no division or product of the two.
+// False when xl or xr is NaN (no endpoint dropped on that side yet).
+#[inline]
+#[allow(clippy::too_many_arguments)]
+pub fn curvature_changes_sign(
+    xl: f64, fl: f64, x1: f64, f1: f64, x2: f64, f2: f64, xr: f64, fr: f64,
+) -> bool {
+    let (df, w) = (f2 - f1, x2 - x1);
+    let pl = df * (x1 - xl) - (f1 - fl) * w;
+    let pr = (fr - f2) * w - df * (xr - x2);
+    (pl < 0.0 && pr > 0.0) || (pl > 0.0 && pr < 0.0)
+}
+
 // Finds the root of "F(x) = 0" within the interval [x1, x2]
 // with the specified precisions - absolute: aTol and relative: rTol,
 // using an improved version of the modified Anderson Bjork's method:
@@ -91,6 +140,13 @@ fn ab_factor(y3: f64, y_moved: f64) -> f64 {
 //        are stored for later use in bisection fallback
 // The overflow- and NaN-safe form of the interpolation lives in the shared
 // safeguards above; the switching test is written so that it cannot overflow.
+// The A&B phase adds two changes:
+//     1. Rational correction: the A&B secant is replaced by the secant through the true
+//        residuals, corrected for curvature by a 3-point rational model through the bracket
+//        and the endpoint it most recently dropped. The A&B secant remains the fallback when
+//        the correction is unusable or the curvature changes sign within the bracket.
+//     2. Closing step: an A&B point is kept at least epsx/2 away from the endpoint that was
+//        just evaluated, so that one-sided convergence still closes the bracket.
 // F(x) must be continuous and sign(F(x1)) != sign(F(x2))
 pub fn mod_ab_root<F>(
     f: F,
@@ -133,14 +189,41 @@ where
     // Each return from A&B to bisection halves the margin of the switching test, so that
     // borderline switches are rejected after unsuccessful A&B phases.
     let mut margin = 1.0;
+    let mut last: i32 = 0; // Endpoint set by the last evaluation: 1 = x1, -1 = x2, 0 = none
+    // Last endpoints dropped on each side
+    let (mut xl, mut fl, mut xr, mut fr) = (f64::NAN, f64::NAN, f64::NAN, f64::NAN);
     for _ in 0..maxiter {
-        let x3 = if bisection {
-            safe_midpoint(x1, x2)
-        } else {
-            safe_secant(x1, y1, x2, y2)
-        };
         let dx = x2 - x1; // Bracket width
-        let epsx = xtol * x3.abs().max(1.0);
+        let x3;
+        let epsx;
+        if bisection {
+            x3 = safe_midpoint(x1, x2);
+            epsx = xtol * x3.abs().max(1.0);
+        } else {
+            // Rational correction through the endpoint dropped by the last update, or the A&B
+            // secant when the curvature changes sign within the bracket. A missing endpoint is
+            // NaN, which fails both tests, so it needs no check of its own.
+            let mut xc = if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr) {
+                safe_secant(x1, y1, x2, y2)
+            } else if last == 1 {
+                rational_step(x1, f1, x2, f2, xl, fl, y1, y2)
+            } else {
+                rational_step(x1, f1, x2, f2, xr, fr, y1, y2)
+            };
+            epsx = xtol * xc.abs().max(1.0);
+            // Closing step: when A&B converges from one side, its next point lands within epsx/2
+            // of the endpoint just evaluated and the bracket does not shrink. A step of epsx/2
+            // towards the far side then crosses the root and closes the bracket.
+            let h = 0.5 * epsx;
+            if last == 1 {
+                if xc - x1 < h && x1 + h < x2 {
+                    xc = x1 + h;
+                }
+            } else if x2 - xc < h && x2 - h > x1 {
+                xc = x2 - h;
+            }
+            x3 = xc;
+        }
         if dx <= epsx {
             return x3;
         }
@@ -184,9 +267,11 @@ where
         }
         if bisection {
             if same_sign(f1, y3) {
-                (x1, f1) = (x3, y3);
+                (xl, fl) = (x1, f1);
+                (x1, f1, last) = (x3, y3, 1);
             } else {
-                (x2, f2) = (x3, y3);
+                (xr, fr) = (x2, f2);
+                (x2, f2, last) = (x3, y3, -1);
             }
         } else {
             let (yl, yr) = (f1, f2); // True residuals of the bracket before the update
@@ -196,14 +281,20 @@ where
                 } else if !switching || ay3 <= PLATEAU_RATIO * yl.abs() {
                     side = 1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
-                (x1, y1, f1) = (x3, y3, y3);
+                if x3 != x1 {
+                    (xl, fl) = (x1, f1);
+                }
+                (x1, y1, f1, last) = (x3, y3, y3, 1);
             } else {
                 if side == -1 {
                     y1 *= ab_factor(y3, y2);
                 } else if !switching || ay3 <= PLATEAU_RATIO * yr.abs() {
                     side = -1; // A switching bisection on a plateau starts the A&B phase afresh
                 }
-                (x2, y2, f2) = (x3, y3, y3);
+                if x3 != x2 {
+                    (xr, fr) = (x2, f2);
+                }
+                (x2, y2, f2, last) = (x3, y3, y3, -1);
             }
             // Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
             // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
@@ -226,7 +317,7 @@ mod safeguard_tests {
     //! safe_secant, and the overflow cases of the switching test, are covered here.
     //!
     //! Expected values come from the C# reference in C#/Root/Node.cs and
-    //! C#/Root/Solvers/SgModAB.cs; every language port is held to the same table.
+    //! C#/Root/Solvers/RModAB.cs; every language port is held to the same table.
 
     use super::*;
 
