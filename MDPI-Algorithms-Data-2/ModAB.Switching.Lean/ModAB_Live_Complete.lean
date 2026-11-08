@@ -1,18 +1,18 @@
 /-
-ModAB — complete single-file edition of version 0.4.0.
+ModAB — complete single-file edition of version 0.5.0.
 
 For https://live.lean-lang.org/ choose:
   Stable Release (v4.34.0 with mathlib, cslib)
 Then Load this .lean file, or paste its complete contents into the editor.
-Wait for the final message: PASS: 287 ModAB lemmas/theorems; standard axioms only.
+Wait for the final message: PASS: 380 declarations; only standard logical axioms.
 The initial load can take time: all needed FloatLib support is included in this file.
 
 Scope: concrete binary64 switching proofs, the normal-range unscaled estimate,
-cubic lemma, exact-arithmetic global convergence and width bound, both exact AB
-examples, and the residual-to-distance estimate. This does not prove convergence
+cubic lemma, exact-arithmetic global convergence and width bound, both switching conventions for the exact AB
+examples, the eta=1/42 counterexample, and the residual-to-distance estimate. This does not prove convergence
 of the entire C# root-finding loop in binary64, nor compiler/hardware semantics.
 
-All 397 authored ModAB declarations are retained with their original names.
+All 511 authored ModAB declarations are retained with their original names.
 ModAB proof bodies are unchanged; module imports are replaced by dependency-order
 inlining and file-local scopes. FloatLib support has explicit name/cast qualifications
 and redundant final tactics are guarded for the merged environment. No separate ModAB or FloatLib installation is needed.
@@ -64512,6 +64512,810 @@ end
 end ModAB.Examples
 end BundledModule255
 
+/- ===== Original module: ModAB.TopEntry ===== -/
+section BundledModule256
+
+/-! Exact-arithmetic bridge for top switching. The switching point is still a
+midpoint. Recording its moved side changes the next correction, not the bracket
+or the phase width policy. This is not a verification of the C# loop. -/
+namespace ModAB.Convergence
+noncomputable section
+
+inductive EndpointSide where
+  | left | right
+  deriving DecidableEq
+
+/-- `GetABFactor`, with its positive fallback. -/
+def abFactor (new old : ℝ) : ℝ :=
+  if 0 < 1-new/old then 1-new/old else 1/2
+
+theorem abFactor_positive (new old : ℝ) : 0 < abFactor new old := by
+  unfold abFactor
+  split_ifs with h
+  · exact h
+  · norm_num
+
+structure OrdinateState where
+  leftTrue : ℝ
+  rightTrue : ℝ
+  leftWork : ℝ
+  rightWork : ℝ
+  previous : Option EndpointSide
+
+/-- The side is chosen using true function signs outside this ordinate update. -/
+def recordUpdate (s : OrdinateState) (moved : EndpointSide) (y : ℝ) : OrdinateState :=
+  match moved with
+  | .left => ⟨y,s.rightTrue,y,
+      (if s.previous = some .left then abFactor y s.leftWork else 1)*s.rightWork,
+      some .left⟩
+  | .right => ⟨s.leftTrue,y,
+      (if s.previous = some .right then abFactor y s.rightWork else 1)*s.leftWork,y,
+      some .right⟩
+
+theorem recorded_side (s : OrdinateState) (moved : EndpointSide) (y : ℝ) :
+    (recordUpdate s moved y).previous = some moved := by cases moved <;> rfl
+
+/-- Opposite-side first secant: no scaling; the actual new side is recorded. -/
+theorem opposite_side_no_correction (a b u v y : ℝ) :
+    recordUpdate ⟨a,b,u,v,some .left⟩ .right y = ⟨a,y,u,y,some .right⟩ ∧
+    recordUpdate ⟨a,b,u,v,some .right⟩ .left y = ⟨y,b,y,v,some .left⟩ := by
+  simp [recordUpdate]
+
+/-- Same-side first secant: exactly the usual positive AB factor is applied. -/
+theorem same_side_correction (a b u v y : ℝ) :
+    (recordUpdate ⟨a,b,u,v,some .left⟩ .left y).rightWork = abFactor y u*v ∧
+    (recordUpdate ⟨a,b,u,v,some .right⟩ .right y).leftWork = abFactor y v*u := by
+  simp [recordUpdate]
+
+theorem recordUpdate_working_signs (s : OrdinateState) (moved : EndpointSide) (y : ℝ)
+    (hu : SameSign s.leftWork s.leftTrue) (hv : SameSign s.rightWork s.rightTrue)
+    (hy : y ≠ 0) :
+    SameSign (recordUpdate s moved y).leftWork (recordUpdate s moved y).leftTrue ∧
+    SameSign (recordUpdate s moved y).rightWork (recordUpdate s moved y).rightTrue := by
+  have hp (old : ℝ) (side : EndpointSide) :
+      0 < (if s.previous = some side then abFactor y old else 1) := by
+    split_ifs
+    · exact abFactor_positive y old
+    · norm_num
+  cases moved with
+  | left => exact ⟨inserted_sign hy,positive_correction hv (hp _ _)⟩
+  | right => exact ⟨positive_correction hu (hp _ _),inserted_sign hy⟩
+
+/-- Before the switching bisection, the previous side is cleared and the
+working values are reset to the true endpoint residuals. -/
+theorem top_entry_ordinates (a b y : ℝ) :
+    recordUpdate ⟨a,b,a,b,none⟩ .left y = ⟨y,b,y,b,some .left⟩ ∧
+    recordUpdate ⟨a,b,a,b,none⟩ .right y = ⟨a,y,a,y,some .right⟩ := by
+  simp [recordUpdate]
+
+/-- At entry the width test succeeds, independently of residuals. Halving
+its stored threshold gives exactly the threshold of the first true secant. -/
+theorem top_entry_width_policy {B W : ℝ} (hB : (1/2:ℝ) ≤ B) (hW : 0 ≤ W) (M : ℕ) :
+    W/2 ≤ B*W ∧ (B*W)/2 = threshold B (W/2) 1 ∧
+    Step B M W .bisection (W/2) (.ab (W/2) 0 0) := by
+  refine ⟨?_,?_,Step.bisectStart W⟩
+  · nlinarith [mul_nonneg (sub_nonneg.mpr hB) hW]
+  · simp [threshold]; ring
+
+/-- Concrete common entry bracket for the examples starting from [-3,1]. -/
+theorem top_entry_midpoint :
+    ((-3:ℝ)+1)/2 = -1 ∧ (1:ℝ)-(-1)=2 := by norm_num
+
+/-- Concrete left-side top initialization used by the example orbit models. -/
+theorem top_left_seed (a v : ℝ) :
+    recordUpdate ⟨a,v,a,v,none⟩ .left (-1) = ⟨-1,v,-1,v,some .left⟩ :=
+  (top_entry_ordinates a v (-1)).1
+
+end
+end ModAB.Convergence
+
+namespace ModAB.Examples
+noncomputable section
+/-- Projection of the recorded top-entry state onto the one-sided orbit model. -/
+def topLeftSeed (a v : ℝ) : LeftState :=
+  let s := ModAB.Convergence.recordUpdate ⟨a,v,a,v,none⟩ .left (-1)
+  ⟨1,s.rightWork,decide (s.previous = some .left)⟩
+
+theorem topLeftSeed_eq (a v : ℝ) : topLeftSeed a v = ⟨1,v,true⟩ := by
+  simp [topLeftSeed,ModAB.Convergence.recordUpdate]
+end
+end ModAB.Examples
+
+end BundledModule256
+
+/- ===== Original module: ModAB.TopOneSided ===== -/
+section BundledModule257
+
+/-! The top-convention hybrid entry in the discussion after Proposition 2. -/
+namespace ModAB.Examples
+open Set Filter Topology
+noncomputable section
+
+def topOneError : ℕ→ℝ
+  | 0 => 1/3
+  | n+1 => quadraticMap (topOneError n)
+
+def topOneState (n : ℕ) : LeftState := ⟨topOneError n,1+topOneError n,true⟩
+
+theorem topOne_positive (n : ℕ) : 0<topOneError n := by
+  induction n with
+  | zero => norm_num [topOneError]
+  | succ n ih => exact quadraticMap_positive ih
+
+theorem topOne_step (n : ℕ) : leftStep 1 (topOneState n)=topOneState (n+1) :=
+  quadratic_step (topOne_positive n)
+
+theorem topOne_first_steps :
+    leftOrbit 1 ⟨1,2,true⟩ 1=topOneState 0 ∧
+    topOneError 1=1/15 ∧ topOneError 2=1/255 ∧ topOneError 3=1/65535 := by
+  norm_num [leftOrbit,leftStep,leftTrial,topOneState,topOneError,quadraticMap]
+
+theorem topOne_orbit (n : ℕ) : leftOrbit 1 ⟨1,2,true⟩ (n+1)=topOneState n := by
+  induction n with
+  | zero => exact topOne_first_steps.1
+  | succ n ih =>
+    change leftStep 1 (leftOrbit 1 ⟨1,2,true⟩ (n+1))=topOneState (n+1)
+    rw [ih,topOne_step]
+
+theorem topOne_tendsto : Tendsto topOneError atTop (𝓝 0) :=
+  geometric_tendsto (fun n=>(topOne_positive n).le) (by norm_num)
+    (by norm_num) (fun n=>quadraticMap_half (topOne_positive n).le)
+
+theorem topOne_quadratic_order :
+    Tendsto (fun n=>topOneError (n+1)/(topOneError n)^2) atTop (𝓝 1) := by
+  have hq (n : ℕ) : topOneError (n+1)/(topOneError n)^2=1/(1+2*topOneError n) := by
+    have he:=ne_of_gt (topOne_positive n)
+    simp only [topOneError,quadraticMap]
+    field_simp
+  simp_rw [hq]
+  have ht := (tendsto_const_nhds : Tendsto (fun _ : ℕ=>(1:ℝ)) atTop (𝓝 1)).div
+    ((topOne_tendsto.const_mul 2).const_add 1) (by norm_num : (1:ℝ)+2*0≠0)
+  change Tendsto (fun n=>(1:ℝ)/(1+2*topOneError n)) atTop (𝓝 (1/(1+2*(0:ℝ)))) at ht
+  simpa only [mul_zero,add_zero,div_one,one_div] using ht
+
+def topOneFullError (j : ℕ) : ℝ := (leftOrbit 1 ⟨1,2,true⟩ j).e
+
+theorem topOne_full_tail (n : ℕ) : topOneFullError (n+1)=topOneError n := by
+  simp only [topOneFullError,topOne_orbit,topOneState]
+
+theorem topOne_full_positive (j : ℕ) : 0<topOneFullError j := by
+  cases j with
+  | zero => norm_num [topOneFullError,leftOrbit]
+  | succ n => rw [topOne_full_tail]; exact topOne_positive n
+
+theorem topOne_full_decrease (j : ℕ) : topOneFullError (j+1)<topOneFullError j := by
+  cases j with
+  | zero => norm_num [topOneFullError,leftOrbit,leftStep,leftTrial]
+  | succ n =>
+    rw [topOne_full_tail,topOne_full_tail]
+    change quadraticMap (topOneError n)<topOneError n
+    linarith [quadraticMap_half (topOne_positive n).le,topOne_positive n]
+
+theorem topOne_width_limit : Tendsto (fun j=>1+topOneFullError j) atTop (𝓝 1) := by
+  apply (tendsto_add_atTop_iff_nat 1).mp
+  simpa only [topOne_full_tail,add_zero] using topOne_tendsto.const_add 1
+
+theorem topOne_actual_update (j : ℕ) :
+    ModAB.Convergence.Updated oneFunction (-topOneFullError j) 1
+      (-topOneFullError (j+1)) (-topOneFullError (j+1)) 1 ∧
+    -topOneFullError (j+1)∈Ioo (-topOneFullError j) 1 ∧
+    oneFunction (-topOneFullError (j+1))≠0 ∧
+    0<1-topOneFullError (j+1)/topOneFullError j := by
+  have he:=topOne_full_positive j
+  have hn:=topOne_full_positive (j+1)
+  have hd:=topOne_full_decrease j
+  refine ⟨left_updated (p:=1) he hn (by simpa using oneFunction_left he.le)
+    (by simpa using oneFunction_left hn.le),⟨by linarith,by linarith⟩,?_,?_⟩
+  · rw [oneFunction_left hn.le]; linarith
+  · linarith [(div_lt_one he).mpr hd]
+
+/-- The concrete switching bisection and its recorded initial orbit state. -/
+theorem topOne_top_entry :
+    ModAB.Convergence.Updated oneFunction (-3) 1 (-1) (-1) 1 ∧
+    topLeftSeed (-3) (2) = ⟨1,2,true⟩ := by
+  constructor
+  · norm_num [ModAB.Convergence.Updated,oneFunction_formula]
+  · exact topLeftSeed_eq _ _
+
+end
+end ModAB.Examples
+
+end BundledModule257
+
+/- ===== Original module: ModAB.TopUncapped ===== -/
+section BundledModule258
+
+/-! The f101 counterexample with the switching bisection recorded (top convention).
+The original bottom-convention proof remains in Uncapped.lean. -/
+namespace ModAB.Examples
+open Set Filter Topology
+noncomputable section
+
+def topCounterPair : ℕ→ℝ×ℝ
+  | 0=>(2664111/8512544,24001/36692)
+  | n+1=>let s:=topCounterPair n; let r:=phi s.1 s.2; (s.1*r,r)
+
+def topCounterError (n : ℕ) : ℝ := (topCounterPair n).1
+def topCounterRatio (n : ℕ) : ℝ := (topCounterPair n).2
+
+theorem topCounter_recurrence (n : ℕ) :
+    topCounterRatio (n+1)=phi (topCounterError n) (topCounterRatio n) ∧
+    topCounterError (n+1)=topCounterError n*topCounterRatio (n+1) := by
+  constructor <;> rfl
+
+theorem topCounter_invariant (n : ℕ) :
+    0<topCounterError n ∧ topCounterError n≤2/5 ∧ topCounterRatio n∈Icc (1/2:ℝ) (7/10) := by
+  induction n with
+  | zero=>norm_num [topCounterError,topCounterRatio,topCounterPair]
+  | succ n ih=>
+    have hp:=phi_region ⟨ih.1.le,ih.2.1⟩ ih.2.2
+    have hr : topCounterRatio (n+1)∈Icc (1/2:ℝ) (7/10):=by
+      rw [(topCounter_recurrence n).1]
+      constructor <;> linarith [hp.1,hp.2]
+    have hpos : 0<topCounterRatio (n+1):=by linarith [hr.1]
+    rw [(topCounter_recurrence n).2]
+    exact ⟨mul_pos ih.1 hpos,by nlinarith [hr.2],hr⟩
+
+theorem topCounter_error_shrinks (n : ℕ) :
+    topCounterError (n+1)≤(7/10)*topCounterError n := by
+  rw [(topCounter_recurrence n).2]
+  nlinarith [(topCounter_invariant n).1,(topCounter_invariant (n+1)).2.2.2]
+
+theorem topCounterError_tendsto : Tendsto topCounterError atTop (𝓝 0) :=
+  geometric_tendsto (fun n=>(topCounter_invariant n).1.le) (by norm_num)
+    (by norm_num) topCounter_error_shrinks
+
+theorem topCounter_width_limit : Tendsto (fun n=>1+topCounterError n) atTop (𝓝 1) := by
+  simpa using topCounterError_tendsto.const_add 1
+
+def topCounterPrevious : ℕ→ℝ
+  | 0=>111/232
+  | n+1=>topCounterError n
+
+theorem topCounter_ratio_identity (n : ℕ) :
+    topCounterError n=topCounterRatio n*topCounterPrevious n := by
+  cases n with
+  | zero=>norm_num [topCounterError,topCounterRatio,topCounterPair,topCounterPrevious]
+  | succ n=>simpa only [topCounterPrevious,mul_comm] using (topCounter_recurrence n).2
+
+theorem topCounterPrevious_positive (n : ℕ) : 0<topCounterPrevious n := by
+  cases n with
+  | zero=>norm_num [topCounterPrevious]
+  | succ n=>exact (topCounter_invariant n).1
+
+def topCounterState (n : ℕ) : LeftState :=
+  ⟨topCounterError n,(1+topCounterError n)*(topCounterPrevious n+topCounterError n),true⟩
+
+theorem topCounter_state_step (n : ℕ) : leftStep 2 (topCounterState n)=topCounterState (n+1) := by
+  have hi:=topCounter_invariant n
+  have hp:=topCounterPrevious_positive n
+  have hr : 0<topCounterRatio n:=by linarith [hi.2.2.1]
+  have hv : 0<(1+topCounterError n)*(topCounterPrevious n+topCounterError n):=
+    mul_pos (by linarith [hi.1]) (by linarith [hi.1,hp])
+  have ht:=counter_trial_identity hi.1 hp hr (topCounter_ratio_identity n)
+  have ht' : leftTrial 2 (topCounterError n)
+      ((1+topCounterError n)*(topCounterPrevious n+topCounterError n))=topCounterError (n+1) := by
+    rw [ht,(topCounter_recurrence n).2,(topCounter_recurrence n).1]
+  have hc:=counter_correction_identity hi.1 hv ht'.symm
+  simp only [leftStep,topCounterState,ite_true]
+  rw [ht',hc]
+  rfl
+
+theorem topCounter_first_steps :
+    (leftOrbit 2 ⟨1,7,true⟩ 1).e=3/4 ∧
+    (leftOrbit 2 ⟨1,7,true⟩ 2).e=111/232 ∧
+    leftOrbit 2 ⟨1,7,true⟩ 3=topCounterState 0 := by
+  norm_num [leftOrbit,leftStep,leftTrial,topCounterState,topCounterError,topCounterRatio,topCounterPair,topCounterPrevious]
+
+theorem topCounter_orbit (n : ℕ) : leftOrbit 2 ⟨1,7,true⟩ (n+3)=topCounterState n := by
+  induction n with
+  | zero=>exact topCounter_first_steps.2.2
+  | succ n ih=>
+    change leftStep 2 (leftOrbit 2 ⟨1,7,true⟩ (n+3))=topCounterState (n+1)
+    rw [ih]
+    exact topCounter_state_step n
+
+theorem topCounter_actual_update (n : ℕ) :
+    ModAB.Convergence.Updated counterFunction (-topCounterError n) 1
+      (-topCounterError (n+1)) (-topCounterError (n+1)) 1 := by
+  exact left_updated (p:=2) (topCounter_invariant n).1 (topCounter_invariant (n+1)).1
+    (counterFunction_left (topCounter_invariant n).1.le)
+    (counterFunction_left (topCounter_invariant (n+1)).1.le)
+
+theorem topCounter_residual_ratio (n : ℕ) :
+    |counterFunction (-topCounterError n)| /
+      min |counterFunction (-topCounterPrevious n)| |counterFunction 1|≤49/100 := by
+  have hp:=topCounterPrevious_positive n
+  have hi:=topCounter_invariant n
+  have hprev : topCounterPrevious n≤1:=by
+    cases n with
+    | zero=>norm_num [topCounterPrevious]
+    | succ k=>exact le_trans (topCounter_invariant k).2.1 (by norm_num)
+  rw [counterFunction_left hi.1.le,counterFunction_left hp.le]
+  have hf : counterFunction 1=7:=by norm_num [counterFunction,gluedQuadratic]
+  rw [hf,abs_neg,abs_neg,abs_of_nonneg (sq_nonneg _),abs_of_nonneg (sq_nonneg _)]
+  norm_num only [abs_of_pos (by norm_num : (0:ℝ)<7)]
+  have hmin : min ((topCounterPrevious n)^2) (7:ℝ)=(topCounterPrevious n)^2:=by
+    apply min_eq_left
+    nlinarith [mul_nonneg hp.le (sub_nonneg.mpr hprev)]
+  rw [hmin,topCounter_ratio_identity n]
+  have hid : (topCounterRatio n*topCounterPrevious n)^2/(topCounterPrevious n)^2=(topCounterRatio n)^2:=by
+    field_simp
+  rw [hid]
+  nlinarith [hi.2.2.1,hi.2.2.2]
+
+theorem topCounter_hybrid_entry :
+    counterFunction (-3)=-9 ∧ counterFunction 1=7 ∧ counterFunction (-1)=-1 ∧
+    ModAB.originalL (-9) 7 (-1)<ModAB.originalR ((1-(1:ℝ)/16)^2) (-9) 7 (-1) := by
+  norm_num [counterFunction,gluedQuadratic,ModAB.originalL,ModAB.originalR]
+
+theorem topCounter_admissible_step (n : ℕ) :
+    -topCounterError (n+1)∈Ioo (-topCounterError n) 1 ∧
+    counterFunction (-topCounterError (n+1))≠0 ∧
+    0<1-(topCounterError (n+1))^2/(topCounterError n)^2 := by
+  have he:=(topCounter_invariant n).1
+  have hn:=(topCounter_invariant (n+1)).1
+  have hs:=topCounter_error_shrinks n
+  have hlt : topCounterError (n+1)<topCounterError n:=by linarith
+  constructor
+  · constructor <;> linarith
+  · constructor
+    · intro hz
+      have heq:=(counterFunction_zero_iff _).mp hz
+      linarith
+    · have hsq : (topCounterError (n+1))^2<(topCounterError n)^2:=by nlinarith
+      have hratio : (topCounterError (n+1))^2/(topCounterError n)^2<1:=
+        (div_lt_one (sq_pos_of_pos he)).mpr hsq
+      linarith
+
+theorem topCounter_residual_exception (n : ℕ) :
+    |counterFunction (-topCounterError n)| < (1/2)*
+      min |counterFunction (-topCounterPrevious n)| |counterFunction 1| := by
+  have hp:=topCounterPrevious_positive n
+  have hm : 0<min |counterFunction (-topCounterPrevious n)| |counterFunction 1| := by
+    apply lt_min
+    · rw [counterFunction_left hp.le,abs_neg,abs_of_nonneg (sq_nonneg _)]
+      exact sq_pos_of_pos hp
+    · norm_num [counterFunction,gluedQuadratic]
+  have hb:=topCounter_residual_ratio n
+  have hm' := (div_le_iff₀ hm).mp hb
+  nlinarith only [hm,hm']
+
+theorem topCounter_width_test_fails (n : ℕ) :
+    ModAB.Convergence.threshold 2 2 (n+3)<1+topCounterError n := by
+  have hp : (2:ℝ)^3≤2^(n+3):=pow_le_pow_right₀ (by norm_num) (by omega)
+  have hpow : 0<(2:ℝ)^(n+3):=by positivity
+  have ht : ModAB.Convergence.threshold 2 2 (n+3)≤1:=by
+    unfold ModAB.Convergence.threshold
+    apply (div_le_iff₀ hpow).mpr
+    norm_num at hp ⊢
+    exact hp
+  linarith [(topCounter_invariant n).1]
+
+def topCounterFullError (j : ℕ) : ℝ := (leftOrbit 2 ⟨1,7,true⟩ j).e
+
+theorem topCounter_full_tail (n : ℕ) : topCounterFullError (n+3)=topCounterError n := by
+  simp only [topCounterFullError,topCounter_orbit,topCounterState]
+
+theorem topCounterFullError_positive (j : ℕ) : 0<topCounterFullError j := by
+  rcases j with _|_|_|n
+  · norm_num [topCounterFullError,leftOrbit]
+  · norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]
+  · norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]
+  · exact topCounter_full_tail n ▸ (topCounter_invariant n).1
+
+theorem topCounter_full_width_limit : Tendsto (fun j=>1+topCounterFullError j) atTop (𝓝 1) := by
+  apply (tendsto_add_atTop_iff_nat 3).mp
+  simpa only [topCounter_full_tail] using topCounter_width_limit
+
+theorem topCounterFullError_tendsto : Tendsto topCounterFullError atTop (𝓝 0) := by
+  apply (tendsto_add_atTop_iff_nat 3).mp
+  simpa only [topCounter_full_tail] using topCounterError_tendsto
+
+theorem topCounter_full_strict_decrease (j : ℕ) : topCounterFullError (j+1)<topCounterFullError j := by
+  rcases j with _|_|_|n
+  · norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]
+  · norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]
+  · norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]
+  · rw [show n+3+1=(n+1)+3 by omega,topCounter_full_tail,topCounter_full_tail]
+    linarith [topCounter_error_shrinks n,(topCounter_invariant n).1]
+
+theorem topCounter_full_ordinate_positive (j : ℕ) : 0<(leftOrbit 2 ⟨1,7,true⟩ j).v := by
+  rcases j with _|_|_|n
+  · norm_num [leftOrbit]
+  · norm_num [leftOrbit,leftStep,leftTrial]
+  · norm_num [leftOrbit,leftStep,leftTrial]
+  · rw [topCounter_orbit]
+    change 0<(1+topCounterError n)*(topCounterPrevious n+topCounterError n)
+    exact mul_pos (by linarith [(topCounter_invariant n).1])
+      (by linarith [(topCounter_invariant n).1,topCounterPrevious_positive n])
+
+theorem topCounter_full_actual_update (j : ℕ) :
+    ModAB.Convergence.Updated counterFunction (-topCounterFullError j) 1
+      (-topCounterFullError (j+1)) (-topCounterFullError (j+1)) 1 ∧
+    -topCounterFullError (j+1)∈Ioo (-topCounterFullError j) 1 ∧
+    counterFunction (-topCounterFullError (j+1))≠0 := by
+  have he:=topCounterFullError_positive j
+  have hn:=topCounterFullError_positive (j+1)
+  have hd:=topCounter_full_strict_decrease j
+  refine ⟨left_updated (p:=2) he hn (counterFunction_left he.le)
+    (counterFunction_left hn.le),⟨by linarith,by linarith⟩,?_⟩
+  intro hz
+  have heq:=(counterFunction_zero_iff _).mp hz
+  linarith
+
+/-- Exactly the two continuation tests, with the consecutive-exception cap removed. -/
+def topUncappedContinues (j : ℕ) : Prop :=
+  1+topCounterFullError j≤ModAB.Convergence.threshold 2 2 j ∨
+  |counterFunction (-topCounterFullError j)|<(1/2)*
+    min |counterFunction (-topCounterFullError (j-1))| |counterFunction 1|
+
+theorem topCounter_uncapped_continues (j : ℕ) (hj : 1≤j) : topUncappedContinues j := by
+  rcases j with _|_|_|n
+  · omega
+  · left; norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]
+  · left; norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]
+  · right
+    have hp : topCounterFullError (n+3-1)=topCounterPrevious n := by
+      cases n with
+      | zero=>norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial,topCounterPrevious]
+      | succ n=>
+        rw [show n+1+3-1=n+3 by omega,topCounter_full_tail]
+        rfl
+    rw [topCounter_full_tail,hp]
+    exact topCounter_residual_exception n
+
+theorem topCounter_no_width_termination {τ : ℝ} (hτ : τ≤1) (j : ℕ) :
+    τ<1+topCounterFullError j := by linarith [topCounterFullError_positive j]
+
+theorem topCounter_mixed_tolerance_fails {ea er : ℝ} (ha : ea<1) :
+    ∀ᶠj in atTop,ea+er*|(-topCounterFullError j)|<1+topCounterFullError j := by
+  have ht := ((topCounterFullError_tendsto.neg).abs.const_mul er).const_add ea
+  have ht' : Tendsto (fun j=>ea+er*|(-topCounterFullError j)|) atTop (𝓝 ea):=by
+    simpa using ht
+  have hevent := (tendsto_order.mp ht').2 1 ha
+  filter_upwards [hevent] with j hj
+  linarith [topCounterFullError_positive j]
+
+theorem topCounter_global_bound_violation :
+    (4:ℝ)/(2:ℝ)^(14/7)<1+topCounterFullError 13 := by
+  have h:=topCounterFullError_positive 13
+  norm_num
+  linarith
+
+/-- All conclusions are derived from the concrete secants, not assumed in a run record. -/
+theorem topUncapped_counterexample :
+    ContDiff ℝ 1 counterFunction ∧ (∀x,counterFunction x=0↔x=0) ∧
+    (∀j,1≤j→topUncappedContinues j) ∧
+    Tendsto (fun j=>1+topCounterFullError j) atTop (𝓝 1) ∧
+    (∀n,|counterFunction (-topCounterError n)| /
+      min |counterFunction (-topCounterPrevious n)| |counterFunction 1|≤49/100) :=
+  ⟨counterFunction_C1,counterFunction_zero_iff,topCounter_uncapped_continues,
+    topCounter_full_width_limit,topCounter_residual_ratio⟩
+
+/-- The concrete switching bisection and its recorded initial orbit state. -/
+theorem topCounter_top_entry :
+    ModAB.Convergence.Updated counterFunction (-3) 1 (-1) (-1) 1 ∧
+    topLeftSeed (-9) (7) = ⟨1,7,true⟩ := by
+  constructor
+  · norm_num [ModAB.Convergence.Updated,counterFunction_formula]
+  · exact topLeftSeed_eq _ _
+
+/-- The positive correction holds from the first chord, not only in the tail. -/
+theorem topCounter_full_correction (j : ℕ) :
+    0 < 1-(topCounterFullError (j+1))^2/(topCounterFullError j)^2 := by
+  have he := topCounterFullError_positive j
+  have hn := topCounterFullError_positive (j+1)
+  have hd := topCounter_full_strict_decrease j
+  have hs : (topCounterFullError (j+1))^2 < (topCounterFullError j)^2 := by nlinarith
+  linarith [(div_lt_one (sq_pos_of_pos he)).mpr hs]
+
+end
+end ModAB.Examples
+
+end BundledModule258
+
+/- ===== Original module: ModAB.Eta42 ===== -/
+section BundledModule259
+
+/-! A simple-root counterexample to uncapped width termination at eta=1/42.
+Every iterate is an actual top-convention AB secant. Fast point convergence
+coexists with width tending to 1. The cap M=3 forces a return after secant 6. -/
+namespace ModAB.Examples
+open Set Filter Topology
+noncomputable section
+
+def eta42Function (x : ℝ) : ℝ := x+gluedQuadratic 0 (1/10) x
+
+theorem eta42_formula (x : ℝ) :
+    eta42Function x = if x≤0 then x else x+x^2/10 := by
+  unfold eta42Function gluedQuadratic
+  split_ifs <;> ring
+
+theorem eta42_C1 : ContDiff ℝ 1 eta42Function :=
+  contDiff_id.add (gluedQuadratic_C1 0 (1/10))
+
+theorem eta42_left {e : ℝ} (he : 0≤e) : eta42Function (-e) = -e := by
+  rw [eta42_formula,if_pos (by linarith)]
+
+theorem eta42_right : eta42Function 1 = 11/10 := by norm_num [eta42_formula]
+
+theorem eta42_zero_iff (x : ℝ) : eta42Function x=0 ↔ x=0 := by
+  rw [eta42_formula]
+  split_ifs with h
+  · rfl
+  · constructor
+    · intro hz; nlinarith [sq_nonneg x]
+    · intro hz; simp [hz]
+
+theorem eta42_simple_root : HasDerivAt eta42Function 1 0 := by
+  convert (hasDerivAt_id (0:ℝ)).add
+    (gluedQuadratic_hasDerivAt_zero 0 (1/10)) using 1 <;> try norm_num
+  funext x
+  simp [eta42Function]
+
+theorem eta42_strictMono : StrictMono eta42Function := by
+  intro a b hab
+  rw [eta42_formula,eta42_formula]
+  split_ifs with ha hb
+  · exact hab
+  · nlinarith [sq_nonneg b]
+  · linarith
+  · nlinarith [mul_pos (sub_pos.mpr hab) (show 0<b+a by linarith)]
+
+/-- The strict switching test is satisfied at the initial midpoint -1. -/
+theorem eta42_hybrid_entry :
+    eta42Function (-3)=-3 ∧ eta42Function 1=11/10 ∧ eta42Function (-1)=-1 ∧
+    ModAB.originalL (-3) (11/10) (-1) <
+      ModAB.originalR ((1-(19/20)/(41/10))^2) (-3) (11/10) (-1) := by
+  norm_num [eta42_formula,ModAB.originalL,ModAB.originalR]
+
+/-- n=0 denotes the first true secant, after the switching bisection. -/
+def eta42Error : ℕ→ℝ
+  | 0 => 1/21
+  | n+1 => quadraticMap (eta42Error n)
+
+def eta42State (n : ℕ) : LeftState := ⟨eta42Error n,1+eta42Error n,true⟩
+
+theorem eta42_positive (n : ℕ) : 0<eta42Error n := by
+  induction n with
+  | zero => norm_num [eta42Error]
+  | succ n ih => exact quadraticMap_positive ih
+
+theorem eta42_step (n : ℕ) : leftStep 1 (eta42State n) = eta42State (n+1) :=
+  quadratic_step (eta42_positive n)
+
+theorem eta42_first_steps :
+    leftOrbit 1 ⟨1,11/10,true⟩ 1 = eta42State 0 ∧
+    eta42Error 1=1/483 ∧ eta42Error 2=1/234255 := by
+  norm_num [leftOrbit,leftStep,leftTrial,eta42State,eta42Error,quadraticMap]
+
+theorem eta42_orbit (n : ℕ) : leftOrbit 1 ⟨1,11/10,true⟩ (n+1)=eta42State n := by
+  induction n with
+  | zero => exact eta42_first_steps.1
+  | succ n ih =>
+    change leftStep 1 (leftOrbit 1 ⟨1,11/10,true⟩ (n+1)) = eta42State (n+1)
+    rw [ih,eta42_step]
+
+theorem eta42_shrinks (n : ℕ) : eta42Error (n+1) ≤ (1/2)*eta42Error n :=
+  quadraticMap_half (eta42_positive n).le
+
+theorem eta42_strict_decrease (n : ℕ) : eta42Error (n+1)<eta42Error n := by
+  linarith [eta42_shrinks n,eta42_positive n]
+
+theorem eta42_antitone : Antitone eta42Error :=
+  antitone_nat_of_succ_le (fun n=>(eta42_strict_decrease n).le)
+
+theorem eta42_bound (n : ℕ) : eta42Error n ≤ 1/21 :=
+  eta42_antitone (Nat.zero_le n)
+
+theorem eta42_next_bound (n : ℕ) : eta42Error (n+1) ≤ 1/483 := by
+  rw [← eta42_first_steps.2.1]
+  exact eta42_antitone (by omega)
+
+theorem eta42_tendsto : Tendsto eta42Error atTop (𝓝 0) :=
+  geometric_tendsto (fun n=>(eta42_positive n).le) (by norm_num)
+    (by norm_num) eta42_shrinks
+
+/-- Reciprocal invariant yielding the closed form without astronomical numerals. -/
+theorem eta42_reciprocal (n : ℕ) : 1+1/eta42Error n = (22:ℝ)^(2^n) := by
+  induction n with
+  | zero => norm_num [eta42Error]
+  | succ n ih =>
+    have he := ne_of_gt (eta42_positive n)
+    calc
+      1+1/eta42Error (n+1) = (1+1/eta42Error n)^2 := by
+        simp only [eta42Error,quadraticMap]
+        field_simp
+        <;> ring
+      _ = ((22:ℝ)^(2^n))^2 := by rw [ih]
+      _ = (22:ℝ)^(2^(n+1)) := by rw [← pow_mul, pow_succ]
+
+theorem eta42_closed_form (n : ℕ) : eta42Error n = 1/((22:ℝ)^(2^n)-1) := by
+  rw [← eta42_reciprocal]
+  simp
+
+theorem eta42_quadratic_order :
+    Tendsto (fun n=>eta42Error (n+1)/(eta42Error n)^2) atTop (𝓝 1) := by
+  have hq (n : ℕ) : eta42Error (n+1)/(eta42Error n)^2=1/(1+2*eta42Error n) := by
+    have he := ne_of_gt (eta42_positive n)
+    simp only [eta42Error,quadraticMap]
+    field_simp
+  simp_rw [hq]
+  have ht := (tendsto_const_nhds : Tendsto (fun _ : ℕ=>(1:ℝ)) atTop (𝓝 1)).div
+    ((eta42_tendsto.const_mul 2).const_add 1) (by norm_num : (1:ℝ)+2*0≠0)
+  change Tendsto (fun n=>(1:ℝ)/(1+2*eta42Error n)) atTop (𝓝 (1/(1+2*(0:ℝ)))) at ht
+  simpa only [mul_zero,add_zero,div_one,one_div] using ht
+
+def eta42FullError (j : ℕ) : ℝ := (leftOrbit 1 ⟨1,11/10,true⟩ j).e
+
+theorem eta42_full_tail (n : ℕ) : eta42FullError (n+1)=eta42Error n := by
+  simp only [eta42FullError,eta42_orbit,eta42State]
+
+theorem eta42_full_positive (j : ℕ) : 0<eta42FullError j := by
+  cases j with
+  | zero => norm_num [eta42FullError,leftOrbit]
+  | succ n => rw [eta42_full_tail]; exact eta42_positive n
+
+theorem eta42_full_decrease (j : ℕ) : eta42FullError (j+1)<eta42FullError j := by
+  cases j with
+  | zero => norm_num [eta42FullError,leftOrbit,leftStep,leftTrial]
+  | succ n => rw [eta42_full_tail,eta42_full_tail]; exact eta42_strict_decrease n
+
+theorem eta42_full_bound (j : ℕ) : eta42FullError j ≤ 1 := by
+  cases j with
+  | zero => norm_num [eta42FullError,leftOrbit]
+  | succ n => rw [eta42_full_tail]; linarith [eta42_bound n]
+
+theorem eta42_full_tendsto : Tendsto eta42FullError atTop (𝓝 0) := by
+  apply (tendsto_add_atTop_iff_nat 1).mp
+  simpa only [eta42_full_tail] using eta42_tendsto
+
+theorem eta42_width_limit : Tendsto (fun j=>1+eta42FullError j) atTop (𝓝 1) := by
+  simpa using eta42_full_tendsto.const_add 1
+
+theorem eta42_full_ordinate_positive (j : ℕ) :
+    0 < (leftOrbit 1 ⟨1,11/10,true⟩ j).v := by
+  cases j with
+  | zero => norm_num [leftOrbit]
+  | succ n => rw [eta42_orbit]; change 0<1+eta42Error n; linarith [eta42_positive n]
+
+/-- The un-clipped correction in leftStep coincides with GetABFactor on this orbit. -/
+theorem eta42_positive_correction (j : ℕ) :
+    0 < 1-eta42FullError (j+1)/eta42FullError j ∧
+    ModAB.Convergence.abFactor (-eta42FullError (j+1)) (-eta42FullError j) =
+      1-eta42FullError (j+1)/eta42FullError j := by
+  have h := (div_lt_one (eta42_full_positive j)).mpr (eta42_full_decrease j)
+  have hp : 0<1-eta42FullError (j+1)/eta42FullError j := by linarith
+  exact ⟨hp,by simp [ModAB.Convergence.abFactor,hp]⟩
+
+theorem eta42_actual_update (j : ℕ) :
+    ModAB.Convergence.Updated eta42Function (-eta42FullError j) 1
+      (-eta42FullError (j+1)) (-eta42FullError (j+1)) 1 ∧
+    -eta42FullError (j+1)∈Ioo (-eta42FullError j) 1 ∧
+    eta42Function (-eta42FullError (j+1))≠0 := by
+  have he:=eta42_full_positive j
+  have hn:=eta42_full_positive (j+1)
+  have hd:=eta42_full_decrease j
+  refine ⟨left_updated (p:=1) he hn (by simpa using eta42_left he.le)
+    (by simpa using eta42_left hn.le),⟨by linarith,by linarith⟩,?_⟩
+  rw [eta42_left hn.le]; linarith
+
+/-- At and after the third secant, the true-residual ratio is at most 1/485. -/
+theorem eta42_residual_ratio (n : ℕ) :
+    eta42FullError (n+3)/eta42FullError (n+2) ≤ 1/485 := by
+  rw [show n+3=(n+2)+1 by omega,show n+2=(n+1)+1 by omega,
+    eta42_full_tail,eta42_full_tail]
+  change quadraticMap (eta42Error (n+1))/eta42Error (n+1) ≤ 1/485
+  have he:=eta42_positive (n+1)
+  have hd : 0<1+2*eta42Error (n+1) := by positivity
+  have hq : quadraticMap (eta42Error (n+1))/eta42Error (n+1) =
+      eta42Error (n+1)/(1+2*eta42Error (n+1)) := by
+    unfold quadraticMap; field_simp
+  rw [hq]
+  apply (div_le_iff₀ hd).mpr
+  linarith [eta42_next_bound n]
+
+theorem eta42_residual_exception (n : ℕ) :
+    |eta42Function (-eta42FullError (n+3))| < (1/42)*
+      min |eta42Function (-eta42FullError (n+2))| |eta42Function 1| := by
+  have he:=eta42_full_positive (n+2)
+  rw [eta42_left (eta42_full_positive (n+3)).le,eta42_left he.le,eta42_right,
+    abs_neg,abs_neg,abs_of_pos (eta42_full_positive (n+3)),abs_of_pos he]
+  norm_num only [abs_of_pos (by norm_num : (0:ℝ)<11/10)]
+  rw [min_eq_left (show eta42FullError (n+2)≤11/10 by linarith [eta42_full_bound (n+2)])]
+  have h:=(div_le_iff₀ he).mp (eta42_residual_ratio n)
+  nlinarith only [h,he]
+
+theorem eta42_width_test_fails (n : ℕ) :
+    ModAB.Convergence.threshold 2 2 (n+3)<1+eta42FullError (n+3) := by
+  have hp : (2:ℝ)^3≤2^(n+3):=pow_le_pow_right₀ (by norm_num) (by omega)
+  have ht : ModAB.Convergence.threshold 2 2 (n+3)≤1:=by
+    unfold ModAB.Convergence.threshold
+    apply (div_le_iff₀ (by positivity : 0<(2:ℝ)^(n+3))).mpr
+    norm_num at hp ⊢
+    exact hp
+  linarith [eta42_full_positive (n+3)]
+
+def eta42UncappedContinues (j : ℕ) : Prop :=
+  1+eta42FullError j≤ModAB.Convergence.threshold 2 2 j ∨
+  |eta42Function (-eta42FullError j)| < (1/42)*
+    min |eta42Function (-eta42FullError (j-1))| |eta42Function 1|
+
+theorem eta42_uncapped_continues (j : ℕ) (hj : 1≤j) : eta42UncappedContinues j := by
+  rcases j with _|_|_|n
+  · omega
+  · left; norm_num [eta42FullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]
+  · left; norm_num [eta42FullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]
+  · right
+    rw [show n+3-1=n+2 by omega]
+    exact eta42_residual_exception n
+
+theorem eta42_no_width_termination {τ : ℝ} (hτ : τ≤1) (j : ℕ) :
+    τ<1+eta42FullError j := by linarith [eta42_full_positive j]
+
+theorem eta42_mixed_tolerance_fails {ea er : ℝ} (ha : ea<1) :
+    ∀ᶠj in atTop,ea+er*|(-eta42FullError j)|<1+eta42FullError j := by
+  have ht := ((eta42_full_tendsto.neg).abs.const_mul er).const_add ea
+  have ht' : Tendsto (fun j=>ea+er*|(-eta42FullError j)|) atTop (𝓝 ea):=by simpa using ht
+  have hevent := (tendsto_order.mp ht').2 1 ha
+  filter_upwards [hevent] with j hj
+  linarith [eta42_full_positive j]
+
+/-- The exact implemented continuation decision after true secant t+1. -/
+def eta42NextMode (t c : ℕ) : ModAB.Convergence.Mode :=
+  ModAB.Convergence.adaptiveMode 2 2 (1/42)
+    |eta42Function (-eta42FullError (t+1))|
+    (min |eta42Function (-eta42FullError t)| |eta42Function 1|)
+    (1+eta42FullError (t+1)) 3 t c
+
+theorem eta42_capped_exception (n c : ℕ) (hc : c<3) :
+    eta42NextMode (n+2) c = .ab 2 (n+3) (c+1) := by
+  have hw := not_le.mpr (eta42_width_test_fails n)
+  have hr := eta42_residual_exception n
+  simp only [eta42NextMode,ModAB.Convergence.adaptiveMode]
+  rw [if_neg hw,if_pos ⟨hr,hc⟩]
+
+theorem eta42_cap_forces_fallback (n : ℕ) : eta42NextMode (n+2) 3 = .bisection := by
+  have hw := not_le.mpr (eta42_width_test_fails n)
+  simp only [eta42NextMode,ModAB.Convergence.adaptiveMode]
+  rw [if_neg hw]
+  norm_num
+
+/-- Exactly two width successes, then three exceptions, then fallback. -/
+theorem eta42_capped_schedule :
+    eta42NextMode 0 0 = .ab 2 1 0 ∧ eta42NextMode 1 0 = .ab 2 2 0 ∧
+    eta42NextMode 2 0 = .ab 2 3 1 ∧ eta42NextMode 3 1 = .ab 2 4 2 ∧
+    eta42NextMode 4 2 = .ab 2 5 3 ∧ eta42NextMode 5 3 = .bisection := by
+  refine ⟨?_,?_,eta42_capped_exception 0 0 (by norm_num),
+    eta42_capped_exception 1 1 (by norm_num),eta42_capped_exception 2 2 (by norm_num),
+    eta42_cap_forces_fallback 3⟩
+  all_goals norm_num [eta42NextMode,ModAB.Convergence.adaptiveMode,
+    eta42FullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]
+
+/-- Summary: this refutes uncapped width termination, not point convergence. -/
+theorem eta42_uncapped_counterexample :
+    ContDiff ℝ 1 eta42Function ∧ StrictMono eta42Function ∧
+    (∀x,eta42Function x=0↔x=0) ∧ HasDerivAt eta42Function 1 0 ∧
+    (∀j,1≤j→eta42UncappedContinues j) ∧
+    Tendsto eta42FullError atTop (𝓝 0) ∧
+    Tendsto (fun j=>1+eta42FullError j) atTop (𝓝 1) :=
+  ⟨eta42_C1,eta42_strictMono,eta42_zero_iff,eta42_simple_root,
+    eta42_uncapped_continues,eta42_full_tendsto,eta42_width_limit⟩
+
+/-- The concrete switching bisection and its recorded initial orbit state. -/
+theorem eta42_top_entry :
+    ModAB.Convergence.Updated eta42Function (-3) 1 (-1) (-1) 1 ∧
+    topLeftSeed (-3) (11/10) = ⟨1,11/10,true⟩ := by
+  constructor
+  · norm_num [ModAB.Convergence.Updated,eta42_formula]
+  · exact topLeftSeed_eq _ _
+
+end
+end ModAB.Examples
+
+end BundledModule259
+
 /- ===== Final transitive axiom audit ===== -/
 
 open Lean Elab Command
@@ -64804,7 +65608,100 @@ run_cmd do
     ``ModAB.Unscaled.side_errors,
     ``ModAB.Unscaled.unscaled_error,
     ``ModAB.Unscaled.comparison_agreement,
-    ``ModAB.Unscaled.unscaled_comparison
+    ``ModAB.Unscaled.unscaled_comparison,
+    ``ModAB.Convergence.abFactor_positive,
+    ``ModAB.Convergence.recorded_side,
+    ``ModAB.Convergence.opposite_side_no_correction,
+    ``ModAB.Convergence.same_side_correction,
+    ``ModAB.Convergence.recordUpdate_working_signs,
+    ``ModAB.Convergence.top_entry_ordinates,
+    ``ModAB.Convergence.top_entry_width_policy,
+    ``ModAB.Convergence.top_entry_midpoint,
+    ``ModAB.Convergence.top_left_seed,
+    ``ModAB.Examples.topLeftSeed_eq,
+    ``ModAB.Examples.topOne_positive,
+    ``ModAB.Examples.topOne_step,
+    ``ModAB.Examples.topOne_first_steps,
+    ``ModAB.Examples.topOne_orbit,
+    ``ModAB.Examples.topOne_tendsto,
+    ``ModAB.Examples.topOne_quadratic_order,
+    ``ModAB.Examples.topOne_full_tail,
+    ``ModAB.Examples.topOne_full_positive,
+    ``ModAB.Examples.topOne_full_decrease,
+    ``ModAB.Examples.topOne_width_limit,
+    ``ModAB.Examples.topOne_actual_update,
+    ``ModAB.Examples.topOne_top_entry,
+    ``ModAB.Examples.topCounter_recurrence,
+    ``ModAB.Examples.topCounter_invariant,
+    ``ModAB.Examples.topCounter_error_shrinks,
+    ``ModAB.Examples.topCounterError_tendsto,
+    ``ModAB.Examples.topCounter_width_limit,
+    ``ModAB.Examples.topCounter_ratio_identity,
+    ``ModAB.Examples.topCounterPrevious_positive,
+    ``ModAB.Examples.topCounter_state_step,
+    ``ModAB.Examples.topCounter_first_steps,
+    ``ModAB.Examples.topCounter_orbit,
+    ``ModAB.Examples.topCounter_actual_update,
+    ``ModAB.Examples.topCounter_residual_ratio,
+    ``ModAB.Examples.topCounter_hybrid_entry,
+    ``ModAB.Examples.topCounter_admissible_step,
+    ``ModAB.Examples.topCounter_residual_exception,
+    ``ModAB.Examples.topCounter_width_test_fails,
+    ``ModAB.Examples.topCounter_full_tail,
+    ``ModAB.Examples.topCounterFullError_positive,
+    ``ModAB.Examples.topCounter_full_width_limit,
+    ``ModAB.Examples.topCounterFullError_tendsto,
+    ``ModAB.Examples.topCounter_full_strict_decrease,
+    ``ModAB.Examples.topCounter_full_ordinate_positive,
+    ``ModAB.Examples.topCounter_full_actual_update,
+    ``ModAB.Examples.topCounter_uncapped_continues,
+    ``ModAB.Examples.topCounter_no_width_termination,
+    ``ModAB.Examples.topCounter_mixed_tolerance_fails,
+    ``ModAB.Examples.topCounter_global_bound_violation,
+    ``ModAB.Examples.topUncapped_counterexample,
+    ``ModAB.Examples.topCounter_top_entry,
+    ``ModAB.Examples.topCounter_full_correction,
+    ``ModAB.Examples.eta42_formula,
+    ``ModAB.Examples.eta42_C1,
+    ``ModAB.Examples.eta42_left,
+    ``ModAB.Examples.eta42_right,
+    ``ModAB.Examples.eta42_zero_iff,
+    ``ModAB.Examples.eta42_simple_root,
+    ``ModAB.Examples.eta42_strictMono,
+    ``ModAB.Examples.eta42_hybrid_entry,
+    ``ModAB.Examples.eta42_positive,
+    ``ModAB.Examples.eta42_step,
+    ``ModAB.Examples.eta42_first_steps,
+    ``ModAB.Examples.eta42_orbit,
+    ``ModAB.Examples.eta42_shrinks,
+    ``ModAB.Examples.eta42_strict_decrease,
+    ``ModAB.Examples.eta42_antitone,
+    ``ModAB.Examples.eta42_bound,
+    ``ModAB.Examples.eta42_next_bound,
+    ``ModAB.Examples.eta42_tendsto,
+    ``ModAB.Examples.eta42_reciprocal,
+    ``ModAB.Examples.eta42_closed_form,
+    ``ModAB.Examples.eta42_quadratic_order,
+    ``ModAB.Examples.eta42_full_tail,
+    ``ModAB.Examples.eta42_full_positive,
+    ``ModAB.Examples.eta42_full_decrease,
+    ``ModAB.Examples.eta42_full_bound,
+    ``ModAB.Examples.eta42_full_tendsto,
+    ``ModAB.Examples.eta42_width_limit,
+    ``ModAB.Examples.eta42_full_ordinate_positive,
+    ``ModAB.Examples.eta42_positive_correction,
+    ``ModAB.Examples.eta42_actual_update,
+    ``ModAB.Examples.eta42_residual_ratio,
+    ``ModAB.Examples.eta42_residual_exception,
+    ``ModAB.Examples.eta42_width_test_fails,
+    ``ModAB.Examples.eta42_uncapped_continues,
+    ``ModAB.Examples.eta42_no_width_termination,
+    ``ModAB.Examples.eta42_mixed_tolerance_fails,
+    ``ModAB.Examples.eta42_capped_exception,
+    ``ModAB.Examples.eta42_cap_forces_fallback,
+    ``ModAB.Examples.eta42_capped_schedule,
+    ``ModAB.Examples.eta42_uncapped_counterexample,
+    ``ModAB.Examples.eta42_top_entry
   ]
   let allowed : Array Name := #[``propext, ``Classical.choice, ``Quot.sound]
   for name in declarations do
@@ -64812,4 +65709,5 @@ run_cmd do
     for dependency in dependencies do
       unless allowed.contains dependency do
         throwError "Unexpected axiom {dependency} in {name}"
-  logInfo m!"PASS: {declarations.size} ModAB lemmas/theorems; standard axioms only."
+    logInfo m!"{name}: {dependencies}"
+  logInfo m!"PASS: {declarations.size} declarations; only standard logical axioms."
