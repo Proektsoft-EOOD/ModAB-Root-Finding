@@ -24,7 +24,7 @@ The ModAB algorithm combines the reliability of bisection with the speed of the 
 2. **Linearity detection** - Monitors when the function behavior is close enough to linear
 3. **False-position acceleration** - Switches to false-position method when conditions are favorable
 4. **Anderson-Björck correction** - Applies A&B corrections to prevent stalling
-5. **Rational correction** - Bends the secant step to follow the curvature of the function, using a 3-point rational model through the bracket and the last endpoint it dropped
+5. **Rational correction** - Bends the secant step to follow the curvature of the function, using a 3-point rational model through the A&B-corrected bracket and the last endpoint it dropped; the step is kept within 0.7 of the distance from the A&B secant point to the nearer endpoint
 6. **Closing step** - Keeps each new point at least half the tolerance away from the endpoint just evaluated, so a one-sided convergence still closes the bracket
 7. **Adaptive fallback** - Returns to bisection if progress slows
 
@@ -41,15 +41,15 @@ The current version with steps 5 and 6 is called **Rational ModAB (RModAB)**.
 
 | Method        | Mean      | Error    | StdDev   |
 |-------------- |----------:|---------:|---------:|
-| Bisection     | 103.51 us | 0.923 us | 0.721 us |
-| FalsePosition | 362.01 us | 1.612 us | 1.346 us |
-| Illinois      | 150.20 us | 0.452 us | 0.377 us |
-| AndersonBjork | 214.96 us | 0.651 us | 0.544 us |
-| ITP           | 256.18 us | 2.287 us | 2.028 us |
-| Ridders       | 104.32 us | 0.689 us | 0.645 us |
-| Brent         | 123.36 us | 1.506 us | 1.409 us |
-| ModAB         |  58.26 us | 0.482 us | 0.376 us |
-| **RModAB**    |**58.18 us**|**0.728 us**|**0.645 us**|
+| Bisection     |  97.12 us | 1.042 us | 0.924 us |
+| FalsePosition | 377.13 us | 7.347 us | 9.023 us |
+| Illinois      | 158.22 us | 2.300 us | 2.151 us |
+| AndersonBjork | 222.55 us | 2.194 us | 1.945 us |
+| ITP           | 245.93 us | 3.397 us | 3.178 us |
+| Ridders       | 106.08 us | 1.899 us | 1.776 us |
+| Brent         | 121.96 us | 1.845 us | 1.541 us |
+| ModAB         |  58.79 us | 0.903 us | 0.800 us |
+|**RModAB**     |**58.05 us**|**0.628 us**|**0.588 us**|
 
 *BenchmarkDotNet v0.15.8, .NET 10.0.12 x64 RyuJIT x86-64-v4  
 Windows 11 (10.0.26200.9711/25H2/2025Update/HudsonValley2)  
@@ -59,14 +59,14 @@ Intel Core i7-1065G7 CPU 1.30GHz 8 logical and 4 physical cores + 16 GB RAM
 
 |Func | bs | fp | ill | AB | ITP | Rid | Br | ModAB | **RModAB**
 | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: 
-| SumAll |  4835 | 11192 |  4087 |  5267 |  3337 |  3354 |  3141 |  1992 |**1881**
-|  Valid |  4428 | 10715 |  3486 |  4666 |  2925 |  2897 |  2699 |  1705 |**1596**
-|    Ave |  47.6 | 115.2 |  37.5 |  50.2 |  31.5 |  31.2 |  29.0 |  18.3 |**17.2**
-|   Mean |  45.2 |  68.4 |  22.1 |  22.6 |  24.8 |  22.2 |  17.2 |  14.7 |**13.6**
-| StdDev |   8.9 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |**14.1**
+| SumAll |  4835 | 11192 |  4087 |  5267 |  3337 |  3354 |  3141 |  1992 |**1871**
+|  Valid |  4428 | 10715 |  3486 |  4666 |  2925 |  2897 |  2699 |  1705 |**1588**
+|    Ave |  47.6 | 115.2 |  37.5 |  50.2 |  31.5 |  31.2 |  29.0 |  18.3 |**17.1**
+|   Mean |  45.2 |  68.4 |  22.1 |  22.6 |  24.8 |  22.2 |  17.2 |  14.7 |**13.5**
+| StdDev |   8.9 |  88.2 |  49.4 |  69.6 |  19.1 |  33.7 |  39.4 |  14.7 |**14.2**
 | Median |  49.0 | 202.0 |  15.0 |  13.0 |  23.0 |  17.0 |  12.0 |  12.0 |**11.0**
 |    Max |    53 |   202 |   202 |   202 |    55 |   202 |   142 |    78 |**56**
-| BestAt |    14 |     5 |     1 |    18 |     5 |     2 |    21 |    22 |**67**
+| BestAt |    14 |     5 |     1 |    17 |     5 |     2 |    20 |    20 |**66**
 |WorstAt |    38 |    50 |     5 |    13 |     2 |     3 |     0 |     1 |**1**
 |   Succ |    93 |    46 |    88 |    80 |    93 |    91 |    93 |    93 |**93**
 |Invalid |     8 |     8 |     8 |     8 |     8 |     8 |     8 |     8 |**8**

@@ -10,7 +10,7 @@ from typing import Callable
 
 # Benchmark of pymodab against the bracketed solvers of PyRoot
 # (https://github.com/SimpleArt/pyroot). Both packages are used as
-# installed from PyPI:  pip install pymodab==1.0.7 pyroot==0.2.0
+# installed from PyPI:  pip install pymodab==1.2.1 pyroot==0.2.0
 # PyRoot 0.3.1 (the latest release) is not used, because its solvers
 # do not converge on most of the test problems.
 
@@ -377,4 +377,4 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    run()

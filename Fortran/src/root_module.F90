@@ -2769,10 +2769,11 @@
 !    1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
 !    2. The original function values y1 and y2 (without A&B corrections) are stored for later use in bisection fallback
 !  * The A&B phase adds two changes:
-!    1. Rational correction: the A&B secant is replaced by the secant through the true residuals,
-!       corrected for curvature by a 3-point rational model through the bracket and the endpoint
-!       it most recently dropped ([[rational_step]]). The A&B secant remains the fallback when the
-!       correction is unusable or the curvature changes sign within the bracket.
+!    1. Rational correction: the A&B secant is corrected for curvature by a 3-point rational
+!       model through the A&B-corrected bracket and the endpoint it most recently dropped
+!       ([[rational_step]]), with the step kept within 0.7 of the distance from the A&B secant
+!       point to the nearer endpoint. The plain A&B secant is used when the correction is NaN
+!       or the curvature changes sign within the bracket.
 !    2. Closing step: an A&B point is kept at least half the x-tolerance away from the endpoint
 !       that was just evaluated, so that one-sided convergence still closes the bracket.
     subroutine ModAB(me,ax,bx,fax,fbx,xzero,fzero,iflag)
@@ -2842,9 +2843,9 @@
             if (bends) then
                 x3 = safe_secant(x1,y1,x2,y2)
             else if (last == 1 .and. have_l) then
-                x3 = rational_step(x1,f1,x2,f2,xl,fl,y1,y2)
+                x3 = rational_step(x1,y1,x2,y2,xl,fl)
             else if (last == 2 .and. have_r) then
-                x3 = rational_step(x1,f1,x2,f2,xr,fr,y1,y2)
+                x3 = rational_step(x1,y1,x2,y2,xr,fr)
             else
                 x3 = safe_secant(x1,y1,x2,y2)
             end if
@@ -3090,46 +3091,53 @@
 !*****************************************************************************************
 !>
 !  Root of the linear-fractional model `f(x) = (x - r)/(p*x + q)` through the bracket
-!  `(x1,f1)`, `(x2,f2)` and a third point `(x3,f3)` outside it. The model fits both
-!  nearly-quadratic shapes and functions with a pole; for a straight line it gives the
-!  secant point. With `w = x2 - x1`, `u = x3 - x1` and the residuals relative to `f2`,
-!  `q1 = f1/f2` and `q3 = f3/f2` (so the step does not depend on the scale of `f`), and
-!  `c = 1 - q1`, the root is
+!  `(x1,y1)`, `(x2,y2)` and a third point `(x3,f3)` outside it. The bracket ordinates are
+!  the A&B-corrected residuals and `f3` is the true residual of the dropped endpoint. The
+!  model fits both nearly-quadratic shapes and functions with a pole; for a straight line
+!  it gives the secant point. With `w = x2 - x1`, `u = x3 - x1` and the residuals relative
+!  to `y2`, `q1 = y1/y2` and `q3 = f3/y2` (so the step does not depend on the scale of
+!  `f`), and `c = 1 - q1 > 1`, the root is
 !
 !  `r = x1 + t`,   `t = w*u*q1*(q3 - 1)/(w*(q3 - q1) - u*q3*c)`,
 !
-!  two divisions per step, `1/f2` and this one. The step is used only if it moves the
-!  secant point `xs = x1 - w*q1/c` by at most half the distance to the nearer endpoint
-!  (on a plateau the model degenerates towards a step function). Multiplied by `c`, that
-!  test reads `|t*c + w*q1| <= w*min(|q1|, 1)/2`, with no division; it also rejects NaN
-!  and infinite values. When the step is unusable, it returns the A&B secant point
-!  through `(x1,y1)`, `(x2,y2)` instead.
+!  two divisions per step, `1/y2` and this one. The A&B secant point is `xs = x1 - w*q1/c`
+!  and its distance to the nearer endpoint is `d = w*min(|q1|, 1)/c`. The step is kept
+!  within `0.7*d` of `xs` (on a plateau the model degenerates towards a step function), so
+!  it stays at least `0.3*d` inside the bracket. Multiplied by `c`, the test reads
+!  `|t*c + w*q1| <= 0.7*w*min(|q1|, 1)`, with no division. A step outside it is clamped to
+!  `xs +- 0.7*d` on the side the model points to; this did better than the A&B secant in
+!  randomized-bracket tests and on 200,000 random functions, where factors 0.6 to
+!  0.9 differed little.
+!  A NaN `t` fails the clamp test and then `x < x2`, so it returns the A&B secant point.
 
-    pure function rational_step(x1,f1,x2,f2,x3,f3,y1,y2) result(x)
+    pure function rational_step(x1,y1,x2,y2,x3,f3) result(x)
 
     implicit none
 
     real(wp),intent(in) :: x1
-    real(wp),intent(in) :: f1
+    real(wp),intent(in) :: y1
     real(wp),intent(in) :: x2
-    real(wp),intent(in) :: f2
+    real(wp),intent(in) :: y2
     real(wp),intent(in) :: x3
     real(wp),intent(in) :: f3
-    real(wp),intent(in) :: y1
-    real(wp),intent(in) :: y2
     real(wp) :: x
 
-    real(wp) :: k,q1,q3,c,w,u,t
+    real(wp) :: k,q1,q3,c,w,u,t,lim,dev
 
-    k = 1.0_wp/f2
-    q1 = f1*k
+    k = 1.0_wp/y2
+    q1 = y1*k
     q3 = f3*k
     c = 1.0_wp - q1
     w = x2 - x1
     u = x3 - x1
     t = w*u*q1*(q3 - 1.0_wp)/(w*(q3 - q1) - u*q3*c)
+    lim = 0.7_wp*w*min(abs(q1),1.0_wp)   ! c*0.7*d
+    dev = t*c + w*q1                     ! c*(x - xs)
+    ! Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t.
+    if (abs(dev) > lim) t = (sign(lim,dev) - w*q1)/c
     x = x1 + t
-    if (abs(t*c + w*q1) <= 0.5_wp*w*min(abs(q1),1.0_wp) .and. x <= x2) return
+    ! Rounding can put x on x2 when the bracket is a few ulps wide.
+    if (x < x2) return
     x = safe_secant(x1,y1,x2,y2)
 
     end function rational_step

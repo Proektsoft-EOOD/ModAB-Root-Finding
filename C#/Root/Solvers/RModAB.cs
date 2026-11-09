@@ -6,10 +6,11 @@ namespace Proektsoft.Root
     public static partial class Solver
     {
         // The Anderson-Björck phase adds two changes:
-        //     1. Rational correction: the AB secant is replaced by the secant through the true
-        //        residuals, corrected for curvature by a 3-point rational model through the bracket
-        //        and the endpoint it most recently dropped. The AB secant remains the fallback when
-        //        the correction is unusable or the curvature changes sign within the bracket.
+        //     1. Rational correction: the AB secant is corrected for curvature by a 3-point rational
+        //        model through the AB-scaled bracket and the endpoint it most recently dropped, with
+        //        the step kept within 0.7 of the distance from the AB secant point to the nearer
+        //        endpoint. The plain AB secant is used when the curvature changes sign within the
+        //        bracket.
         //     2. Closing step: an AB point is kept at least eps/2 away from the endpoint that was
         //        just evaluated, so that one-sided convergence still closes the bracket.
         public static double RModAB(Func<double, double> f, double x1, double x2, out ReturnCode returnCode,
@@ -56,8 +57,8 @@ namespace Proektsoft.Root
                         x3 = Node.SafeSecant(p1.X, f1, p2.X, f2);
                     else
                         x3 = lastMoved == LEFT ?
-                            RationalStep(p1.X, p1.Y, p2.X, p2.Y, xl, yl, f1, f2) :
-                            RationalStep(p1.X, p1.Y, p2.X, p2.Y, xr, yr, f1, f2);
+                            RationalStep(p1.X, f1, p2.X, f2, xl, yl) :
+                            RationalStep(p1.X, f1, p2.X, f2, xr, yr);
 
                     eps = aTol + rTol * Math.Abs(x3);
                     // Closing step: when AB converges from one side, its next point lands within eps/2
@@ -168,34 +169,44 @@ namespace Proektsoft.Root
         }
 
         // Root of the linear-fractional model  f(x) = (x - r) / (p*x + q)  through the bracket
-        // (x1, f1), (x2, f2) and a third point (x3, f3) outside it, or NaN when it is unusable.
-        // The model fits both nearly-quadratic shapes and functions with a pole; for a straight
-        // line it gives the secant point. With w = x2 - x1, u = x3 - x1 and the residuals relative
-        // to f2, q1 = f1/f2 and q3 = f3/f2 (so the step does not depend on the scale of f), and
-        // c = 1 - q1, the root is
+        // (x1, y1), (x2, y2) and a third point (x3, y3) outside it. The bracket ordinates are the
+        // AB-scaled residuals and y3 is the true residual of the dropped endpoint. The model fits
+        // both nearly-quadratic shapes and functions with a pole; for a straight line it gives the
+        // secant point. With w = x2 - x1, u = x3 - x1 and the residuals relative to y2,
+        // q1 = y1/y2 and q3 = y3/y2 (so the step does not depend on the scale of f), and
+        // c = 1 - q1 > 1, the root is
         //     r = x1 + t,   t = w*u*q1*(q3 - 1) / (w*(q3 - q1) - u*q3*c),
-        // two divisions per step, 1/f2 and this one. The step is used only if it moves the secant
-        // point xs = x1 - w*q1/c by at most half the distance to the nearer endpoint (on a plateau
-        // the model degenerates towards a step function). Multiplied by c, that test reads
-        //     |t*c + w*q1| <= w*min(|q1|, 1)/2,
-        // with no division; it also rejects NaN and infinite values.
-        // When the step is unusable, including a NaN third point (no endpoint dropped on that
-        // side yet), it returns the A&B secant point through (x1, s1), (x2, s2) instead.
+        // two divisions per step, 1/y2 and this one. The AB secant point is xs = x1 - w*q1/c and
+        // its distance to the nearer endpoint is d = w*min(|q1|, 1)/c. The step is kept within
+        // 0.7*d of xs (on a plateau the model degenerates towards a step function), so it stays
+        // at least 0.3*d inside the bracket. Multiplied by c, the test reads
+        //     |t*c + w*q1| <= 0.7*w*min(|q1|, 1),
+        // with no division. A step outside it is clamped to xs ± 0.7*d on the side the model
+        // points to; this did better than the AB secant in randomized-bracket tests and on
+        // 200,000 random functions, where factors 0.6 to 0.9 differed little.
+        // A step that rounds onto x2, or a NaN step (from overflow in t, or a NaN third point
+        // when no endpoint was dropped on that side yet), returns x2. Its residual is already
+        // stored, so the caller reuses it instead of evaluating f; the closing step may first
+        // move the point to x2 - eps/2.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static double RationalStep(double x1, double y1, double x2, double y2, double x3, double y3,
-            double s1, double s2)
+        private static double RationalStep(double x1, double y1, double x2, double y2, double x3, double y3)
         {
             var k = 1.0 / y2;
             double q1 = y1 * k, q3 = y3 * k;
             var c = 1.0 - q1;
             double w = x2 - x1, u = x3 - x1;
             var t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
-            var a1 = Math.Abs(q1);
-            var x = x1 + t;
-            if (Math.Abs(t * c + w * q1) <= 0.5 * w * (a1 < 1.0 ? a1 : 1.0) && x <= x2)
-                return x;
+            var a = Math.Abs(q1);
+            var lim = 0.7 * (a < 1.0 ? w * a : w); // c * 0.7 * d
+            var dev = t * c + w * q1;              // c * (x - xs)
+            // Clamp: t = ts ± 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
+            // then t is NaN too), so x is NaN and the test below returns x2.
+            if (Math.Abs(dev) > lim)
+                t = (Math.CopySign(lim, dev) - w * q1) / c;
 
-            return Node.SafeSecant(x1, s1, x2, s2);
+            var x = x1 + t;
+            // Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too.
+            return x < x2 ? x : x2;
         }
 
         // True if the second divided differences on the left (xl, x1, x2) and on the right

@@ -7,13 +7,14 @@ registered package. See `Project.toml` / `setup_env.jl` for the wiring.
 Two modAB columns are reported side by side in the same run:
 
 - `RModAB` — the rational modab: `NonlinearSolve.jl/modAB.jl` from this repository, loaded
-  over the local checkout (branch `fix-modab-units-and-stagnation` at `78ed8c32`). On top of
+  over the local checkout (branch `fix-modab-units-and-stagnation` at `1f0f49fe`). On top of
   the residual test `42|y3| >= min(|yl|, |yr|)`, the halved switching margin after each
   fallback and the plateau rule of the previous version (`modAB_sg`), it changes the A&B step
   in two ways. A rational correction bends the secant step to follow the curvature of the
-  function, using a 3-point model through the bracket and the endpoint it dropped last; the
-  plain A&B secant remains the fallback when the curvature changes sign within the bracket or
-  the model is unusable. A closing step keeps each A&B point at least `ϵ` away from the endpoint
+  function, using a 3-point model through the A&B-corrected bracket and the endpoint it dropped
+  last, with the step kept within 0.7 of the distance from the A&B secant point to the nearer
+  endpoint; the plain A&B secant is used when the curvature changes sign within the bracket.
+  A closing step keeps each A&B point at least `ϵ` away from the endpoint
   just evaluated, so a one-sided convergence still closes the bracket.
   The first line of each results file records the branch, commit and a hash of `modAB.jl`.
 - `modAB_rel` — the algorithm exactly as shipped in the latest registered
@@ -31,9 +32,9 @@ counterexample, which the factor of 42 in the residual test of `RModAB` sends ba
 
 Func | bisect | brent | ridder | alefeld |  ITP | modAB_rel | RModAB
 ---  | -----: | ----: | -----: | ------: | ---: | --------: | ----:
-SUM  |   4941 |  3118 |   4094 |   72940 | 2834 |      2146 |  1924
-AVE  |   48,9 |  30,9 |   40,5 |   722,2 | 28,1 |      21,2 |  19,0
-REL  |   257% |  162% |   213% |   3791% | 147% |      112% |  100%
+SUM  |   4941 |  3118 |   4094 |   72940 | 2834 |      2146 |  1912
+AVE  |   48,9 |  30,9 |   40,5 |   722,2 | 28,1 |      21,2 |  18,9
+REL  |   258% |  163% |   214% |   3815% | 148% |      112% |  100%
 
 Failures: `alefeld` returns `NaN` on f100. `RModAB` solves all 101. `modAB_rel` hits
 `maxiters = 200` on f101 (201 evaluations); the point it returns is within 1e-41 of the root,
@@ -45,47 +46,50 @@ but the solve ends with `ReturnCode.MaxIters`.
 
 Func | bisect | brent | ridder | alefeld |  ITP |  A42 | modAB_rel | RModAB
 ---  | -----: | ----: | -----: | ------: | ---: | ---: | --------: | ----:
-SUM  |   4789 |  1950 |   3272 |    1829 | 2544 | 2072 |      2146 |  1924
-AVE  |   47,4 |  19,3 |   32,4 |    18,1 | 25,2 | 20,5 |      21,2 |  19,0
-REL  |   249% |  101% |   170% |     95% | 132% | 108% |      112% |  100%
+SUM  |   4789 |  1950 |   3272 |    1829 | 2544 | 2072 |      2146 |  1912
+AVE  |   47,4 |  19,3 |   32,4 |    18,1 | 25,2 | 20,5 |      21,2 |  18,9
+REL  |   250% |  102% |   171% |     96% | 133% | 108% |      112% |  100%
 
 Failures: `ridder` returns `NaN` on f72 and f73; on f100 `alefeld` and `A42` return `NaN`,
 while `brent`, `ridder` and `ITP` return the right endpoint `ℯ`, which is not a root.
 `modAB_rel` hits `maxiters` on f101, as above.
 
-Across the 101 problems `RModAB` and `modAB_rel` differ on 65 evaluation counts. `RModAB` is
-cheaper on 58 of them and needs one more on 7: f37, f41, f42, f65, f76, f80 and f84. f101
-accounts for most of the difference, 201→56.
+Across the 101 problems `RModAB` and `modAB_rel` differ on 66 evaluation counts. `RModAB` is
+cheaper on 61 of them and needs more on 5: one more on f15, f42, f65 and f85, three more on
+f100. f101 accounts for most of the difference, 201→56.
 
-Against the previous version `modAB_sg` (1974 evaluations on 03.11.2026), `RModAB` saves 50
-evaluations, 2.5 %: 44 problems need fewer (32 one fewer, 12 two fewer) and 6 need one more
-(f37, f41, f42, f65, f80, f84). The gain is smaller than in the other ports (3.6 % in C, C#
-and Python). Those stop on a relative tolerance and this one on the absolute
-`abstol = 1e-14`, which is the likely reason.
+Against the previous version `modAB_sg` (1974 evaluations on 03.11.2026), `RModAB` saves 62
+evaluations, 3.1 %: 50 problems need fewer (32 one fewer, 14 two fewer, 4 three fewer) and 7
+need more (one more on f15, f20, f42, f65 and f81, two more on f85, three more on f100). The
+gain is smaller than in C and C# (4.1 %). Those stop on a relative tolerance and this one on
+the absolute `abstol = 1e-14`, which is the likely reason. The first `RModAB` of 08.11.2026,
+with the rational model through the true residuals and the A&B secant as its fallback, took
+1924 evaluations; the A&B-corrected bracket with the 0.7 limit saves 12 more (11 problems need
+fewer, 6 need more).
 
 ## Wall-clock time — NonlinearSolve.jl solvers
 
 `NonlinearSolve.jl/nonlinearsolve_modab__speed_benchmark.jl` → `NonlinearSolve.jl/Benchmark Results.txt`
 
 Median of `@belapsed` over `solve()` only, with the problem constructed outside the
-timing loop. Each entry is the smallest of the medians from two runs on 08.11.2026, on mains
-power with `% Processor Performance` mostly between 200 % and 255 %. The solvers that did not
-change match the runs of 03.11.2026 to within about 1 % in total (`modAB_rel` 33,6 μs
-against 33,5 μs).
+timing loop. Each entry is the smallest of the medians from two runs on 09.11.2026, on mains
+power with `% Processor Performance` between 225 % and 254 %. The solvers that did not change
+match the runs of 08.11.2026 to within 0,7 % in total (`modAB_rel` 33,6 μs in both).
 
 Func | bisect   | brent   | ridder  | alefeld   |   ITP   | modAB_rel |  RModAB
 ---- | -------: | ------: | ------: | --------: | ------: | --------: | ------:
-SUM  |  95,8 μs | 98,7 μs | 52,2 μs | 327,7 μs* | 79,0 μs |   33,6 μs | 28,5 μs
-AVE  |   949 ns |  977 ns |  516 ns |  3277 ns* |  782 ns |    333 ns |  282 ns
-REL  |     336% |    346% |    183% |    1149%* |    277% |      118% |    100%
+SUM  |  95,8 μs | 98,7 μs | 52,1 μs | 325,5 μs* | 78,8 μs |   33,6 μs | 28,7 μs
+AVE  |   949 ns |  977 ns |  516 ns |  3255 ns* |  780 ns |    332 ns |  285 ns
+REL  |     333% |    343% |    181% |    1133%* |    274% |      117% |    100%
 
 \* `alefeld` errors on f100, so its total covers only the 100 problems it solved
 and understates the true cost. Every other solver completed all 101.
 
-`RModAB` is 15,1 % faster than the v1.12.8 release over all 101 problems, and 4,8 % faster
-without f101. It is faster on 56 problems, within ±3 % on 17 and slower on 28, by 3–42 %; the
-largest are f42 (93 ns → 132 ns), f82 (60 ns → 74 ns) and f28 (301 ns → 358 ns). Per
-function evaluation the release costs 15,7 ns and `RModAB` 14,8 ns. The previous version
+`RModAB` is 14,4 % faster than the v1.12.8 release over all 101 problems, and 3,7 % faster
+without f101. It is faster on 43 problems, within ±3 % on 17 and slower on 41, by 3–56 %; the
+largest are f42 (93 ns → 145 ns), f10 (115 ns → 150 ns) and f11 (83 ns → 107 ns). Per
+function evaluation the release costs 15,6 ns and `RModAB` 15,0 ns. The previous version
 `modAB_sg` took 27,8 μs on 03.11.2026 (14,1 ns per evaluation): the rational correction
-saves 2,5 % of the evaluations but makes each step a little dearer, so `RModAB` is 2,5 %
-slower than `modAB_sg` on these cheap test functions.
+saves 3,1 % of the evaluations but makes each step a little dearer, so `RModAB` is 3,4 %
+slower than `modAB_sg` on these cheap test functions. The first `RModAB` of 08.11.2026 took
+28,5 μs, 0,7 % less, about as much as the unchanged solvers moved between the two days.

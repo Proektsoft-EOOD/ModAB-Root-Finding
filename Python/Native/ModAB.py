@@ -1,6 +1,7 @@
 import math
 
 _NAN = float('nan')
+_INF = float('inf')
 
 
 # ---------------------------------------------------------------------------
@@ -56,25 +57,30 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
         2. The original function values y1 and y2 (without A&B corrections)
            are stored for later use in bisection fallback
     The A&B phase adds two changes:
-        1. Rational correction: the A&B secant is replaced by the secant through the true
-           residuals, corrected for curvature by a 3-point rational model through the bracket
-           and the endpoint it most recently dropped. The A&B secant remains the fallback when
-           the correction is unusable or the curvature changes sign within the bracket.
+        1. Rational correction: the A&B secant is corrected for curvature by a 3-point rational
+           model through the A&B-corrected bracket and the endpoint it most recently dropped,
+           with the step kept within 0.7 of the distance from the A&B secant point to the
+           nearer endpoint. The plain A&B secant is used when the curvature changes sign
+           within the bracket.
         2. Closing step: an A&B point is kept at least epsx/2 away from the endpoint that was
            just evaluated, so that one-sided convergence still closes the bracket.
 
     Rational correction. The linear-fractional model  f(x) = (x - r) / (p*x + q)  through
-    (x1, f1), (x2, f2) and the dropped endpoint (xp, fp) outside the bracket fits both
-    nearly-quadratic shapes and functions with a pole; for a straight line it gives the
-    secant point. With w = x2 - x1, u = xp - x1 and the residuals relative to f2,
-    q1 = f1/f2 and qp = fp/f2 (so the step does not depend on the scale of f), and
-    c = 1 - q1, its root is
+    the A&B-corrected bracket (x1, y1), (x2, y2) and the dropped endpoint (xp, fp) outside it,
+    with its true residual, fits both nearly-quadratic shapes and functions with a pole; for a
+    straight line it gives the secant point. With w = x2 - x1, u = xp - x1 and the residuals
+    relative to y2, q1 = y1/y2 and qp = fp/y2 (so the step does not depend on the scale of f),
+    and c = 1 - q1 > 1, its root is
         r = x1 + t,   t = w*u*q1*(qp - 1) / (w*(qp - q1) - u*qp*c),
-    two divisions per step, 1/f2 and this one. The step is used only if it moves the
-    secant point xs = x1 - w*q1/c by at most half the distance to the nearer endpoint (on a
-    plateau the model degenerates towards a step function). Multiplied by c, that test reads
-        |t*c + w*q1| <= w*min(|q1|, 1)/2,
-    with no division; it also rejects NaN and infinite values. The curvature changes sign
+    two divisions per step, 1/y2 and this one. The A&B secant point is xs = x1 - w*q1/c and its
+    distance to the nearer endpoint is d = w*min(|q1|, 1)/c. The step is kept within 0.7*d of
+    xs (on a plateau the model degenerates towards a step function), so it stays at least 0.3*d
+    inside the bracket. Multiplied by c, the test reads
+        |t*c + w*q1| <= 0.7*w*min(|q1|, 1),
+    with no division. A step outside it is clamped to xs +- 0.7*d on the side the model points
+    to; this did better than the A&B secant in randomized-bracket tests and on 200,000 random
+    functions, where factors 0.6 to 0.9 differed little. A NaN step, or one that rounds onto
+    x2, gives x2, whose residual is already stored. The curvature changes sign
     within the bracket when the second divided differences on the left (xl, x1, x2) and on
     the right (x1, x2, xr) have opposite signs. Scaled by positive factors, they are
         pl = (f2 - f1)*(x1 - xl) - (f1 - fl)*w,   pr = (fr - f2)*w - (f2 - f1)*(xr - x2),
@@ -120,33 +126,46 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
             epsx = xtol * max(abs(x3), 1)
         else:
             # Rational correction through the endpoint dropped by the last update, or the A&B
-            # secant when the curvature changes sign within the bracket or the correction is
-            # unusable. A missing endpoint is NaN, which fails every test below, so it needs no
-            # check of its own.
-            x3 = _NAN
+            # secant when the curvature changes sign within the bracket. A missing endpoint is
+            # NaN, which fails the curvature test and makes the rational step NaN.
             df = f2 - f1
             pl = df * (x1 - xl) - (f1 - fl) * dx
             pr = (fr - f2) * dx - df * (xr - x2)
-            if not (pl < 0.0 < pr or pr < 0.0 < pl):
+            if pl < 0.0 < pr or pr < 0.0 < pl:
+                x3 = safe_secant(x1, y1, x2, y2)
+            else:
                 if last == 1:
                     xp, fp = xl, fl
                 else:
                     xp, fp = xr, fr
-                k = 1.0 / f2  # Residuals relative to f2, so the step does not depend on the scale of f
-                q1 = f1 * k
-                qp = fp * k
-                c = 1.0 - q1
-                u = xp - x1
-                den = dx * (qp - q1) - u * qp * c
-                if den != 0.0:  # Python raises on a division by zero
-                    t = dx * u * q1 * (qp - 1.0) / den
-                    a1 = abs(q1)
-                    if abs(t * c + dx * q1) <= 0.5 * dx * (a1 if a1 < 1.0 else 1.0):
-                        t += x1
-                        if t <= x2:
-                            x3 = t
-            if x3 != x3:  # NaN test: the rational step was rejected, fall back to the A&B secant
-                x3 = safe_secant(x1, y1, x2, y2)
+                # Rational step through the A&B-corrected bracket (x1, y1), (x2, y2) and the
+                # dropped endpoint (xp, fp), clamped to 0.7 of the distance from the A&B secant
+                # point to the nearer endpoint; a NaN step, or one that rounds onto x2, gives x2.
+                # Python raises where C gives inf or NaN, so those cases are spelled out: a zero
+                # y2 makes the C step NaN, and a zero denominator gives an infinite or NaN t.
+                x3 = x2
+                if y2 != 0.0:
+                    k = 1.0 / y2  # Residuals relative to y2, so the step does not depend on the scale of f
+                    q1 = y1 * k
+                    qp = fp * k
+                    c = 1.0 - q1
+                    u = xp - x1
+                    num = dx * u * q1 * (qp - 1.0)
+                    den = dx * (qp - q1) - u * qp * c
+                    if den != 0.0:
+                        t = num / den
+                    elif num != 0.0:
+                        t = math.copysign(_INF, num) * math.copysign(1.0, den)
+                    else:
+                        t = _NAN
+                    a = abs(q1)
+                    lim = 0.7 * (dx * a if a < 1.0 else dx)  # c * 0.7 * d
+                    dev = t * c + dx * q1  # c * (x - xs)
+                    if abs(dev) > lim:  # False for NaN: then t is NaN and the test below gives x2
+                        t = (math.copysign(lim, dev) - dx * q1) / c
+                    t += x1
+                    if t < x2:
+                        x3 = t
             epsx = xtol * max(abs(x3), 1)
             # Closing step: when A&B converges from one side, its next point lands within epsx/2
             # of the endpoint just evaluated and the bracket does not shrink. A step of epsx/2

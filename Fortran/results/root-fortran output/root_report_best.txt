@@ -1,13 +1,13 @@
 nprob     n evals Best Methods
     1     1     8 Best: rbp, muller, modab
-    2     1    12 Best: modab, chandrupatla
+    2     1    11 Best: modab
     3     1     8 Best: brent, brentq
-    4     1    10 Best: chandrupatla
+    4     1    10 Best: modab, chandrupatla
     5     1    10 Best: chandrupatla
-    6     1    11 Best: itp, muller, modab, chandrupatla
-    7     1    10 Best: modab
+    6     1    10 Best: modab
+    7     1    11 Best: muller, modab
     8     1    12 Best: brent, brentq, brenth, modab
-    9     1    12 Best: brent, brentq, brenth, muller, modab
+    9     1    11 Best: modab
    10     1    11 Best: brentq
    11     1    11 Best: brent, brentq, brenth, muller
    12    40     4 Best: ridders
@@ -45,9 +45,9 @@ nprob     n evals Best Methods
    20    10     6 Best: rbp, muller
    20    20     6 Best: bdqrf, rbp
    21     2     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
-   21     5     8 Best: brent, brentq, chandrupatla
+   21     5     8 Best: brent, brentq, modab, chandrupatla
    21    10     9 Best: modab
-   21    15    10 Best: chandrupatla
+   21    15    10 Best: modab, chandrupatla
    21    20    11 Best: toms748, modab
    22     1     8 Best: toms748, anderson_bjorck, brenth, modab
    22     2     9 Best: brenth, modab
@@ -67,12 +67,12 @@ nprob     n evals Best Methods
    24    20     5 Best: anderson_bjorck
    25     2     4 Best: zhang
    25     3     5 Best: toms748
-   25     4    10 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth, modab
-   25     5    10 Best: pegasus, toms748, anderson_bjorck, brenth, modab
-   25     6    10 Best: pegasus, toms748, anderson_bjorck, modab
+   25     4     9 Best: modab
+   25     5     9 Best: modab
+   25     6     9 Best: modab
    25     7     9 Best: modab
-   25     9    10 Best: pegasus, anderson_bjorck, brenth
-   25    11    10 Best: pegasus, anderson_bjorck, brenth, modab
+   25     9     9 Best: modab
+   25    11     9 Best: modab
    25    13    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth
    25    15    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth, muller, modab, chandrupatla
    25    17    10 Best: pegasus, brent, brentq, anderson_bjorck, brenth, modab, chandrupatla
@@ -123,11 +123,11 @@ nprob     n evals Best Methods
    58     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
    59     1     8 Best: modab
    60     1    14 Best: anderson_bjorck
-   61     1     8 Best: rbp, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, modab, chandrupatla
+   61     1     8 Best: rbp, pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
    62     1    14 Best: modab, chandrupatla
    63     1     8 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth, muller, modab
    64     1     7 Best: muller
-   65     1     9 Best: muller, modab
+   65     1     9 Best: muller
    66     1     8 Best: rbp, muller
    67     1    12 Best: brent, brentq, brenth, chandrupatla
    68     1     8 Best: itp, toms748, brent, brentq, anderson_bjorck, brenth, muller, modab, chandrupatla
@@ -135,7 +135,7 @@ nprob     n evals Best Methods
    70     1     6 Best: rbp
    71     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
    72     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
-   73     1    10 Best: toms748
+   73     1    10 Best: toms748, modab
    74     1    12 Best: brenth, muller, modab
    75     1    11 Best: toms748, modab
    76     1     9 Best: toms748, brent, brentq, brenth, modab
@@ -176,7 +176,7 @@ nprob     n evals Best Methods
   109     1     9 Best: itp, brent, brentq, modab, chandrupatla
   110     1     7 Best: toms748, muller, modab
   111     1     7 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth
-  112     1    10 Best: rbp, pegasus, brent, brentq, anderson_bjorck, brenth, muller, chandrupatla
+  112     1    10 Best: rbp, pegasus, brent, brentq, anderson_bjorck, brenth, muller, modab, chandrupatla
   113     1    10 Best: brent, brentq, brenth
   114     1     7 Best: toms748, muller, modab, chandrupatla
   115     1     8 Best: muller, modab
@@ -198,7 +198,7 @@ nprob     n evals Best Methods
   131     1     3 Best: blendtf
   132     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, brentq, anderson_bjorck, brenth
   133     1     3 Best: regula_falsi, illinois, pegasus, toms748, brent, anderson_bjorck
-  134     1     9 Best: pegasus, toms748, brent, brentq, anderson_bjorck, brenth, chandrupatla
+  134     1     8 Best: modab
   135     1    12 Best: itp
   136     1     9 Best: muller
   137     1     7 Best: muller, chandrupatla
@@ -218,7 +218,7 @@ nprob     n evals Best Methods
   151     1    11 Best: toms748
   152     1     5 Best: anderson_bjorck
   153     1    10 Best: brenth
-  154     1    11 Best: anderson_bjorck
+  154     1    10 Best: modab
   155     1    10 Best: bdqrf, rbp, muller
   156     1     7 Best: pegasus, brent, brentq, anderson_bjorck, brenth, muller
   157     1    12 Best: chandrupatla

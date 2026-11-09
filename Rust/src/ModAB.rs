@@ -80,34 +80,43 @@ fn ab_factor(y3: f64, y_moved: f64) -> f64 {
 }
 
 // Root of the linear-fractional model  f(x) = (x - r) / (p*x + q)  through the bracket
-// (x1, f1), (x2, f2) and a third point (x3, f3) outside it, or NaN when it is unusable.
-// The model fits both nearly-quadratic shapes and functions with a pole; for a straight
-// line it gives the secant point. With w = x2 - x1, u = x3 - x1 and the residuals relative
-// to f2, q1 = f1/f2 and q3 = f3/f2 (so the step does not depend on the scale of f), and
-// c = 1 - q1, the root is
+// (x1, y1), (x2, y2) and a third point (x3, f3) outside it. The bracket ordinates are the
+// A&B-corrected residuals and f3 is the true residual of the dropped endpoint. The model fits
+// both nearly-quadratic shapes and functions with a pole; for a straight line it gives the
+// secant point. With w = x2 - x1, u = x3 - x1 and the residuals relative to y2,
+// q1 = y1/y2 and q3 = f3/y2 (so the step does not depend on the scale of f), and
+// c = 1 - q1 > 1, the root is
 //     r = x1 + t,   t = w*u*q1*(q3 - 1) / (w*(q3 - q1) - u*q3*c),
-// two divisions per step, 1/f2 and this one. The step is used only if it moves the secant
-// point xs = x1 - w*q1/c by at most half the distance to the nearer endpoint (on a plateau
-// the model degenerates towards a step function). Multiplied by c, that test reads
-//     |t*c + w*q1| <= w*min(|q1|, 1)/2,
-// with no division; it also rejects NaN and infinite values.
-// When the step is unusable, including a NaN third point (no endpoint dropped on that
-// side yet), it returns the A&B secant point through (x1, y1), (x2, y2) instead.
+// two divisions per step, 1/y2 and this one. The A&B secant point is xs = x1 - w*q1/c and
+// its distance to the nearer endpoint is d = w*min(|q1|, 1)/c. The step is kept within
+// 0.7*d of xs (on a plateau the model degenerates towards a step function), so it stays
+// at least 0.3*d inside the bracket. Multiplied by c, the test reads
+//     |t*c + w*q1| <= 0.7*w*min(|q1|, 1),
+// with no division. A step outside it is clamped to xs +- 0.7*d on the side the model
+// points to; this did better than the A&B secant in randomized-bracket tests and on
+// 200,000 random functions, where factors 0.6 to 0.9 differed little.
+// A step that rounds onto x2, or a NaN step (from overflow in t, or a NaN third point
+// when no endpoint was dropped on that side yet), returns x2. Its residual is already
+// stored, so the caller reuses it instead of evaluating f; the closing step may first
+// move the point to x2 - epsx/2.
 #[inline]
-#[allow(clippy::too_many_arguments)]
-pub fn rational_step(x1: f64, f1: f64, x2: f64, f2: f64, x3: f64, f3: f64, y1: f64, y2: f64) -> f64 {
-    let k = 1.0 / f2;
-    let (q1, q3) = (f1 * k, f3 * k);
+pub fn rational_step(x1: f64, y1: f64, x2: f64, y2: f64, x3: f64, f3: f64) -> f64 {
+    let k = 1.0 / y2;
+    let (q1, q3) = (y1 * k, f3 * k);
     let c = 1.0 - q1;
     let (w, u) = (x2 - x1, x3 - x1);
-    let t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
-    let a1 = q1.abs();
-    let x = x1 + t;
-    if (t * c + w * q1).abs() <= 0.5 * w * (if a1 < 1.0 { a1 } else { 1.0 }) && x <= x2 {
-        x
-    } else {
-        safe_secant(x1, y1, x2, y2)
+    let mut t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+    let a = q1.abs();
+    let lim = 0.7 * (if a < 1.0 { w * a } else { w }); // c * 0.7 * d
+    let dev = t * c + w * q1; // c * (x - xs)
+    // Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
+    // then t is NaN too), so x is NaN and the test below returns x2.
+    if dev.abs() > lim {
+        t = (lim.copysign(dev) - w * q1) / c;
     }
+    let x = x1 + t;
+    // Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too.
+    if x < x2 { x } else { x2 }
 }
 
 // True if the second divided differences on the left (xl, x1, x2) and on the right
@@ -141,10 +150,11 @@ pub fn curvature_changes_sign(
 // The overflow- and NaN-safe form of the interpolation lives in the shared
 // safeguards above; the switching test is written so that it cannot overflow.
 // The A&B phase adds two changes:
-//     1. Rational correction: the A&B secant is replaced by the secant through the true
-//        residuals, corrected for curvature by a 3-point rational model through the bracket
-//        and the endpoint it most recently dropped. The A&B secant remains the fallback when
-//        the correction is unusable or the curvature changes sign within the bracket.
+//     1. Rational correction: the A&B secant is corrected for curvature by a 3-point rational
+//        model through the A&B-corrected bracket and the endpoint it most recently dropped,
+//        with the step kept within 0.7 of the distance from the A&B secant point to the
+//        nearer endpoint. The plain A&B secant is used when the curvature changes sign
+//        within the bracket.
 //     2. Closing step: an A&B point is kept at least epsx/2 away from the endpoint that was
 //        just evaluated, so that one-sided convergence still closes the bracket.
 // F(x) must be continuous and sign(F(x1)) != sign(F(x2))
@@ -206,9 +216,9 @@ where
             let mut xc = if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr) {
                 safe_secant(x1, y1, x2, y2)
             } else if last == 1 {
-                rational_step(x1, f1, x2, f2, xl, fl, y1, y2)
+                rational_step(x1, y1, x2, y2, xl, fl)
             } else {
-                rational_step(x1, f1, x2, f2, xr, fr, y1, y2)
+                rational_step(x1, y1, x2, y2, xr, fr)
             };
             epsx = xtol * xc.abs().max(1.0);
             // Closing step: when A&B converges from one side, its next point lands within epsx/2
