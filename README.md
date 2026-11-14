@@ -28,7 +28,7 @@ The ModAB algorithm combines the reliability of bisection with the speed of the 
 6. **Closing step** - Keeps each new point at least half the tolerance away from the endpoint just evaluated, so a one-sided convergence still closes the bracket
 7. **Adaptive fallback** - Returns to bisection if progress slows
 
-This hybrid approach achieves superlinear convergence while maintaining the worst-case optimality of bisection.
+This hybrid approach achieves superlinear convergence of order from 1.618 to 1.839 while maintaining the worst-case optimality of bisection.
 The current version with steps 5 and 6 is called **Rational ModAB (RModAB)**.
 
 ## ⏱️ Benchmarks

@@ -36,25 +36,26 @@ end
 # points to; this did better than the A&B secant in randomized-bracket tests and on
 # 200,000 random functions, where factors 0.6 to 0.9 differed little. The factor is
 # written as 7/10 so that it keeps the type of the bracket (e.g. Float32).
-# A step that rounds onto x2, or a NaN step (from overflow in t), returns x2. Its residual
-# is already stored, so the caller reuses it instead of evaluating f; the closing step may
-# first move the point to x2 - ϵ.
+# A non-finite 1/y2 (a zero or subnormal y2) or a non-finite t (overflow in its terms) falls
+# back to the A&B secant. A step that rounds onto x2 returns x2. Its residual is already
+# stored, so the caller reuses it instead of evaluating f; the closing step may first move
+# the point to x2 - ϵ.
 @inline function rational_step(x1, y1, x2, y2, x3, f3)
     k = inv(y2)
+    isfinite(k) || return safe_secant(x1, y1, x2, y2)
     q1, q3 = y1 * k, f3 * k
     c = 1 - q1
     w, u = x2 - x1, x3 - x1
     t = w * u * q1 * (q3 - 1) / (w * (q3 - q1) - u * q3 * c)
+    isfinite(t) || return safe_secant(x1, y1, x2, y2)
     a = abs(q1)
     lim = (a < one(a) ? w * a : w) * 7 / 10 # c * 0.7 * d
     dev = t * c + w * q1                    # c * (x - xs)
-    # Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
-    # then t is NaN too), so x is NaN and the test below returns x2.
-    if abs(dev) > lim
+    if abs(dev) > lim # Clamp: t = ts +- 0.7*d
         t = ((dev < zero(dev) ? -lim : lim) - w * q1) / c
     end
     x = x1 + t
-    # Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too.
+    # Rounding can put x on x2 when the bracket is a few ulps wide.
     return x < x2 ? x : x2
 end
 
@@ -77,7 +78,7 @@ end
 ModAB (Modified Anderson-Bjork)
 
 Use the [ModAB method](https://iopscience.iop.org/article/10.1088/1757-899X/1276/1/012010/) to find a root of a bracketed
-function, with a convergence rate between 1.7 and 1.8.
+function, with a convergence rate between 1.618 and 1.839.
 
 The method was introduced in the paper "Modified Anderson-Bjork's method for solving non-linear equations
 in structural mechanics" (https://doi.org/10.1088/1757-899X/1276/1/012010) by

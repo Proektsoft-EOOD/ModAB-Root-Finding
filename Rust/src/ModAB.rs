@@ -95,27 +95,33 @@ fn ab_factor(y3: f64, y_moved: f64) -> f64 {
 // with no division. A step outside it is clamped to xs +- 0.7*d on the side the model
 // points to; this did better than the A&B secant in randomized-bracket tests and on
 // 200,000 random functions, where factors 0.6 to 0.9 differed little.
-// A step that rounds onto x2, or a NaN step (from overflow in t, or a NaN third point
-// when no endpoint was dropped on that side yet), returns x2. Its residual is already
-// stored, so the caller reuses it instead of evaluating f; the closing step may first
-// move the point to x2 - epsx/2.
+// A non-finite 1/y2 (a zero or subnormal y2) or a non-finite t (overflow in its terms, or a
+// NaN third point when no endpoint was dropped on that side yet) falls back to the A&B
+// secant. A step that rounds onto x2 returns x2. Its residual is already stored, so the
+// caller reuses it instead of evaluating f; the closing step may first move the point to
+// x2 - epsx/2.
 #[inline]
 pub fn rational_step(x1: f64, y1: f64, x2: f64, y2: f64, x3: f64, f3: f64) -> f64 {
     let k = 1.0 / y2;
+    if !k.is_finite() {
+        return safe_secant(x1, y1, x2, y2);
+    }
     let (q1, q3) = (y1 * k, f3 * k);
     let c = 1.0 - q1;
     let (w, u) = (x2 - x1, x3 - x1);
     let mut t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+    if !t.is_finite() {
+        return safe_secant(x1, y1, x2, y2);
+    }
     let a = q1.abs();
     let lim = 0.7 * (if a < 1.0 { w * a } else { w }); // c * 0.7 * d
     let dev = t * c + w * q1; // c * (x - xs)
-    // Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
-    // then t is NaN too), so x is NaN and the test below returns x2.
     if dev.abs() > lim {
+        // Clamp: t = ts +- 0.7*d
         t = (lim.copysign(dev) - w * q1) / c;
     }
     let x = x1 + t;
-    // Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too.
+    // Rounding can put x on x2 when the bracket is a few ulps wide.
     if x < x2 { x } else { x2 }
 }
 

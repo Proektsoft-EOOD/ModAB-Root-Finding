@@ -3108,7 +3108,8 @@
 !  `xs +- 0.7*d` on the side the model points to; this did better than the A&B secant in
 !  randomized-bracket tests and on 200,000 random functions, where factors 0.6 to
 !  0.9 differed little.
-!  A NaN `t` fails the clamp test and then `x < x2`, so it returns the A&B secant point.
+!  A non-finite `1/y2` (a zero or subnormal `y2`) or a non-finite `t` (overflow in its
+!  terms) returns the A&B secant point, and so does a step that rounds onto `x2`.
 
     pure function rational_step(x1,y1,x2,y2,x3,f3) result(x)
 
@@ -3125,15 +3126,23 @@
     real(wp) :: k,q1,q3,c,w,u,t,lim,dev
 
     k = 1.0_wp/y2
+    if (.not. is_finite(k)) then
+        x = safe_secant(x1,y1,x2,y2)
+        return
+    end if
     q1 = y1*k
     q3 = f3*k
     c = 1.0_wp - q1
     w = x2 - x1
     u = x3 - x1
     t = w*u*q1*(q3 - 1.0_wp)/(w*(q3 - q1) - u*q3*c)
+    if (.not. is_finite(t)) then
+        x = safe_secant(x1,y1,x2,y2)
+        return
+    end if
     lim = 0.7_wp*w*min(abs(q1),1.0_wp)   ! c*0.7*d
     dev = t*c + w*q1                     ! c*(x - xs)
-    ! Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t.
+    ! Clamp: t = ts +- 0.7*d.
     if (abs(dev) > lim) t = (sign(lim,dev) - w*q1)/c
     x = x1 + t
     ! Rounding can put x on x2 when the bracket is a few ulps wide.

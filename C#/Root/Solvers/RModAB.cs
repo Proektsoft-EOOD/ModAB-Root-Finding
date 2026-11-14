@@ -184,28 +184,34 @@ namespace Proektsoft.Root
         // with no division. A step outside it is clamped to xs ± 0.7*d on the side the model
         // points to; this did better than the AB secant in randomized-bracket tests and on
         // 200,000 random functions, where factors 0.6 to 0.9 differed little.
-        // A step that rounds onto x2, or a NaN step (from overflow in t, or a NaN third point
-        // when no endpoint was dropped on that side yet), returns x2. Its residual is already
-        // stored, so the caller reuses it instead of evaluating f; the closing step may first
-        // move the point to x2 - eps/2.
+        // A non-finite 1/y2 (a zero or subnormal y2) or a non-finite t (overflow in its terms, or a
+        // NaN third point when no endpoint was dropped on that side yet) falls back to the AB
+        // secant. A step that rounds onto x2 returns x2. Its residual is already stored, so the
+        // caller reuses it instead of evaluating f; the closing step may first move the point to
+        // x2 - eps/2.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static double RationalStep(double x1, double y1, double x2, double y2, double x3, double y3)
         {
             var k = 1.0 / y2;
+            if (!double.IsFinite(k))
+                return Node.SafeSecant(x1, y1, x2, y2);
+
             double q1 = y1 * k, q3 = y3 * k;
             var c = 1.0 - q1;
             double w = x2 - x1, u = x3 - x1;
             var t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+            if (!double.IsFinite(t))
+                return Node.SafeSecant(x1, y1, x2, y2);
+
             var a = Math.Abs(q1);
             var lim = 0.7 * (a < 1.0 ? w * a : w); // c * 0.7 * d
             var dev = t * c + w * q1;              // c * (x - xs)
-            // Clamp: t = ts ± 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
-            // then t is NaN too), so x is NaN and the test below returns x2.
+            // Clamp: t = ts ± 0.7*d.
             if (Math.Abs(dev) > lim)
                 t = (Math.CopySign(lim, dev) - w * q1) / c;
 
             var x = x1 + t;
-            // Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too.
+            // Rounding can put x on x2 when the bracket is a few ulps wide.
             return x < x2 ? x : x2;
         }
 

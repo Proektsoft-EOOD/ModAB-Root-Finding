@@ -134,26 +134,35 @@ static inline double ab_factor(double y3, double y_moved) {
    with no division. A step outside it is clamped to xs +- 0.7*d on the side the model
    points to; this did better than the A&B secant in randomized-bracket tests and on
    200,000 random functions, where factors 0.6 to 0.9 differed little.
-   A step that rounds onto x2, or a NaN step (from overflow in t, or a NaN third point
-   when no endpoint was dropped on that side yet), returns x2. Its residual is already
-   stored, so the caller reuses it instead of evaluating f; the closing step may first
-   move the point to x2 - epsx/2. */
+   A non-finite 1/y2 (a zero or subnormal y2) or a non-finite t (overflow in its terms, or a
+   NaN third point when no endpoint was dropped on that side yet) falls back to the A&B
+   secant. A step that rounds onto x2 returns x2. Its residual is already stored, so the
+   caller reuses it instead of evaluating f; the closing step may first move the point to
+   x2 - epsx/2. */
 static inline double rational_step(double x1, double y1, double x2, double y2,
                                    double x3, double f3) {
     double k = 1.0 / y2;
-    double q1 = y1 * k, q3 = f3 * k;
-    double c = 1.0 - q1;
-    double w = x2 - x1, u = x3 - x1;
-    double t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
-    double a = fabs(q1);
-    double lim = 0.7 * (a < 1.0 ? w * a : w); /* c * 0.7 * d */
-    double dev = t * c + w * q1;              /* c * (x - xs) */
-    /* Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
-       then t is NaN too), so x is NaN and the test below returns x2. */
-    if (fabs(dev) > lim)
+    double q1, q3, c, w, u, t, a, lim, dev, x;
+    if (!isfinite(k))
+        return safe_secant(x1, y1, x2, y2);
+
+    q1 = y1 * k;
+    q3 = f3 * k;
+    c = 1.0 - q1;
+    w = x2 - x1;
+    u = x3 - x1;
+    t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+    if (!isfinite(t))
+        return safe_secant(x1, y1, x2, y2);
+
+    a = fabs(q1);
+    lim = 0.7 * (a < 1.0 ? w * a : w); /* c * 0.7 * d */
+    dev = t * c + w * q1;              /* c * (x - xs) */
+    if (fabs(dev) > lim) /* Clamp: t = ts +- 0.7*d */
         t = (copysign(lim, dev) - w * q1) / c;
-    double x = x1 + t;
-    /* Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too. */
+
+    x = x1 + t;
+    /* Rounding can put x on x2 when the bracket is a few ulps wide. */
     return x < x2 ? x : x2;
 }
 

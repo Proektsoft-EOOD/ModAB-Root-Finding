@@ -87,28 +87,31 @@ inline fn abFactor(y3: f64, y_moved: f64) f64 {
 /// with no division. A step outside it is clamped to xs +- 0.7*d on the side the model
 /// points to; this did better than the A&B secant in randomized-bracket tests and on
 /// 200,000 random functions, where factors 0.6 to 0.9 differed little.
-/// A step that rounds onto x2, or a NaN step (from overflow in t, or a NaN third point
-/// when no endpoint was dropped on that side yet), returns x2. Its residual is already
-/// stored, so the caller reuses it instead of evaluating f; the closing step may first
-/// move the point to x2 - epsx/2.
+/// A non-finite 1/y2 (a zero or subnormal y2) or a non-finite t (overflow in its terms, or a
+/// NaN third point when no endpoint was dropped on that side yet) falls back to the A&B
+/// secant. A step that rounds onto x2 returns x2. Its residual is already stored, so the
+/// caller reuses it instead of evaluating f; the closing step may first move the point to
+/// x2 - epsx/2.
 pub inline fn rationalStep(x1: f64, y1: f64, x2: f64, y2: f64, x3: f64, f3: f64) f64 {
     const k = 1.0 / y2;
+    if (!std.math.isFinite(k)) return safeSecant(x1, y1, x2, y2);
+
     const q1 = y1 * k;
     const q3 = f3 * k;
     const c = 1.0 - q1;
     const w = x2 - x1;
     const u = x3 - x1;
     var t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+    if (!std.math.isFinite(t)) return safeSecant(x1, y1, x2, y2);
+
     const a = @abs(q1);
     const lim = 0.7 * (if (a < 1.0) w * a else w); // c * 0.7 * d
     const dev = t * c + w * q1; // c * (x - xs)
-    // Clamp: t = ts +- 0.7*d. False for a NaN dev, which only comes from a NaN t (or q1, and
-    // then t is NaN too), so x is NaN and the test below returns x2.
-    if (@abs(dev) > lim) {
+    if (@abs(dev) > lim) { // Clamp: t = ts +- 0.7*d
         t = (std.math.copysign(lim, dev) - w * q1) / c;
     }
     const x = x1 + t;
-    // Rounding can put x on x2 when the bracket is a few ulps wide; NaN fails the test too.
+    // Rounding can put x on x2 when the bracket is a few ulps wide.
     return if (x < x2) x else x2;
 }
 

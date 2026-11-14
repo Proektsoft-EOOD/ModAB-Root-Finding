@@ -79,8 +79,9 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
         |t*c + w*q1| <= 0.7*w*min(|q1|, 1),
     with no division. A step outside it is clamped to xs +- 0.7*d on the side the model points
     to; this did better than the A&B secant in randomized-bracket tests and on 200,000 random
-    functions, where factors 0.6 to 0.9 differed little. A NaN step, or one that rounds onto
-    x2, gives x2, whose residual is already stored. The curvature changes sign
+    functions, where factors 0.6 to 0.9 differed little. A non-finite 1/y2 or t falls back to
+    the A&B secant; a step that rounds onto x2 gives x2, whose residual is already stored.
+    The curvature changes sign
     within the bracket when the second divided differences on the left (xl, x1, x2) and on
     the right (x1, x2, xr) have opposite signs. Scaled by positive factors, they are
         pl = (f2 - f1)*(x1 - xl) - (f1 - fl)*w,   pr = (fr - f2)*w - (f2 - f1)*(xr - x2),
@@ -127,7 +128,7 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
         else:
             # Rational correction through the endpoint dropped by the last update, or the A&B
             # secant when the curvature changes sign within the bracket. A missing endpoint is
-            # NaN, which fails the curvature test and makes the rational step NaN.
+            # NaN, which fails the curvature test and sends the rational step to the A&B secant.
             df = f2 - f1
             pl = df * (x1 - xl) - (f1 - fl) * dx
             pr = (fr - f2) * dx - df * (xr - x2)
@@ -140,32 +141,31 @@ def modAB_root(f, x1, x2, y, xtol=1e-14, ytol=0.0, maxiter=200):
                     xp, fp = xr, fr
                 # Rational step through the A&B-corrected bracket (x1, y1), (x2, y2) and the
                 # dropped endpoint (xp, fp), clamped to 0.7 of the distance from the A&B secant
-                # point to the nearer endpoint; a NaN step, or one that rounds onto x2, gives x2.
-                # Python raises where C gives inf or NaN, so those cases are spelled out: a zero
-                # y2 makes the C step NaN, and a zero denominator gives an infinite or NaN t.
-                x3 = x2
+                # point to the nearer endpoint. A non-finite 1/y2 (a zero or subnormal y2) or a
+                # non-finite t (overflow in its terms, or a NaN third point) falls back to the
+                # A&B secant; a step that rounds onto x2 gives x2. Python raises on a division
+                # by zero, where C gives inf or NaN, so a zero y2 or denominator is tested first.
+                t = _NAN
                 if y2 != 0.0:
                     k = 1.0 / y2  # Residuals relative to y2, so the step does not depend on the scale of f
-                    q1 = y1 * k
-                    qp = fp * k
-                    c = 1.0 - q1
-                    u = xp - x1
-                    num = dx * u * q1 * (qp - 1.0)
-                    den = dx * (qp - q1) - u * qp * c
-                    if den != 0.0:
-                        t = num / den
-                    elif num != 0.0:
-                        t = math.copysign(_INF, num) * math.copysign(1.0, den)
-                    else:
-                        t = _NAN
+                    if math.isfinite(k):
+                        q1 = y1 * k
+                        qp = fp * k
+                        c = 1.0 - q1
+                        u = xp - x1
+                        den = dx * (qp - q1) - u * qp * c
+                        if den != 0.0:
+                            t = dx * u * q1 * (qp - 1.0) / den
+                if math.isfinite(t):
                     a = abs(q1)
                     lim = 0.7 * (dx * a if a < 1.0 else dx)  # c * 0.7 * d
                     dev = t * c + dx * q1  # c * (x - xs)
-                    if abs(dev) > lim:  # False for NaN: then t is NaN and the test below gives x2
+                    if abs(dev) > lim:  # Clamp: t = ts +- 0.7*d
                         t = (math.copysign(lim, dev) - dx * q1) / c
                     t += x1
-                    if t < x2:
-                        x3 = t
+                    x3 = t if t < x2 else x2
+                else:
+                    x3 = safe_secant(x1, y1, x2, y2)
             epsx = xtol * max(abs(x3), 1)
             # Closing step: when A&B converges from one side, its next point lands within epsx/2
             # of the endpoint just evaluated and the bracket does not shrink. A step of epsx/2
