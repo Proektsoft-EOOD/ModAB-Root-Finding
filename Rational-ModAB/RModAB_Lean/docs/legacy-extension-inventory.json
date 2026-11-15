@@ -1,0 +1,800 @@
+[
+  {
+    "name": "ModAB.Convergence.EndpointSide",
+    "module": "TopEntry",
+    "line": 9,
+    "kind": "inductive",
+    "source": "inductive EndpointSide where\n  | left | right\n  deriving DecidableEq"
+  },
+  {
+    "name": "ModAB.Convergence.abFactor",
+    "module": "TopEntry",
+    "line": 14,
+    "kind": "def",
+    "source": "def abFactor (new old : \u211d) : \u211d :=\n  if 0 < 1-new/old then 1-new/old else 1/2"
+  },
+  {
+    "name": "ModAB.Convergence.abFactor_positive",
+    "module": "TopEntry",
+    "line": 17,
+    "kind": "theorem",
+    "source": "theorem abFactor_positive (new old : \u211d) : 0 < abFactor new old := by\n  unfold abFactor\n  split_ifs with h\n  \u00b7 exact h\n  \u00b7 norm_num"
+  },
+  {
+    "name": "ModAB.Convergence.OrdinateState",
+    "module": "TopEntry",
+    "line": 23,
+    "kind": "structure",
+    "source": "structure OrdinateState where\n  leftTrue : \u211d\n  rightTrue : \u211d\n  leftWork : \u211d\n  rightWork : \u211d\n  previous : Option EndpointSide"
+  },
+  {
+    "name": "ModAB.Convergence.recordUpdate",
+    "module": "TopEntry",
+    "line": 31,
+    "kind": "def",
+    "source": "def recordUpdate (s : OrdinateState) (moved : EndpointSide) (y : \u211d) : OrdinateState :=\n  match moved with\n  | .left => \u27e8y,s.rightTrue,y,\n      (if s.previous = some .left then abFactor y s.leftWork else 1)*s.rightWork,\n      some .left\u27e9\n  | .right => \u27e8s.leftTrue,y,\n      (if s.previous = some .right then abFactor y s.rightWork else 1)*s.leftWork,y,\n      some .right\u27e9"
+  },
+  {
+    "name": "ModAB.Convergence.recorded_side",
+    "module": "TopEntry",
+    "line": 40,
+    "kind": "theorem",
+    "source": "theorem recorded_side (s : OrdinateState) (moved : EndpointSide) (y : \u211d) :\n    (recordUpdate s moved y).previous = some moved := by cases moved <;> rfl"
+  },
+  {
+    "name": "ModAB.Convergence.opposite_side_no_correction",
+    "module": "TopEntry",
+    "line": 44,
+    "kind": "theorem",
+    "source": "theorem opposite_side_no_correction (a b u v y : \u211d) :\n    recordUpdate \u27e8a,b,u,v,some .left\u27e9 .right y = \u27e8a,y,u,y,some .right\u27e9 \u2227\n    recordUpdate \u27e8a,b,u,v,some .right\u27e9 .left y = \u27e8y,b,y,v,some .left\u27e9 := by\n  simp [recordUpdate]"
+  },
+  {
+    "name": "ModAB.Convergence.same_side_correction",
+    "module": "TopEntry",
+    "line": 50,
+    "kind": "theorem",
+    "source": "theorem same_side_correction (a b u v y : \u211d) :\n    (recordUpdate \u27e8a,b,u,v,some .left\u27e9 .left y).rightWork = abFactor y u*v \u2227\n    (recordUpdate \u27e8a,b,u,v,some .right\u27e9 .right y).leftWork = abFactor y v*u := by\n  simp [recordUpdate]"
+  },
+  {
+    "name": "ModAB.Convergence.recordUpdate_working_signs",
+    "module": "TopEntry",
+    "line": 55,
+    "kind": "theorem",
+    "source": "theorem recordUpdate_working_signs (s : OrdinateState) (moved : EndpointSide) (y : \u211d)\n    (hu : SameSign s.leftWork s.leftTrue) (hv : SameSign s.rightWork s.rightTrue)\n    (hy : y \u2260 0) :\n    SameSign (recordUpdate s moved y).leftWork (recordUpdate s moved y).leftTrue \u2227\n    SameSign (recordUpdate s moved y).rightWork (recordUpdate s moved y).rightTrue := by\n  have hp (old : \u211d) (side : EndpointSide) :\n      0 < (if s.previous = some side then abFactor y old else 1) := by\n    split_ifs\n    \u00b7 exact abFactor_positive y old\n    \u00b7 norm_num\n  cases moved with\n  | left => exact \u27e8inserted_sign hy,positive_correction hv (hp _ _)\u27e9\n  | right => exact \u27e8positive_correction hu (hp _ _),inserted_sign hy\u27e9"
+  },
+  {
+    "name": "ModAB.Convergence.top_entry_ordinates",
+    "module": "TopEntry",
+    "line": 71,
+    "kind": "theorem",
+    "source": "theorem top_entry_ordinates (a b y : \u211d) :\n    recordUpdate \u27e8a,b,a,b,none\u27e9 .left y = \u27e8y,b,y,b,some .left\u27e9 \u2227\n    recordUpdate \u27e8a,b,a,b,none\u27e9 .right y = \u27e8a,y,a,y,some .right\u27e9 := by\n  simp [recordUpdate]"
+  },
+  {
+    "name": "ModAB.Convergence.top_entry_width_policy",
+    "module": "TopEntry",
+    "line": 78,
+    "kind": "theorem",
+    "source": "theorem top_entry_width_policy {B W : \u211d} (hB : (1/2:\u211d) \u2264 B) (hW : 0 \u2264 W) (M : \u2115) :\n    W/2 \u2264 B*W \u2227 (B*W)/2 = threshold B (W/2) 1 \u2227\n    Step B M W .bisection (W/2) (.ab (W/2) 0 0) := by\n  refine \u27e8?_,?_,Step.bisectStart W\u27e9\n  \u00b7 nlinarith [mul_nonneg (sub_nonneg.mpr hB) hW]\n  \u00b7 simp [threshold]; ring"
+  },
+  {
+    "name": "ModAB.Convergence.top_entry_midpoint",
+    "module": "TopEntry",
+    "line": 86,
+    "kind": "theorem",
+    "source": "theorem top_entry_midpoint :\n    ((-3:\u211d)+1)/2 = -1 \u2227 (1:\u211d)-(-1)=2 := by norm_num"
+  },
+  {
+    "name": "ModAB.Convergence.top_left_seed",
+    "module": "TopEntry",
+    "line": 90,
+    "kind": "theorem",
+    "source": "theorem top_left_seed (a v : \u211d) :\n    recordUpdate \u27e8a,v,a,v,none\u27e9 .left (-1) = \u27e8-1,v,-1,v,some .left\u27e9 :=\n  (top_entry_ordinates a v (-1)).1"
+  },
+  {
+    "name": "ModAB.Examples.topLeftSeed",
+    "module": "TopEntry",
+    "line": 100,
+    "kind": "def",
+    "source": "def topLeftSeed (a v : \u211d) : LeftState :=\n  let s := ModAB.Convergence.recordUpdate \u27e8a,v,a,v,none\u27e9 .left (-1)\n  \u27e81,s.rightWork,decide (s.previous = some .left)\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.topLeftSeed_eq",
+    "module": "TopEntry",
+    "line": 104,
+    "kind": "theorem",
+    "source": "theorem topLeftSeed_eq (a v : \u211d) : topLeftSeed a v = \u27e81,v,true\u27e9 := by\n  simp [topLeftSeed,ModAB.Convergence.recordUpdate]"
+  },
+  {
+    "name": "ModAB.Examples.topOneError",
+    "module": "TopOneSided",
+    "line": 9,
+    "kind": "def",
+    "source": "def topOneError : \u2115\u2192\u211d\n  | 0 => 1/3\n  | n+1 => quadraticMap (topOneError n)"
+  },
+  {
+    "name": "ModAB.Examples.topOneState",
+    "module": "TopOneSided",
+    "line": 13,
+    "kind": "def",
+    "source": "def topOneState (n : \u2115) : LeftState := \u27e8topOneError n,1+topOneError n,true\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.topOne_positive",
+    "module": "TopOneSided",
+    "line": 15,
+    "kind": "theorem",
+    "source": "theorem topOne_positive (n : \u2115) : 0<topOneError n := by\n  induction n with\n  | zero => norm_num [topOneError]\n  | succ n ih => exact quadraticMap_positive ih"
+  },
+  {
+    "name": "ModAB.Examples.topOne_step",
+    "module": "TopOneSided",
+    "line": 20,
+    "kind": "theorem",
+    "source": "theorem topOne_step (n : \u2115) : leftStep 1 (topOneState n)=topOneState (n+1) :=\n  quadratic_step (topOne_positive n)"
+  },
+  {
+    "name": "ModAB.Examples.topOne_first_steps",
+    "module": "TopOneSided",
+    "line": 23,
+    "kind": "theorem",
+    "source": "theorem topOne_first_steps :\n    leftOrbit 1 \u27e81,2,true\u27e9 1=topOneState 0 \u2227\n    topOneError 1=1/15 \u2227 topOneError 2=1/255 \u2227 topOneError 3=1/65535 := by\n  norm_num [leftOrbit,leftStep,leftTrial,topOneState,topOneError,quadraticMap]"
+  },
+  {
+    "name": "ModAB.Examples.topOne_orbit",
+    "module": "TopOneSided",
+    "line": 28,
+    "kind": "theorem",
+    "source": "theorem topOne_orbit (n : \u2115) : leftOrbit 1 \u27e81,2,true\u27e9 (n+1)=topOneState n := by\n  induction n with\n  | zero => exact topOne_first_steps.1\n  | succ n ih =>\n    change leftStep 1 (leftOrbit 1 \u27e81,2,true\u27e9 (n+1))=topOneState (n+1)\n    rw [ih,topOne_step]"
+  },
+  {
+    "name": "ModAB.Examples.topOne_tendsto",
+    "module": "TopOneSided",
+    "line": 35,
+    "kind": "theorem",
+    "source": "theorem topOne_tendsto : Tendsto topOneError atTop (\ud835\udcdd 0) :=\n  geometric_tendsto (fun n=>(topOne_positive n).le) (by norm_num)\n    (by norm_num) (fun n=>quadraticMap_half (topOne_positive n).le)"
+  },
+  {
+    "name": "ModAB.Examples.topOne_quadratic_order",
+    "module": "TopOneSided",
+    "line": 39,
+    "kind": "theorem",
+    "source": "theorem topOne_quadratic_order :\n    Tendsto (fun n=>topOneError (n+1)/(topOneError n)^2) atTop (\ud835\udcdd 1) := by\n  have hq (n : \u2115) : topOneError (n+1)/(topOneError n)^2=1/(1+2*topOneError n) := by\n    have he:=ne_of_gt (topOne_positive n)\n    simp only [topOneError,quadraticMap]\n    field_simp\n  simp_rw [hq]\n  have ht := (tendsto_const_nhds : Tendsto (fun _ : \u2115=>(1:\u211d)) atTop (\ud835\udcdd 1)).div\n    ((topOne_tendsto.const_mul 2).const_add 1) (by norm_num : (1:\u211d)+2*0\u22600)\n  change Tendsto (fun n=>(1:\u211d)/(1+2*topOneError n)) atTop (\ud835\udcdd (1/(1+2*(0:\u211d)))) at ht\n  simpa only [mul_zero,add_zero,div_one,one_div] using ht"
+  },
+  {
+    "name": "ModAB.Examples.topOneFullError",
+    "module": "TopOneSided",
+    "line": 51,
+    "kind": "def",
+    "source": "def topOneFullError (j : \u2115) : \u211d := (leftOrbit 1 \u27e81,2,true\u27e9 j).e"
+  },
+  {
+    "name": "ModAB.Examples.topOne_full_tail",
+    "module": "TopOneSided",
+    "line": 53,
+    "kind": "theorem",
+    "source": "theorem topOne_full_tail (n : \u2115) : topOneFullError (n+1)=topOneError n := by\n  simp only [topOneFullError,topOne_orbit,topOneState]"
+  },
+  {
+    "name": "ModAB.Examples.topOne_full_positive",
+    "module": "TopOneSided",
+    "line": 56,
+    "kind": "theorem",
+    "source": "theorem topOne_full_positive (j : \u2115) : 0<topOneFullError j := by\n  cases j with\n  | zero => norm_num [topOneFullError,leftOrbit]\n  | succ n => rw [topOne_full_tail]; exact topOne_positive n"
+  },
+  {
+    "name": "ModAB.Examples.topOne_full_decrease",
+    "module": "TopOneSided",
+    "line": 61,
+    "kind": "theorem",
+    "source": "theorem topOne_full_decrease (j : \u2115) : topOneFullError (j+1)<topOneFullError j := by\n  cases j with\n  | zero => norm_num [topOneFullError,leftOrbit,leftStep,leftTrial]\n  | succ n =>\n    rw [topOne_full_tail,topOne_full_tail]\n    change quadraticMap (topOneError n)<topOneError n\n    linarith [quadraticMap_half (topOne_positive n).le,topOne_positive n]"
+  },
+  {
+    "name": "ModAB.Examples.topOne_width_limit",
+    "module": "TopOneSided",
+    "line": 69,
+    "kind": "theorem",
+    "source": "theorem topOne_width_limit : Tendsto (fun j=>1+topOneFullError j) atTop (\ud835\udcdd 1) := by\n  apply (tendsto_add_atTop_iff_nat 1).mp\n  simpa only [topOne_full_tail,add_zero] using topOne_tendsto.const_add 1"
+  },
+  {
+    "name": "ModAB.Examples.topOne_actual_update",
+    "module": "TopOneSided",
+    "line": 73,
+    "kind": "theorem",
+    "source": "theorem topOne_actual_update (j : \u2115) :\n    ModAB.Convergence.Updated oneFunction (-topOneFullError j) 1\n      (-topOneFullError (j+1)) (-topOneFullError (j+1)) 1 \u2227\n    -topOneFullError (j+1)\u2208Ioo (-topOneFullError j) 1 \u2227\n    oneFunction (-topOneFullError (j+1))\u22600 \u2227\n    0<1-topOneFullError (j+1)/topOneFullError j := by\n  have he:=topOne_full_positive j\n  have hn:=topOne_full_positive (j+1)\n  have hd:=topOne_full_decrease j\n  refine \u27e8left_updated (p:=1) he hn (by simpa using oneFunction_left he.le)\n    (by simpa using oneFunction_left hn.le),\u27e8by linarith,by linarith\u27e9,?_,?_\u27e9\n  \u00b7 rw [oneFunction_left hn.le]; linarith\n  \u00b7 linarith [(div_lt_one he).mpr hd]"
+  },
+  {
+    "name": "ModAB.Examples.topOne_top_entry",
+    "module": "TopOneSided",
+    "line": 88,
+    "kind": "theorem",
+    "source": "theorem topOne_top_entry :\n    ModAB.Convergence.Updated oneFunction (-3) 1 (-1) (-1) 1 \u2227\n    topLeftSeed (-3) (2) = \u27e81,2,true\u27e9 := by\n  constructor\n  \u00b7 norm_num [ModAB.Convergence.Updated,oneFunction_formula]\n  \u00b7 exact topLeftSeed_eq _ _"
+  },
+  {
+    "name": "ModAB.Examples.topCounterPair",
+    "module": "TopUncapped",
+    "line": 10,
+    "kind": "def",
+    "source": "def topCounterPair : \u2115\u2192\u211d\u00d7\u211d\n  | 0=>(2664111/8512544,24001/36692)\n  | n+1=>let s:=topCounterPair n; let r:=phi s.1 s.2; (s.1*r,r)"
+  },
+  {
+    "name": "ModAB.Examples.topCounterError",
+    "module": "TopUncapped",
+    "line": 14,
+    "kind": "def",
+    "source": "def topCounterError (n : \u2115) : \u211d := (topCounterPair n).1"
+  },
+  {
+    "name": "ModAB.Examples.topCounterRatio",
+    "module": "TopUncapped",
+    "line": 15,
+    "kind": "def",
+    "source": "def topCounterRatio (n : \u2115) : \u211d := (topCounterPair n).2"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_recurrence",
+    "module": "TopUncapped",
+    "line": 17,
+    "kind": "theorem",
+    "source": "theorem topCounter_recurrence (n : \u2115) :\n    topCounterRatio (n+1)=phi (topCounterError n) (topCounterRatio n) \u2227\n    topCounterError (n+1)=topCounterError n*topCounterRatio (n+1) := by\n  constructor <;> rfl"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_invariant",
+    "module": "TopUncapped",
+    "line": 22,
+    "kind": "theorem",
+    "source": "theorem topCounter_invariant (n : \u2115) :\n    0<topCounterError n \u2227 topCounterError n\u22642/5 \u2227 topCounterRatio n\u2208Icc (1/2:\u211d) (7/10) := by\n  induction n with\n  | zero=>norm_num [topCounterError,topCounterRatio,topCounterPair]\n  | succ n ih=>\n    have hp:=phi_region \u27e8ih.1.le,ih.2.1\u27e9 ih.2.2\n    have hr : topCounterRatio (n+1)\u2208Icc (1/2:\u211d) (7/10):=by\n      rw [(topCounter_recurrence n).1]\n      constructor <;> linarith [hp.1,hp.2]\n    have hpos : 0<topCounterRatio (n+1):=by linarith [hr.1]\n    rw [(topCounter_recurrence n).2]\n    exact \u27e8mul_pos ih.1 hpos,by nlinarith [hr.2],hr\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_error_shrinks",
+    "module": "TopUncapped",
+    "line": 35,
+    "kind": "theorem",
+    "source": "theorem topCounter_error_shrinks (n : \u2115) :\n    topCounterError (n+1)\u2264(7/10)*topCounterError n := by\n  rw [(topCounter_recurrence n).2]\n  nlinarith [(topCounter_invariant n).1,(topCounter_invariant (n+1)).2.2.2]"
+  },
+  {
+    "name": "ModAB.Examples.topCounterError_tendsto",
+    "module": "TopUncapped",
+    "line": 40,
+    "kind": "theorem",
+    "source": "theorem topCounterError_tendsto : Tendsto topCounterError atTop (\ud835\udcdd 0) :=\n  geometric_tendsto (fun n=>(topCounter_invariant n).1.le) (by norm_num)\n    (by norm_num) topCounter_error_shrinks"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_width_limit",
+    "module": "TopUncapped",
+    "line": 44,
+    "kind": "theorem",
+    "source": "theorem topCounter_width_limit : Tendsto (fun n=>1+topCounterError n) atTop (\ud835\udcdd 1) := by\n  simpa using topCounterError_tendsto.const_add 1"
+  },
+  {
+    "name": "ModAB.Examples.topCounterPrevious",
+    "module": "TopUncapped",
+    "line": 47,
+    "kind": "def",
+    "source": "def topCounterPrevious : \u2115\u2192\u211d\n  | 0=>111/232\n  | n+1=>topCounterError n"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_ratio_identity",
+    "module": "TopUncapped",
+    "line": 51,
+    "kind": "theorem",
+    "source": "theorem topCounter_ratio_identity (n : \u2115) :\n    topCounterError n=topCounterRatio n*topCounterPrevious n := by\n  cases n with\n  | zero=>norm_num [topCounterError,topCounterRatio,topCounterPair,topCounterPrevious]\n  | succ n=>simpa only [topCounterPrevious,mul_comm] using (topCounter_recurrence n).2"
+  },
+  {
+    "name": "ModAB.Examples.topCounterPrevious_positive",
+    "module": "TopUncapped",
+    "line": 57,
+    "kind": "theorem",
+    "source": "theorem topCounterPrevious_positive (n : \u2115) : 0<topCounterPrevious n := by\n  cases n with\n  | zero=>norm_num [topCounterPrevious]\n  | succ n=>exact (topCounter_invariant n).1"
+  },
+  {
+    "name": "ModAB.Examples.topCounterState",
+    "module": "TopUncapped",
+    "line": 62,
+    "kind": "def",
+    "source": "def topCounterState (n : \u2115) : LeftState :=\n  \u27e8topCounterError n,(1+topCounterError n)*(topCounterPrevious n+topCounterError n),true\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_state_step",
+    "module": "TopUncapped",
+    "line": 65,
+    "kind": "theorem",
+    "source": "theorem topCounter_state_step (n : \u2115) : leftStep 2 (topCounterState n)=topCounterState (n+1) := by\n  have hi:=topCounter_invariant n\n  have hp:=topCounterPrevious_positive n\n  have hr : 0<topCounterRatio n:=by linarith [hi.2.2.1]\n  have hv : 0<(1+topCounterError n)*(topCounterPrevious n+topCounterError n):=\n    mul_pos (by linarith [hi.1]) (by linarith [hi.1,hp])\n  have ht:=counter_trial_identity hi.1 hp hr (topCounter_ratio_identity n)\n  have ht' : leftTrial 2 (topCounterError n)\n      ((1+topCounterError n)*(topCounterPrevious n+topCounterError n))=topCounterError (n+1) := by\n    rw [ht,(topCounter_recurrence n).2,(topCounter_recurrence n).1]\n  have hc:=counter_correction_identity hi.1 hv ht'.symm\n  simp only [leftStep,topCounterState,ite_true]\n  rw [ht',hc]\n  rfl"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_first_steps",
+    "module": "TopUncapped",
+    "line": 80,
+    "kind": "theorem",
+    "source": "theorem topCounter_first_steps :\n    (leftOrbit 2 \u27e81,7,true\u27e9 1).e=3/4 \u2227\n    (leftOrbit 2 \u27e81,7,true\u27e9 2).e=111/232 \u2227\n    leftOrbit 2 \u27e81,7,true\u27e9 3=topCounterState 0 := by\n  norm_num [leftOrbit,leftStep,leftTrial,topCounterState,topCounterError,topCounterRatio,topCounterPair,topCounterPrevious]"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_orbit",
+    "module": "TopUncapped",
+    "line": 86,
+    "kind": "theorem",
+    "source": "theorem topCounter_orbit (n : \u2115) : leftOrbit 2 \u27e81,7,true\u27e9 (n+3)=topCounterState n := by\n  induction n with\n  | zero=>exact topCounter_first_steps.2.2\n  | succ n ih=>\n    change leftStep 2 (leftOrbit 2 \u27e81,7,true\u27e9 (n+3))=topCounterState (n+1)\n    rw [ih]\n    exact topCounter_state_step n"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_actual_update",
+    "module": "TopUncapped",
+    "line": 94,
+    "kind": "theorem",
+    "source": "theorem topCounter_actual_update (n : \u2115) :\n    ModAB.Convergence.Updated counterFunction (-topCounterError n) 1\n      (-topCounterError (n+1)) (-topCounterError (n+1)) 1 := by\n  exact left_updated (p:=2) (topCounter_invariant n).1 (topCounter_invariant (n+1)).1\n    (counterFunction_left (topCounter_invariant n).1.le)\n    (counterFunction_left (topCounter_invariant (n+1)).1.le)"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_residual_ratio",
+    "module": "TopUncapped",
+    "line": 101,
+    "kind": "theorem",
+    "source": "theorem topCounter_residual_ratio (n : \u2115) :\n    |counterFunction (-topCounterError n)| /\n      min |counterFunction (-topCounterPrevious n)| |counterFunction 1|\u226449/100 := by\n  have hp:=topCounterPrevious_positive n\n  have hi:=topCounter_invariant n\n  have hprev : topCounterPrevious n\u22641:=by\n    cases n with\n    | zero=>norm_num [topCounterPrevious]\n    | succ k=>exact le_trans (topCounter_invariant k).2.1 (by norm_num)\n  rw [counterFunction_left hi.1.le,counterFunction_left hp.le]\n  have hf : counterFunction 1=7:=by norm_num [counterFunction,gluedQuadratic]\n  rw [hf,abs_neg,abs_neg,abs_of_nonneg (sq_nonneg _),abs_of_nonneg (sq_nonneg _)]\n  norm_num only [abs_of_pos (by norm_num : (0:\u211d)<7)]\n  have hmin : min ((topCounterPrevious n)^2) (7:\u211d)=(topCounterPrevious n)^2:=by\n    apply min_eq_left\n    nlinarith [mul_nonneg hp.le (sub_nonneg.mpr hprev)]\n  rw [hmin,topCounter_ratio_identity n]\n  have hid : (topCounterRatio n*topCounterPrevious n)^2/(topCounterPrevious n)^2=(topCounterRatio n)^2:=by\n    field_simp\n  rw [hid]\n  nlinarith [hi.2.2.1,hi.2.2.2]"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_hybrid_entry",
+    "module": "TopUncapped",
+    "line": 123,
+    "kind": "theorem",
+    "source": "theorem topCounter_hybrid_entry :\n    counterFunction (-3)=-9 \u2227 counterFunction 1=7 \u2227 counterFunction (-1)=-1 \u2227\n    ModAB.originalL (-9) 7 (-1)<ModAB.originalR ((1-(1:\u211d)/16)^2) (-9) 7 (-1) := by\n  norm_num [counterFunction,gluedQuadratic,ModAB.originalL,ModAB.originalR]"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_admissible_step",
+    "module": "TopUncapped",
+    "line": 128,
+    "kind": "theorem",
+    "source": "theorem topCounter_admissible_step (n : \u2115) :\n    -topCounterError (n+1)\u2208Ioo (-topCounterError n) 1 \u2227\n    counterFunction (-topCounterError (n+1))\u22600 \u2227\n    0<1-(topCounterError (n+1))^2/(topCounterError n)^2 := by\n  have he:=(topCounter_invariant n).1\n  have hn:=(topCounter_invariant (n+1)).1\n  have hs:=topCounter_error_shrinks n\n  have hlt : topCounterError (n+1)<topCounterError n:=by linarith\n  constructor\n  \u00b7 constructor <;> linarith\n  \u00b7 constructor\n    \u00b7 intro hz\n      have heq:=(counterFunction_zero_iff _).mp hz\n      linarith\n    \u00b7 have hsq : (topCounterError (n+1))^2<(topCounterError n)^2:=by nlinarith\n      have hratio : (topCounterError (n+1))^2/(topCounterError n)^2<1:=\n        (div_lt_one (sq_pos_of_pos he)).mpr hsq\n      linarith"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_residual_exception",
+    "module": "TopUncapped",
+    "line": 147,
+    "kind": "theorem",
+    "source": "theorem topCounter_residual_exception (n : \u2115) :\n    |counterFunction (-topCounterError n)| < (1/2)*\n      min |counterFunction (-topCounterPrevious n)| |counterFunction 1| := by\n  have hp:=topCounterPrevious_positive n\n  have hm : 0<min |counterFunction (-topCounterPrevious n)| |counterFunction 1| := by\n    apply lt_min\n    \u00b7 rw [counterFunction_left hp.le,abs_neg,abs_of_nonneg (sq_nonneg _)]\n      exact sq_pos_of_pos hp\n    \u00b7 norm_num [counterFunction,gluedQuadratic]\n  have hb:=topCounter_residual_ratio n\n  have hm' := (div_le_iff\u2080 hm).mp hb\n  nlinarith only [hm,hm']"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_width_test_fails",
+    "module": "TopUncapped",
+    "line": 160,
+    "kind": "theorem",
+    "source": "theorem topCounter_width_test_fails (n : \u2115) :\n    ModAB.Convergence.threshold 2 2 (n+3)<1+topCounterError n := by\n  have hp : (2:\u211d)^3\u22642^(n+3):=pow_le_pow_right\u2080 (by norm_num) (by omega)\n  have hpow : 0<(2:\u211d)^(n+3):=by positivity\n  have ht : ModAB.Convergence.threshold 2 2 (n+3)\u22641:=by\n    unfold ModAB.Convergence.threshold\n    apply (div_le_iff\u2080 hpow).mpr\n    norm_num at hp \u22a2\n    exact hp\n  linarith [(topCounter_invariant n).1]"
+  },
+  {
+    "name": "ModAB.Examples.topCounterFullError",
+    "module": "TopUncapped",
+    "line": 171,
+    "kind": "def",
+    "source": "def topCounterFullError (j : \u2115) : \u211d := (leftOrbit 2 \u27e81,7,true\u27e9 j).e"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_full_tail",
+    "module": "TopUncapped",
+    "line": 173,
+    "kind": "theorem",
+    "source": "theorem topCounter_full_tail (n : \u2115) : topCounterFullError (n+3)=topCounterError n := by\n  simp only [topCounterFullError,topCounter_orbit,topCounterState]"
+  },
+  {
+    "name": "ModAB.Examples.topCounterFullError_positive",
+    "module": "TopUncapped",
+    "line": 176,
+    "kind": "theorem",
+    "source": "theorem topCounterFullError_positive (j : \u2115) : 0<topCounterFullError j := by\n  rcases j with _|_|_|n\n  \u00b7 norm_num [topCounterFullError,leftOrbit]\n  \u00b7 norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]\n  \u00b7 norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]\n  \u00b7 exact topCounter_full_tail n \u25b8 (topCounter_invariant n).1"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_full_width_limit",
+    "module": "TopUncapped",
+    "line": 183,
+    "kind": "theorem",
+    "source": "theorem topCounter_full_width_limit : Tendsto (fun j=>1+topCounterFullError j) atTop (\ud835\udcdd 1) := by\n  apply (tendsto_add_atTop_iff_nat 3).mp\n  simpa only [topCounter_full_tail] using topCounter_width_limit"
+  },
+  {
+    "name": "ModAB.Examples.topCounterFullError_tendsto",
+    "module": "TopUncapped",
+    "line": 187,
+    "kind": "theorem",
+    "source": "theorem topCounterFullError_tendsto : Tendsto topCounterFullError atTop (\ud835\udcdd 0) := by\n  apply (tendsto_add_atTop_iff_nat 3).mp\n  simpa only [topCounter_full_tail] using topCounterError_tendsto"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_full_strict_decrease",
+    "module": "TopUncapped",
+    "line": 191,
+    "kind": "theorem",
+    "source": "theorem topCounter_full_strict_decrease (j : \u2115) : topCounterFullError (j+1)<topCounterFullError j := by\n  rcases j with _|_|_|n\n  \u00b7 norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]\n  \u00b7 norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]\n  \u00b7 norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial]\n  \u00b7 rw [show n+3+1=(n+1)+3 by omega,topCounter_full_tail,topCounter_full_tail]\n    linarith [topCounter_error_shrinks n,(topCounter_invariant n).1]"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_full_ordinate_positive",
+    "module": "TopUncapped",
+    "line": 199,
+    "kind": "theorem",
+    "source": "theorem topCounter_full_ordinate_positive (j : \u2115) : 0<(leftOrbit 2 \u27e81,7,true\u27e9 j).v := by\n  rcases j with _|_|_|n\n  \u00b7 norm_num [leftOrbit]\n  \u00b7 norm_num [leftOrbit,leftStep,leftTrial]\n  \u00b7 norm_num [leftOrbit,leftStep,leftTrial]\n  \u00b7 rw [topCounter_orbit]\n    change 0<(1+topCounterError n)*(topCounterPrevious n+topCounterError n)\n    exact mul_pos (by linarith [(topCounter_invariant n).1])\n      (by linarith [(topCounter_invariant n).1,topCounterPrevious_positive n])"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_full_actual_update",
+    "module": "TopUncapped",
+    "line": 209,
+    "kind": "theorem",
+    "source": "theorem topCounter_full_actual_update (j : \u2115) :\n    ModAB.Convergence.Updated counterFunction (-topCounterFullError j) 1\n      (-topCounterFullError (j+1)) (-topCounterFullError (j+1)) 1 \u2227\n    -topCounterFullError (j+1)\u2208Ioo (-topCounterFullError j) 1 \u2227\n    counterFunction (-topCounterFullError (j+1))\u22600 := by\n  have he:=topCounterFullError_positive j\n  have hn:=topCounterFullError_positive (j+1)\n  have hd:=topCounter_full_strict_decrease j\n  refine \u27e8left_updated (p:=2) he hn (counterFunction_left he.le)\n    (counterFunction_left hn.le),\u27e8by linarith,by linarith\u27e9,?_\u27e9\n  intro hz\n  have heq:=(counterFunction_zero_iff _).mp hz\n  linarith"
+  },
+  {
+    "name": "ModAB.Examples.topUncappedContinues",
+    "module": "TopUncapped",
+    "line": 224,
+    "kind": "def",
+    "source": "def topUncappedContinues (j : \u2115) : Prop :=\n  1+topCounterFullError j\u2264ModAB.Convergence.threshold 2 2 j \u2228\n  |counterFunction (-topCounterFullError j)|<(1/2)*\n    min |counterFunction (-topCounterFullError (j-1))| |counterFunction 1|"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_uncapped_continues",
+    "module": "TopUncapped",
+    "line": 229,
+    "kind": "theorem",
+    "source": "theorem topCounter_uncapped_continues (j : \u2115) (hj : 1\u2264j) : topUncappedContinues j := by\n  rcases j with _|_|_|n\n  \u00b7 omega\n  \u00b7 left; norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]\n  \u00b7 left; norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]\n  \u00b7 right\n    have hp : topCounterFullError (n+3-1)=topCounterPrevious n := by\n      cases n with\n      | zero=>norm_num [topCounterFullError,leftOrbit,leftStep,leftTrial,topCounterPrevious]\n      | succ n=>\n        rw [show n+1+3-1=n+3 by omega,topCounter_full_tail]\n        rfl\n    rw [topCounter_full_tail,hp]\n    exact topCounter_residual_exception n"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_no_width_termination",
+    "module": "TopUncapped",
+    "line": 244,
+    "kind": "theorem",
+    "source": "theorem topCounter_no_width_termination {\u03c4 : \u211d} (h\u03c4 : \u03c4\u22641) (j : \u2115) :\n    \u03c4<1+topCounterFullError j := by linarith [topCounterFullError_positive j]"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_mixed_tolerance_fails",
+    "module": "TopUncapped",
+    "line": 247,
+    "kind": "theorem",
+    "source": "theorem topCounter_mixed_tolerance_fails {ea er : \u211d} (ha : ea<1) :\n    \u2200\u1da0j in atTop,ea+er*|(-topCounterFullError j)|<1+topCounterFullError j := by\n  have ht := ((topCounterFullError_tendsto.neg).abs.const_mul er).const_add ea\n  have ht' : Tendsto (fun j=>ea+er*|(-topCounterFullError j)|) atTop (\ud835\udcdd ea):=by\n    simpa using ht\n  have hevent := (tendsto_order.mp ht').2 1 ha\n  filter_upwards [hevent] with j hj\n  linarith [topCounterFullError_positive j]"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_global_bound_violation",
+    "module": "TopUncapped",
+    "line": 256,
+    "kind": "theorem",
+    "source": "theorem topCounter_global_bound_violation :\n    (4:\u211d)/(2:\u211d)^(14/7)<1+topCounterFullError 13 := by\n  have h:=topCounterFullError_positive 13\n  norm_num\n  linarith"
+  },
+  {
+    "name": "ModAB.Examples.topUncapped_counterexample",
+    "module": "TopUncapped",
+    "line": 263,
+    "kind": "theorem",
+    "source": "theorem topUncapped_counterexample :\n    ContDiff \u211d 1 counterFunction \u2227 (\u2200x,counterFunction x=0\u2194x=0) \u2227\n    (\u2200j,1\u2264j\u2192topUncappedContinues j) \u2227\n    Tendsto (fun j=>1+topCounterFullError j) atTop (\ud835\udcdd 1) \u2227\n    (\u2200n,|counterFunction (-topCounterError n)| /\n      min |counterFunction (-topCounterPrevious n)| |counterFunction 1|\u226449/100) :=\n  \u27e8counterFunction_C1,counterFunction_zero_iff,topCounter_uncapped_continues,\n    topCounter_full_width_limit,topCounter_residual_ratio\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_top_entry",
+    "module": "TopUncapped",
+    "line": 273,
+    "kind": "theorem",
+    "source": "theorem topCounter_top_entry :\n    ModAB.Convergence.Updated counterFunction (-3) 1 (-1) (-1) 1 \u2227\n    topLeftSeed (-9) (7) = \u27e81,7,true\u27e9 := by\n  constructor\n  \u00b7 norm_num [ModAB.Convergence.Updated,counterFunction_formula]\n  \u00b7 exact topLeftSeed_eq _ _"
+  },
+  {
+    "name": "ModAB.Examples.topCounter_full_correction",
+    "module": "TopUncapped",
+    "line": 281,
+    "kind": "theorem",
+    "source": "theorem topCounter_full_correction (j : \u2115) :\n    0 < 1-(topCounterFullError (j+1))^2/(topCounterFullError j)^2 := by\n  have he := topCounterFullError_positive j\n  have hn := topCounterFullError_positive (j+1)\n  have hd := topCounter_full_strict_decrease j\n  have hs : (topCounterFullError (j+1))^2 < (topCounterFullError j)^2 := by nlinarith\n  linarith [(div_lt_one (sq_pos_of_pos he)).mpr hs]"
+  },
+  {
+    "name": "ModAB.Examples.eta42Function",
+    "module": "Eta42",
+    "line": 11,
+    "kind": "def",
+    "source": "def eta42Function (x : \u211d) : \u211d := x+gluedQuadratic 0 (1/10) x"
+  },
+  {
+    "name": "ModAB.Examples.eta42_formula",
+    "module": "Eta42",
+    "line": 13,
+    "kind": "theorem",
+    "source": "theorem eta42_formula (x : \u211d) :\n    eta42Function x = if x\u22640 then x else x+x^2/10 := by\n  unfold eta42Function gluedQuadratic\n  split_ifs <;> ring"
+  },
+  {
+    "name": "ModAB.Examples.eta42_C1",
+    "module": "Eta42",
+    "line": 18,
+    "kind": "theorem",
+    "source": "theorem eta42_C1 : ContDiff \u211d 1 eta42Function :=\n  contDiff_id.add (gluedQuadratic_C1 0 (1/10))"
+  },
+  {
+    "name": "ModAB.Examples.eta42_left",
+    "module": "Eta42",
+    "line": 21,
+    "kind": "theorem",
+    "source": "theorem eta42_left {e : \u211d} (he : 0\u2264e) : eta42Function (-e) = -e := by\n  rw [eta42_formula,if_pos (by linarith)]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_right",
+    "module": "Eta42",
+    "line": 24,
+    "kind": "theorem",
+    "source": "theorem eta42_right : eta42Function 1 = 11/10 := by norm_num [eta42_formula]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_zero_iff",
+    "module": "Eta42",
+    "line": 26,
+    "kind": "theorem",
+    "source": "theorem eta42_zero_iff (x : \u211d) : eta42Function x=0 \u2194 x=0 := by\n  rw [eta42_formula]\n  split_ifs with h\n  \u00b7 rfl\n  \u00b7 constructor\n    \u00b7 intro hz; nlinarith [sq_nonneg x]\n    \u00b7 intro hz; simp [hz]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_simple_root",
+    "module": "Eta42",
+    "line": 34,
+    "kind": "theorem",
+    "source": "theorem eta42_simple_root : HasDerivAt eta42Function 1 0 := by\n  convert (hasDerivAt_id (0:\u211d)).add\n    (gluedQuadratic_hasDerivAt_zero 0 (1/10)) using 1 <;> try norm_num\n  funext x\n  simp [eta42Function]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_strictMono",
+    "module": "Eta42",
+    "line": 40,
+    "kind": "theorem",
+    "source": "theorem eta42_strictMono : StrictMono eta42Function := by\n  intro a b hab\n  rw [eta42_formula,eta42_formula]\n  split_ifs with ha hb\n  \u00b7 exact hab\n  \u00b7 nlinarith [sq_nonneg b]\n  \u00b7 linarith\n  \u00b7 nlinarith [mul_pos (sub_pos.mpr hab) (show 0<b+a by linarith)]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_hybrid_entry",
+    "module": "Eta42",
+    "line": 50,
+    "kind": "theorem",
+    "source": "theorem eta42_hybrid_entry :\n    eta42Function (-3)=-3 \u2227 eta42Function 1=11/10 \u2227 eta42Function (-1)=-1 \u2227\n    ModAB.originalL (-3) (11/10) (-1) <\n      ModAB.originalR ((1-(19/20)/(41/10))^2) (-3) (11/10) (-1) := by\n  norm_num [eta42_formula,ModAB.originalL,ModAB.originalR]"
+  },
+  {
+    "name": "ModAB.Examples.eta42Error",
+    "module": "Eta42",
+    "line": 57,
+    "kind": "def",
+    "source": "def eta42Error : \u2115\u2192\u211d\n  | 0 => 1/21\n  | n+1 => quadraticMap (eta42Error n)"
+  },
+  {
+    "name": "ModAB.Examples.eta42State",
+    "module": "Eta42",
+    "line": 61,
+    "kind": "def",
+    "source": "def eta42State (n : \u2115) : LeftState := \u27e8eta42Error n,1+eta42Error n,true\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.eta42_positive",
+    "module": "Eta42",
+    "line": 63,
+    "kind": "theorem",
+    "source": "theorem eta42_positive (n : \u2115) : 0<eta42Error n := by\n  induction n with\n  | zero => norm_num [eta42Error]\n  | succ n ih => exact quadraticMap_positive ih"
+  },
+  {
+    "name": "ModAB.Examples.eta42_step",
+    "module": "Eta42",
+    "line": 68,
+    "kind": "theorem",
+    "source": "theorem eta42_step (n : \u2115) : leftStep 1 (eta42State n) = eta42State (n+1) :=\n  quadratic_step (eta42_positive n)"
+  },
+  {
+    "name": "ModAB.Examples.eta42_first_steps",
+    "module": "Eta42",
+    "line": 71,
+    "kind": "theorem",
+    "source": "theorem eta42_first_steps :\n    leftOrbit 1 \u27e81,11/10,true\u27e9 1 = eta42State 0 \u2227\n    eta42Error 1=1/483 \u2227 eta42Error 2=1/234255 := by\n  norm_num [leftOrbit,leftStep,leftTrial,eta42State,eta42Error,quadraticMap]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_orbit",
+    "module": "Eta42",
+    "line": 76,
+    "kind": "theorem",
+    "source": "theorem eta42_orbit (n : \u2115) : leftOrbit 1 \u27e81,11/10,true\u27e9 (n+1)=eta42State n := by\n  induction n with\n  | zero => exact eta42_first_steps.1\n  | succ n ih =>\n    change leftStep 1 (leftOrbit 1 \u27e81,11/10,true\u27e9 (n+1)) = eta42State (n+1)\n    rw [ih,eta42_step]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_shrinks",
+    "module": "Eta42",
+    "line": 83,
+    "kind": "theorem",
+    "source": "theorem eta42_shrinks (n : \u2115) : eta42Error (n+1) \u2264 (1/2)*eta42Error n :=\n  quadraticMap_half (eta42_positive n).le"
+  },
+  {
+    "name": "ModAB.Examples.eta42_strict_decrease",
+    "module": "Eta42",
+    "line": 86,
+    "kind": "theorem",
+    "source": "theorem eta42_strict_decrease (n : \u2115) : eta42Error (n+1)<eta42Error n := by\n  linarith [eta42_shrinks n,eta42_positive n]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_antitone",
+    "module": "Eta42",
+    "line": 89,
+    "kind": "theorem",
+    "source": "theorem eta42_antitone : Antitone eta42Error :=\n  antitone_nat_of_succ_le (fun n=>(eta42_strict_decrease n).le)"
+  },
+  {
+    "name": "ModAB.Examples.eta42_bound",
+    "module": "Eta42",
+    "line": 92,
+    "kind": "theorem",
+    "source": "theorem eta42_bound (n : \u2115) : eta42Error n \u2264 1/21 :=\n  eta42_antitone (Nat.zero_le n)"
+  },
+  {
+    "name": "ModAB.Examples.eta42_next_bound",
+    "module": "Eta42",
+    "line": 95,
+    "kind": "theorem",
+    "source": "theorem eta42_next_bound (n : \u2115) : eta42Error (n+1) \u2264 1/483 := by\n  rw [\u2190 eta42_first_steps.2.1]\n  exact eta42_antitone (by omega)"
+  },
+  {
+    "name": "ModAB.Examples.eta42_tendsto",
+    "module": "Eta42",
+    "line": 99,
+    "kind": "theorem",
+    "source": "theorem eta42_tendsto : Tendsto eta42Error atTop (\ud835\udcdd 0) :=\n  geometric_tendsto (fun n=>(eta42_positive n).le) (by norm_num)\n    (by norm_num) eta42_shrinks"
+  },
+  {
+    "name": "ModAB.Examples.eta42_reciprocal",
+    "module": "Eta42",
+    "line": 104,
+    "kind": "theorem",
+    "source": "theorem eta42_reciprocal (n : \u2115) : 1+1/eta42Error n = (22:\u211d)^(2^n) := by\n  induction n with\n  | zero => norm_num [eta42Error]\n  | succ n ih =>\n    have he := ne_of_gt (eta42_positive n)\n    calc\n      1+1/eta42Error (n+1) = (1+1/eta42Error n)^2 := by\n        simp only [eta42Error,quadraticMap]\n        field_simp\n        <;> ring\n      _ = ((22:\u211d)^(2^n))^2 := by rw [ih]\n      _ = (22:\u211d)^(2^(n+1)) := by rw [\u2190 pow_mul, pow_succ]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_closed_form",
+    "module": "Eta42",
+    "line": 117,
+    "kind": "theorem",
+    "source": "theorem eta42_closed_form (n : \u2115) : eta42Error n = 1/((22:\u211d)^(2^n)-1) := by\n  rw [\u2190 eta42_reciprocal]\n  simp"
+  },
+  {
+    "name": "ModAB.Examples.eta42_quadratic_order",
+    "module": "Eta42",
+    "line": 121,
+    "kind": "theorem",
+    "source": "theorem eta42_quadratic_order :\n    Tendsto (fun n=>eta42Error (n+1)/(eta42Error n)^2) atTop (\ud835\udcdd 1) := by\n  have hq (n : \u2115) : eta42Error (n+1)/(eta42Error n)^2=1/(1+2*eta42Error n) := by\n    have he := ne_of_gt (eta42_positive n)\n    simp only [eta42Error,quadraticMap]\n    field_simp\n  simp_rw [hq]\n  have ht := (tendsto_const_nhds : Tendsto (fun _ : \u2115=>(1:\u211d)) atTop (\ud835\udcdd 1)).div\n    ((eta42_tendsto.const_mul 2).const_add 1) (by norm_num : (1:\u211d)+2*0\u22600)\n  change Tendsto (fun n=>(1:\u211d)/(1+2*eta42Error n)) atTop (\ud835\udcdd (1/(1+2*(0:\u211d)))) at ht\n  simpa only [mul_zero,add_zero,div_one,one_div] using ht"
+  },
+  {
+    "name": "ModAB.Examples.eta42FullError",
+    "module": "Eta42",
+    "line": 133,
+    "kind": "def",
+    "source": "def eta42FullError (j : \u2115) : \u211d := (leftOrbit 1 \u27e81,11/10,true\u27e9 j).e"
+  },
+  {
+    "name": "ModAB.Examples.eta42_full_tail",
+    "module": "Eta42",
+    "line": 135,
+    "kind": "theorem",
+    "source": "theorem eta42_full_tail (n : \u2115) : eta42FullError (n+1)=eta42Error n := by\n  simp only [eta42FullError,eta42_orbit,eta42State]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_full_positive",
+    "module": "Eta42",
+    "line": 138,
+    "kind": "theorem",
+    "source": "theorem eta42_full_positive (j : \u2115) : 0<eta42FullError j := by\n  cases j with\n  | zero => norm_num [eta42FullError,leftOrbit]\n  | succ n => rw [eta42_full_tail]; exact eta42_positive n"
+  },
+  {
+    "name": "ModAB.Examples.eta42_full_decrease",
+    "module": "Eta42",
+    "line": 143,
+    "kind": "theorem",
+    "source": "theorem eta42_full_decrease (j : \u2115) : eta42FullError (j+1)<eta42FullError j := by\n  cases j with\n  | zero => norm_num [eta42FullError,leftOrbit,leftStep,leftTrial]\n  | succ n => rw [eta42_full_tail,eta42_full_tail]; exact eta42_strict_decrease n"
+  },
+  {
+    "name": "ModAB.Examples.eta42_full_bound",
+    "module": "Eta42",
+    "line": 148,
+    "kind": "theorem",
+    "source": "theorem eta42_full_bound (j : \u2115) : eta42FullError j \u2264 1 := by\n  cases j with\n  | zero => norm_num [eta42FullError,leftOrbit]\n  | succ n => rw [eta42_full_tail]; linarith [eta42_bound n]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_full_tendsto",
+    "module": "Eta42",
+    "line": 153,
+    "kind": "theorem",
+    "source": "theorem eta42_full_tendsto : Tendsto eta42FullError atTop (\ud835\udcdd 0) := by\n  apply (tendsto_add_atTop_iff_nat 1).mp\n  simpa only [eta42_full_tail] using eta42_tendsto"
+  },
+  {
+    "name": "ModAB.Examples.eta42_width_limit",
+    "module": "Eta42",
+    "line": 157,
+    "kind": "theorem",
+    "source": "theorem eta42_width_limit : Tendsto (fun j=>1+eta42FullError j) atTop (\ud835\udcdd 1) := by\n  simpa using eta42_full_tendsto.const_add 1"
+  },
+  {
+    "name": "ModAB.Examples.eta42_full_ordinate_positive",
+    "module": "Eta42",
+    "line": 160,
+    "kind": "theorem",
+    "source": "theorem eta42_full_ordinate_positive (j : \u2115) :\n    0 < (leftOrbit 1 \u27e81,11/10,true\u27e9 j).v := by\n  cases j with\n  | zero => norm_num [leftOrbit]\n  | succ n => rw [eta42_orbit]; change 0<1+eta42Error n; linarith [eta42_positive n]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_positive_correction",
+    "module": "Eta42",
+    "line": 167,
+    "kind": "theorem",
+    "source": "theorem eta42_positive_correction (j : \u2115) :\n    0 < 1-eta42FullError (j+1)/eta42FullError j \u2227\n    ModAB.Convergence.abFactor (-eta42FullError (j+1)) (-eta42FullError j) =\n      1-eta42FullError (j+1)/eta42FullError j := by\n  have h := (div_lt_one (eta42_full_positive j)).mpr (eta42_full_decrease j)\n  have hp : 0<1-eta42FullError (j+1)/eta42FullError j := by linarith\n  exact \u27e8hp,by simp [ModAB.Convergence.abFactor,hp]\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.eta42_actual_update",
+    "module": "Eta42",
+    "line": 175,
+    "kind": "theorem",
+    "source": "theorem eta42_actual_update (j : \u2115) :\n    ModAB.Convergence.Updated eta42Function (-eta42FullError j) 1\n      (-eta42FullError (j+1)) (-eta42FullError (j+1)) 1 \u2227\n    -eta42FullError (j+1)\u2208Ioo (-eta42FullError j) 1 \u2227\n    eta42Function (-eta42FullError (j+1))\u22600 := by\n  have he:=eta42_full_positive j\n  have hn:=eta42_full_positive (j+1)\n  have hd:=eta42_full_decrease j\n  refine \u27e8left_updated (p:=1) he hn (by simpa using eta42_left he.le)\n    (by simpa using eta42_left hn.le),\u27e8by linarith,by linarith\u27e9,?_\u27e9\n  rw [eta42_left hn.le]; linarith"
+  },
+  {
+    "name": "ModAB.Examples.eta42_residual_ratio",
+    "module": "Eta42",
+    "line": 188,
+    "kind": "theorem",
+    "source": "theorem eta42_residual_ratio (n : \u2115) :\n    eta42FullError (n+3)/eta42FullError (n+2) \u2264 1/485 := by\n  rw [show n+3=(n+2)+1 by omega,show n+2=(n+1)+1 by omega,\n    eta42_full_tail,eta42_full_tail]\n  change quadraticMap (eta42Error (n+1))/eta42Error (n+1) \u2264 1/485\n  have he:=eta42_positive (n+1)\n  have hd : 0<1+2*eta42Error (n+1) := by positivity\n  have hq : quadraticMap (eta42Error (n+1))/eta42Error (n+1) =\n      eta42Error (n+1)/(1+2*eta42Error (n+1)) := by\n    unfold quadraticMap; field_simp\n  rw [hq]\n  apply (div_le_iff\u2080 hd).mpr\n  linarith [eta42_next_bound n]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_residual_exception",
+    "module": "Eta42",
+    "line": 202,
+    "kind": "theorem",
+    "source": "theorem eta42_residual_exception (n : \u2115) :\n    |eta42Function (-eta42FullError (n+3))| < (1/42)*\n      min |eta42Function (-eta42FullError (n+2))| |eta42Function 1| := by\n  have he:=eta42_full_positive (n+2)\n  rw [eta42_left (eta42_full_positive (n+3)).le,eta42_left he.le,eta42_right,\n    abs_neg,abs_neg,abs_of_pos (eta42_full_positive (n+3)),abs_of_pos he]\n  norm_num only [abs_of_pos (by norm_num : (0:\u211d)<11/10)]\n  rw [min_eq_left (show eta42FullError (n+2)\u226411/10 by linarith [eta42_full_bound (n+2)])]\n  have h:=(div_le_iff\u2080 he).mp (eta42_residual_ratio n)\n  nlinarith only [h,he]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_width_test_fails",
+    "module": "Eta42",
+    "line": 213,
+    "kind": "theorem",
+    "source": "theorem eta42_width_test_fails (n : \u2115) :\n    ModAB.Convergence.threshold 2 2 (n+3)<1+eta42FullError (n+3) := by\n  have hp : (2:\u211d)^3\u22642^(n+3):=pow_le_pow_right\u2080 (by norm_num) (by omega)\n  have ht : ModAB.Convergence.threshold 2 2 (n+3)\u22641:=by\n    unfold ModAB.Convergence.threshold\n    apply (div_le_iff\u2080 (by positivity : 0<(2:\u211d)^(n+3))).mpr\n    norm_num at hp \u22a2\n    exact hp\n  linarith [eta42_full_positive (n+3)]"
+  },
+  {
+    "name": "ModAB.Examples.eta42UncappedContinues",
+    "module": "Eta42",
+    "line": 223,
+    "kind": "def",
+    "source": "def eta42UncappedContinues (j : \u2115) : Prop :=\n  1+eta42FullError j\u2264ModAB.Convergence.threshold 2 2 j \u2228\n  |eta42Function (-eta42FullError j)| < (1/42)*\n    min |eta42Function (-eta42FullError (j-1))| |eta42Function 1|"
+  },
+  {
+    "name": "ModAB.Examples.eta42_uncapped_continues",
+    "module": "Eta42",
+    "line": 228,
+    "kind": "theorem",
+    "source": "theorem eta42_uncapped_continues (j : \u2115) (hj : 1\u2264j) : eta42UncappedContinues j := by\n  rcases j with _|_|_|n\n  \u00b7 omega\n  \u00b7 left; norm_num [eta42FullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]\n  \u00b7 left; norm_num [eta42FullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]\n  \u00b7 right\n    rw [show n+3-1=n+2 by omega]\n    exact eta42_residual_exception n"
+  },
+  {
+    "name": "ModAB.Examples.eta42_no_width_termination",
+    "module": "Eta42",
+    "line": 237,
+    "kind": "theorem",
+    "source": "theorem eta42_no_width_termination {\u03c4 : \u211d} (h\u03c4 : \u03c4\u22641) (j : \u2115) :\n    \u03c4<1+eta42FullError j := by linarith [eta42_full_positive j]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_mixed_tolerance_fails",
+    "module": "Eta42",
+    "line": 240,
+    "kind": "theorem",
+    "source": "theorem eta42_mixed_tolerance_fails {ea er : \u211d} (ha : ea<1) :\n    \u2200\u1da0j in atTop,ea+er*|(-eta42FullError j)|<1+eta42FullError j := by\n  have ht := ((eta42_full_tendsto.neg).abs.const_mul er).const_add ea\n  have ht' : Tendsto (fun j=>ea+er*|(-eta42FullError j)|) atTop (\ud835\udcdd ea):=by simpa using ht\n  have hevent := (tendsto_order.mp ht').2 1 ha\n  filter_upwards [hevent] with j hj\n  linarith [eta42_full_positive j]"
+  },
+  {
+    "name": "ModAB.Examples.eta42NextMode",
+    "module": "Eta42",
+    "line": 249,
+    "kind": "def",
+    "source": "def eta42NextMode (t c : \u2115) : ModAB.Convergence.Mode :=\n  ModAB.Convergence.adaptiveMode 2 2 (1/42)\n    |eta42Function (-eta42FullError (t+1))|\n    (min |eta42Function (-eta42FullError t)| |eta42Function 1|)\n    (1+eta42FullError (t+1)) 3 t c"
+  },
+  {
+    "name": "ModAB.Examples.eta42_capped_exception",
+    "module": "Eta42",
+    "line": 255,
+    "kind": "theorem",
+    "source": "theorem eta42_capped_exception (n c : \u2115) (hc : c<3) :\n    eta42NextMode (n+2) c = .ab 2 (n+3) (c+1) := by\n  have hw := not_le.mpr (eta42_width_test_fails n)\n  have hr := eta42_residual_exception n\n  simp only [eta42NextMode,ModAB.Convergence.adaptiveMode]\n  rw [if_neg hw,if_pos \u27e8hr,hc\u27e9]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_cap_forces_fallback",
+    "module": "Eta42",
+    "line": 262,
+    "kind": "theorem",
+    "source": "theorem eta42_cap_forces_fallback (n : \u2115) : eta42NextMode (n+2) 3 = .bisection := by\n  have hw := not_le.mpr (eta42_width_test_fails n)\n  simp only [eta42NextMode,ModAB.Convergence.adaptiveMode]\n  rw [if_neg hw]\n  norm_num"
+  },
+  {
+    "name": "ModAB.Examples.eta42_capped_schedule",
+    "module": "Eta42",
+    "line": 269,
+    "kind": "theorem",
+    "source": "theorem eta42_capped_schedule :\n    eta42NextMode 0 0 = .ab 2 1 0 \u2227 eta42NextMode 1 0 = .ab 2 2 0 \u2227\n    eta42NextMode 2 0 = .ab 2 3 1 \u2227 eta42NextMode 3 1 = .ab 2 4 2 \u2227\n    eta42NextMode 4 2 = .ab 2 5 3 \u2227 eta42NextMode 5 3 = .bisection := by\n  refine \u27e8?_,?_,eta42_capped_exception 0 0 (by norm_num),\n    eta42_capped_exception 1 1 (by norm_num),eta42_capped_exception 2 2 (by norm_num),\n    eta42_cap_forces_fallback 3\u27e9\n  all_goals norm_num [eta42NextMode,ModAB.Convergence.adaptiveMode,\n    eta42FullError,leftOrbit,leftStep,leftTrial,ModAB.Convergence.threshold]"
+  },
+  {
+    "name": "ModAB.Examples.eta42_uncapped_counterexample",
+    "module": "Eta42",
+    "line": 280,
+    "kind": "theorem",
+    "source": "theorem eta42_uncapped_counterexample :\n    ContDiff \u211d 1 eta42Function \u2227 StrictMono eta42Function \u2227\n    (\u2200x,eta42Function x=0\u2194x=0) \u2227 HasDerivAt eta42Function 1 0 \u2227\n    (\u2200j,1\u2264j\u2192eta42UncappedContinues j) \u2227\n    Tendsto eta42FullError atTop (\ud835\udcdd 0) \u2227\n    Tendsto (fun j=>1+eta42FullError j) atTop (\ud835\udcdd 1) :=\n  \u27e8eta42_C1,eta42_strictMono,eta42_zero_iff,eta42_simple_root,\n    eta42_uncapped_continues,eta42_full_tendsto,eta42_width_limit\u27e9"
+  },
+  {
+    "name": "ModAB.Examples.eta42_top_entry",
+    "module": "Eta42",
+    "line": 290,
+    "kind": "theorem",
+    "source": "theorem eta42_top_entry :\n    ModAB.Convergence.Updated eta42Function (-3) 1 (-1) (-1) 1 \u2227\n    topLeftSeed (-3) (11/10) = \u27e81,11/10,true\u27e9 := by\n  constructor\n  \u00b7 norm_num [ModAB.Convergence.Updated,eta42_formula]\n  \u00b7 exact topLeftSeed_eq _ _"
+  }
+]

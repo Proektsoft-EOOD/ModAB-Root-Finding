@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "kind": "Structural/source-integrity check, not Lean kernel compilation",
+  "preserved_files_checked": 72,
+  "local_links_checked": 4860,
+  "failures": []
+}

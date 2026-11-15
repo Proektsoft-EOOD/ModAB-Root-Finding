@@ -1,0 +1,149 @@
+[
+  {
+    "number": "7",
+    "kind": "Proposition",
+    "aliases": [
+      "L1"
+    ],
+    "label": "prop:local_error_identity",
+    "title": "Exact mixed-ordinate error and local coefficient",
+    "status": "Fully proved: exact mixed-data identity and true-data local error limit under local C3",
+    "hypotheses": "Exact formula: three distinct nonroot nodes, nonzero ordinates and model denominator; modified weight mu nonzero. Local limit: ContDiffAt R 3 f r, simple zero, three pairwise-distinct off-root node sequences tending to r; relative spacing unrestricted.",
+    "proof": "Exact barycentric/pole identities give the mixed-data formula and connect it to existing rawPoint. Quotient derivatives and L’Hopital prove finite-C3-to-C2 removable regularity; double Rolle gives actual divided-difference limits. Normalized rawPoint error tends to K; denominator guards are proved eventually. Analytic specializations are retained but not required.",
+    "names": [
+      "ModAB.Rational.LocalAlgebra.baryRoot_eq_rawPoint",
+      "ModAB.Rational.LocalAlgebra.baryRoot_true_error",
+      "ModAB.Rational.LocalAlgebra.baryRoot_scaled_error",
+      "ModAB.Rational.LocalAlgebra.baryRoot_scaled_between",
+      "ModAB.Rational.LocalAnalysis.exists_second_derivative_dd2_arbitrary",
+      "ModAB.Rational.LocalAnalysis.tendsto_error_coefficient_arbitrary_of_contDiff_two",
+      "ModAB.Rational.Regularity.regularizedReciprocal_contDiffAt_of_contDiff",
+      "ModAB.Rational.DSlope.contDiffAt_dslope",
+      "ModAB.Rational.Regularity.regularizedReciprocal_error_constant_of_contDiff",
+      "ModAB.Rational.SmoothBridge.eventually_raw_denominator_ne_zero",
+      "ModAB.Rational.SmoothBridge.tendsto_normalized_rawPoint_error"
+    ]
+  },
+  {
+    "number": "8",
+    "kind": "Lemma",
+    "aliases": [
+      "L2"
+    ],
+    "label": "lem:local_tribonacci_order",
+    "title": "Three-error recurrence gives genuine tribonacci Q-order",
+    "status": "Fully proved, including the exact constant and finite-prefix form",
+    "hypotheses": "Nonzero error sequence tending to zero; eventually e(n+3)=C(n)e(n+2)e(n+1)e(n); C(n) tends to nonzero K. The convergence premise is independently discharged for three small seeds and bounded coefficients in LocalAssembly.",
+    "proof": "Prove the unique cubic root and rational enclosure 1.839<tau<1.840. Take logarithms; a positive quadratic energy bounds the stable forced recurrence. A proved geometric-tail contraction yields a zero log defect; exponentiation gives the exact Q-order constant.",
+    "names": [
+      "ModAB.RationalOrder.exists_order_root",
+      "ModAB.RationalOrder.order_root_unique",
+      "ModAB.RationalOrder.tau_lower",
+      "ModAB.RationalOrder.tau_upper",
+      "ModAB.RationalOrder.three_error_recurrence_hasQOrder",
+      "ModAB.RationalLocalAssembly.bounded_coefficient_recurrence_hasQOrder",
+      "ModAB.RationalOrder.eventual_three_error_recurrence_hasQOrder"
+    ]
+  },
+  {
+    "number": "9",
+    "kind": "Theorem",
+    "aliases": [
+      "L3"
+    ],
+    "label": "thm:local_alternating",
+    "title": "Safeguard-preserving alternating local regime",
+    "status": "Fully proved: C3 hypotheses and the initial state imply the actual guarded trajectory and tribonacci Q-order",
+    "hypotheses": "Local C3, simple root, nonzero second derivative and K>0. The theorem chooses one radius. Initial State has a sign bracket, both strictly exterior discarded-side histories in that radius and fresh true working ordinates. Exact real arithmetic, zero tolerances and no iteration budget. No future invariant, error recurrence, coefficient bound or limit is assumed.",
+    "proof": "The uniform coefficient lemma is derived by sequential contradiction. Differentiability supplies secant and residual estimates; C2 and nonzero curvature decide the actual true-ordinate selector. A common radius satisfies clamp and residual42 inequalities. The true-sign/AB transition preserves both history records and fresh ordinates, proves no fallback and geometric convergence. Two crossings derive the latest-three recurrence. The C3 coefficient limit then gives genuine Q-order with its exact constant.",
+    "names": [
+      "ModAB.Rational.LocalComplete.local_alternating_complete",
+      "ModAB.Rational.LocalComplete.exists_operational_neighborhood",
+      "ModAB.Rational.LocalNeighborhood.exists_positive_raw_bounds",
+      "ModAB.Rational.Curvature.exists_radius_no_curvature_change",
+      "ModAB.Rational.SecantLocal.exists_radius_secant_error",
+      "ModAB.Rational.LocalState.step_preserves",
+      "ModAB.Rational.Alternating.history_two_shifts",
+      "ModAB.Rational.Alternating.hasQOrder_of_neighborhood",
+      "ModAB.RationalLocalSafeguards.local_operational_bridge",
+      "ModAB.RationalLocalSafeguards.positive_coefficient_crossing",
+      "ModAB.RationalLocalSafeguards.crossing_left_to_right_restores_true",
+      "ModAB.RationalLocalSafeguards.crossing_right_to_left_restores_true",
+      "ModAB.RationalLocalSafeguards.bounded_coefficient_recurrence_tendsto",
+      "ModAB.RationalLocalAssembly.bounded_coefficient_recurrence_hasQOrder"
+    ]
+  },
+  {
+    "number": "10",
+    "kind": "Proposition",
+    "aliases": [
+      "L4"
+    ],
+    "label": "prop:local_pair_cycle",
+    "title": "Invariant two-step cone and cubic pair recurrence",
+    "status": "Fully proved: C3 interpolation yields a uniform invariant two-step regime of the actual guarded state iteration",
+    "hypotheses": "Local C3, simple root, nonzero second derivative and K<0. The theorem chooses theta and radius. Initial fresh state has both local exterior histories and the signed separated cone. Exact real arithmetic, zero tolerances and no iteration budget. Uniform coefficients, their limits, future guards, invariance and error convergence are conclusions.",
+    "proof": "The exact mixed-data formula gives a normalized second coefficient without a cancelling relative remainder. A shrinking-cone sequential argument derives both coefficients bounded strictly between 2K and K/2 and all denominator guards. Scaled secant and actual AB bounds make both candidates pass clamp, closing and residual42 tests. Both source orientations are proved, including rawPoint endpoint symmetry. Actual two-update transitions restore fresh ordinates and the next cone. Induction transports the concrete pair orbit to the actual state orbit and derives separation and coefficient limits.",
+    "names": [
+      "ModAB.Rational.CycleComplete.local_pair_complete",
+      "ModAB.Rational.CycleNeighborhood.exists_pair_neighborhood",
+      "ModAB.Rational.CycleUniform.smooth_exists_uniform_negative_coefficients",
+      "ModAB.Rational.CycleUniformBridge.smooth_exists_uniform_raw_pair",
+      "ModAB.Rational.CycleSafeguards.exists_scaled_neighborhood",
+      "ModAB.Rational.CycleStateGuards.guards_latest",
+      "ModAB.Rational.CycleStateUpdate.pair_update_preserves",
+      "ModAB.Rational.CycleTransport.even_orbit",
+      "ModAB.Rational.CycleState.coefficient_limits",
+      "ModAB.Rational.CycleEntry.pair_preserves_cone",
+      "ModAB.Rational.CycleEntry.Run.history_geometric_bound",
+      "ModAB.Rational.CycleEntry.Run.errors_tendsto",
+      "ModAB.Rational.CycleEntry.Run.separation_tendsto",
+      "ModAB.Rational.Cycle.cubicCoeff_identity",
+      "ModAB.Rational.Cycle.cubicCoeff_tendsto"
+    ]
+  },
+  {
+    "number": "11",
+    "kind": "Corollary",
+    "aliases": [
+      "L5"
+    ],
+    "label": "cor:local_cycle_orders",
+    "title": "Alternating exponents 9/5 and 5/3 with exact constants",
+    "status": "Fully proved for the actual even/odd evaluated subsequences under the local pair hypotheses",
+    "hypotheses": "The same C3 and initial-state hypotheses as Proposition10; no independent recurrence, convergence or coefficient-limit premises are added. The algebraic recurrence-only theorems remain reusable special components.",
+    "proof": "The complete pair theorem derives the actual orbit correspondence, convergence and both coefficient limits. Exact logarithmic/real-power identities give Q-order3 for both subsequences and the 9/5,5/3 successive quotient limits with their constants. The geometric mean is sqrt3; no single consecutive-step Q-order sqrt3 is claimed.",
+    "names": [
+      "ModAB.Rational.CycleComplete.local_pair_complete",
+      "ModAB.Rational.CycleTransport.source_hasQOrders",
+      "ModAB.Rational.CycleState.orbit_hasQOrders",
+      "ModAB.Rational.Cycle.cycle_orders_of_coefficients",
+      "ModAB.Rational.CycleEntry.Run.latest_cubic_order",
+      "ModAB.Rational.CycleEntry.Run.orders",
+      "ModAB.RationalLocalAssembly.cycle_cone_hasQOrders",
+      "ModAB.Rational.Cycle.alternating_orders_geometric_mean"
+    ]
+  },
+  {
+    "number": "12",
+    "kind": "Proposition",
+    "aliases": [
+      "L6"
+    ],
+    "label": "prop:local_one_sided",
+    "title": "Nondegenerate one-sided golden-ratio order",
+    "status": "Fully proved from the stated convergent one-sided tail and actual AB updates; bounded scaling is derived",
+    "hypotheses": "Local C3 simple root; fixed opposite endpoint in the chosen small neighbourhood; nonzero convergent same-side unmodified rational tail with valid interpolation data; initial working factor in (0,1], and subsequent weights given by the actual abFactor. A nonzero limiting coefficient gives the order. No uniform scaling bound, subsequent weight monotonicity, or rate is assumed. Automatic global entry and C=0 remain outside the statement.",
+    "proof": "The exact no-cross identity bounds delta by a cap whose limit is proved from fixed-node divided differences. Actual AB updates imply positivity and monotonicity of the weights. A tail bound extends to the full sequence; hence the weight has a positive limit. The connected C3 theorem then derives the two-error coefficient limit and golden Q-order, for either sign of the derivative.",
+    "names": [
+      "ModAB.Rational.OneSidedComplete.smooth_rawPoint_one_sided_hasQOrder",
+      "ModAB.Rational.OneSidedComplete.exists_scaling_bound_of_rawPoint_one_sided",
+      "ModAB.Rational.LocalAlgebra.delta_bound_of_same_side",
+      "ModAB.Rational.LocalAlgebra.weight_lower_bound",
+      "ModAB.RationalGoldenOrder.two_error_recurrence_hasQOrder",
+      "ModAB.Rational.OneSided.exists_positive_weight_limit_of_same_side",
+      "ModAB.Rational.OneSided.tendsto_mixedCoefficient_of_contDiffAt",
+      "ModAB.Rational.OneSidedAssembly.rawPoint_one_sided_hasQOrder_of_bounded_scaling"
+    ]
+  }
+]

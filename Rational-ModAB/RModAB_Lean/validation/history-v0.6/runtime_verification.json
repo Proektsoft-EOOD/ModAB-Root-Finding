@@ -1,0 +1,71 @@
+{
+  "lean": "Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release)",
+  "package_revisions": [
+    {
+      "name": "mathlib",
+      "expected": "5ed2965256430c3649e86755f9576b54eca72435",
+      "actual": "5ed2965256430c3649e86755f9576b54eca72435",
+      "matches": true
+    },
+    {
+      "name": "plausible",
+      "expected": "118aa17ee84656b8bd727fef7c458ee8c833385c",
+      "actual": "118aa17ee84656b8bd727fef7c458ee8c833385c",
+      "matches": true
+    },
+    {
+      "name": "LeanSearchClient",
+      "expected": "ddf04cf3949fa556442341e87d47f9f6e6074707",
+      "actual": "ddf04cf3949fa556442341e87d47f9f6e6074707",
+      "matches": true
+    },
+    {
+      "name": "importGraph",
+      "expected": "e928b72544873815af278d38681b31c0293588e3",
+      "actual": "e928b72544873815af278d38681b31c0293588e3",
+      "matches": true
+    },
+    {
+      "name": "proofwidgets",
+      "expected": "106ff4fafc74ef4ac99d81dbf3ab399118f497a5",
+      "actual": "106ff4fafc74ef4ac99d81dbf3ab399118f497a5",
+      "matches": true
+    },
+    {
+      "name": "aesop",
+      "expected": "355695d523e41d0554926416cba2a2b3544fbbc9",
+      "actual": "355695d523e41d0554926416cba2a2b3544fbbc9",
+      "matches": true
+    },
+    {
+      "name": "Qq",
+      "expected": "6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259",
+      "actual": "6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259",
+      "matches": true
+    },
+    {
+      "name": "batteries",
+      "expected": "f2effa3d803fda822b1f97b806c47cf2adfbcbc2",
+      "actual": "f2effa3d803fda822b1f97b806c47cf2adfbcbc2",
+      "matches": true
+    },
+    {
+      "name": "Cli",
+      "expected": "e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204",
+      "actual": "e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204",
+      "matches": true
+    },
+    {
+      "name": "floatlib",
+      "expected": "1e83f09ed8c41a953cf8f93d26c210778177b94a",
+      "actual": "1e83f09ed8c41a953cf8f93d26c210778177b94a",
+      "matches": true
+    }
+  ],
+  "cache_files": 8908,
+  "convergence_build": "passed",
+  "topentry_build": "passed",
+  "full_build": "passed",
+  "full_build_jobs": 3454,
+  "legacy_audit": "passed"
+}

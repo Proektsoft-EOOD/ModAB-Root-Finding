@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-14",
+  "kind": "standalone_map_and_tools_validation",
+  "proof_release": "0.8.0",
+  "proof_files_changed": false,
+  "modular_proof_files_compared_to_baseline": 64,
+  "live_audit_entry_and_pin_files_compared_to_baseline": 8,
+  "paper_results": 12,
+  "audited_statements": 800,
+  "mapped_declarations": 1027,
+  "primary_map": "RModAB_Proof_Map.html",
+  "compatibility_map": "ModAB_Proof_Map.html",
+  "map_alias_byte_identical": true,
+  "historical_and_current_anchors_preserved": true,
+  "relative_current_links_checked": true,
+  "csv_correspondence_checked": true,
+  "future_repository_url": null,
+  "source_regenerator_idempotence": "PASS in isolated copy; actual proof sources not regenerated",
+  "source_regenerator_preserves_dependency_pins": true,
+  "kernel_verification": "separate build/audit/live logs; not asserted by this structural check"
+}

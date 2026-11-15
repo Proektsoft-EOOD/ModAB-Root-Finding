@@ -1,0 +1,224 @@
+<svg width="1641pt" height="601pt"
+ viewBox="0.00 0.00 1641.30 600.80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(14.4 586.4)">
+<title>G</title>
+<!-- old -->
+<g id="node1" class="node">
+<title>old</title>
+<path fill="#eef5f6" stroke="#678a95" d="M547,-572C547,-572 330,-572 330,-572 324,-572 318,-566 318,-560 318,-560 318,-548 318,-548 318,-542 324,-536 330,-536 330,-536 547,-536 547,-536 553,-536 559,-542 559,-548 559,-548 559,-560 559,-560 559,-566 553,-572 547,-572"/>
+<text text-anchor="middle" x="438.5" y="-550.6" font-family="DejaVu Sans" font-size="13.00">Existing secant and sign lemmas</text>
+</g>
+<!-- rational -->
+<g id="node2" class="node">
+<title>rational</title>
+<path fill="#eef5f6" stroke="#678a95" d="M568.5,-495C568.5,-495 308.5,-495 308.5,-495 302.5,-495 296.5,-489 296.5,-483 296.5,-483 296.5,-461 296.5,-461 296.5,-455 302.5,-449 308.5,-449 308.5,-449 568.5,-449 568.5,-449 574.5,-449 580.5,-455 580.5,-461 580.5,-461 580.5,-483 580.5,-483 580.5,-489 574.5,-495 568.5,-495"/>
+<text text-anchor="middle" x="438.5" y="-475.6" font-family="DejaVu Sans" font-size="13.00">Propositions 1–2: rational limit / closing</text>
+<text text-anchor="middle" x="438.5" y="-461.6" font-family="DejaVu Sans" font-size="13.00">closed&#45;interval admissibility</text>
+</g>
+<!-- old&#45;&gt;rational -->
+<g id="edge1" class="edge">
+<title>old&#45;&gt;rational</title>
+<path fill="none" stroke="#567581" d="M438.5,-535.64C438.5,-525.92 438.5,-513.53 438.5,-502.34"/>
+<polygon fill="#567581" stroke="#567581" points="440.95,-502.2 438.5,-495.2 436.05,-502.2 440.95,-502.2"/>
+</g>
+<!-- capped -->
+<g id="node4" class="node">
+<title>capped</title>
+<path fill="#eef5f6" stroke="#678a95" d="M230,-408C230,-408 15,-408 15,-408 9,-408 3,-402 3,-396 3,-396 3,-374 3,-374 3,-368 9,-362 15,-362 15,-362 230,-362 230,-362 236,-362 242,-368 242,-374 242,-374 242,-396 242,-396 242,-402 236,-408 230,-408"/>
+<text text-anchor="middle" x="122.5" y="-388.6" font-family="DejaVu Sans" font-size="13.00">Theorem 3: capped width bound</text>
+<text text-anchor="middle" x="122.5" y="-374.6" font-family="DejaVu Sans" font-size="13.00">Wn &lt;= W0 / 2^floor(n/7)</text>
+</g>
+<!-- rational&#45;&gt;capped -->
+<g id="edge2" class="edge">
+<title>rational&#45;&gt;capped</title>
+<path fill="none" stroke="#567581" d="M338.76,-448.97C312.85,-442.87 285.05,-436 259.5,-429 238.87,-423.35 216.68,-416.66 196.29,-410.26"/>
+<polygon fill="#567581" stroke="#567581" points="196.86,-407.87 189.45,-408.1 195.39,-412.54 196.86,-407.87"/>
+</g>
+<!-- run -->
+<g id="node5" class="node">
+<title>run</title>
+<path fill="#eef5f6" stroke="#678a95" d="M563.5,-408C563.5,-408 335.5,-408 335.5,-408 329.5,-408 323.5,-402 323.5,-396 323.5,-396 323.5,-374 323.5,-374 323.5,-368 329.5,-362 335.5,-362 335.5,-362 563.5,-362 563.5,-362 569.5,-362 575.5,-368 575.5,-374 575.5,-374 575.5,-396 575.5,-396 575.5,-402 569.5,-408 563.5,-408"/>
+<text text-anchor="middle" x="449.5" y="-388.6" font-family="DejaVu Sans" font-size="13.00">SourceRun.exactRun</text>
+<text text-anchor="middle" x="449.5" y="-374.6" font-family="DejaVu Sans" font-size="13.00">membership and schedule derived</text>
+</g>
+<!-- rational&#45;&gt;run -->
+<g id="edge4" class="edge">
+<title>rational&#45;&gt;run</title>
+<path fill="none" stroke="#567581" d="M441.39,-448.67C442.72,-438.42 444.31,-426.13 445.73,-415.17"/>
+<polygon fill="#567581" stroke="#567581" points="448.16,-415.44 446.63,-408.18 443.3,-414.81 448.16,-415.44"/>
+</g>
+<!-- stop -->
+<g id="node8" class="node">
+<title>stop</title>
+<path fill="#eef5f6" stroke="#678a95" d="M549,-133C549,-133 232,-133 232,-133 226,-133 220,-127 220,-121 220,-121 220,-99 220,-99 220,-93 226,-87 232,-87 232,-87 549,-87 549,-87 555,-87 561,-93 561,-99 561,-99 561,-121 561,-121 561,-127 555,-133 549,-133"/>
+<text text-anchor="middle" x="390.5" y="-113.6" font-family="DejaVu Sans" font-size="13.00">Proposition 6: dynamic width tolerance reached</text>
+<text text-anchor="middle" x="390.5" y="-99.6" font-family="DejaVu Sans" font-size="13.00">unique root + positive tolerance floor</text>
+</g>
+<!-- rational&#45;&gt;stop -->
+<g id="edge8" class="edge">
+<title>rational&#45;&gt;stop</title>
+<path fill="none" stroke="#567581" d="M328.2,-448.82C299.52,-436.27 276.5,-416.65 276.5,-386 276.5,-386 276.5,-386 276.5,-196 276.5,-169.26 296.91,-149.93 320.46,-136.53"/>
+<polygon fill="#567581" stroke="#567581" points="321.84,-138.56 326.83,-133.07 319.51,-134.25 321.84,-138.56"/>
+</g>
+<!-- localalgebra -->
+<g id="node9" class="node">
+<title>localalgebra</title>
+<path fill="#eef5f6" stroke="#678a95" d="M1351,-403C1351,-403 1064,-403 1064,-403 1058,-403 1052,-397 1052,-391 1052,-391 1052,-379 1052,-379 1052,-373 1058,-367 1064,-367 1064,-367 1351,-367 1351,-367 1357,-367 1363,-373 1363,-379 1363,-379 1363,-391 1363,-391 1363,-397 1357,-403 1351,-403"/>
+<text text-anchor="middle" x="1207.5" y="-381.6" font-family="DejaVu Sans" font-size="13.00">Proposition 7: mixed&#45;ordinate error identity</text>
+</g>
+<!-- rational&#45;&gt;localalgebra -->
+<g id="edge9" class="edge">
+<title>rational&#45;&gt;localalgebra</title>
+<path fill="none" stroke="#567581" d="M580.89,-455.26C712.69,-440.69 908.48,-419.05 1046.04,-403.85"/>
+<polygon fill="#567581" stroke="#567581" points="1046.68,-406.24 1053.37,-403.04 1046.14,-401.37 1046.68,-406.24"/>
+</g>
+<!-- phase -->
+<g id="node3" class="node">
+<title>phase</title>
+<path fill="#eef5f6" stroke="#678a95" d="M233,-490C233,-490 12,-490 12,-490 6,-490 0,-484 0,-478 0,-478 0,-466 0,-466 0,-460 6,-454 12,-454 12,-454 233,-454 233,-454 239,-454 245,-460 245,-466 245,-466 245,-478 245,-478 245,-484 239,-490 233,-490"/>
+<text text-anchor="middle" x="122.5" y="-468.6" font-family="DejaVu Sans" font-size="13.00">Existing capped phase / schedule</text>
+</g>
+<!-- phase&#45;&gt;capped -->
+<g id="edge3" class="edge">
+<title>phase&#45;&gt;capped</title>
+<path fill="none" stroke="#567581" d="M122.5,-453.8C122.5,-442.77 122.5,-428.16 122.5,-415.34"/>
+<polygon fill="#567581" stroke="#567581" points="124.95,-415.03 122.5,-408.03 120.05,-415.03 124.95,-415.03"/>
+</g>
+<!-- alternative -->
+<g id="node6" class="node">
+<title>alternative</title>
+<path fill="#eef5f6" stroke="#678a95" d="M612,-316C612,-316 323,-316 323,-316 317,-316 311,-310 311,-304 311,-304 311,-292 311,-292 311,-286 317,-280 323,-280 323,-280 612,-280 612,-280 618,-280 624,-286 624,-292 624,-292 624,-304 624,-304 624,-310 618,-316 612,-316"/>
+<text text-anchor="middle" x="467.5" y="-294.6" font-family="DejaVu Sans" font-size="13.00">Theorem 4: width OR residual tends to zero</text>
+</g>
+<!-- run&#45;&gt;alternative -->
+<g id="edge5" class="edge">
+<title>run&#45;&gt;alternative</title>
+<path fill="none" stroke="#567581" d="M454.23,-361.67C456.73,-349.85 459.81,-335.34 462.36,-323.25"/>
+<polygon fill="#567581" stroke="#567581" points="464.83,-323.44 463.88,-316.08 460.04,-322.42 464.83,-323.44"/>
+</g>
+<!-- roots -->
+<g id="node7" class="node">
+<title>roots</title>
+<path fill="#eef5f6" stroke="#678a95" d="M612,-220C612,-220 323,-220 323,-220 317,-220 311,-214 311,-208 311,-208 311,-186 311,-186 311,-180 317,-174 323,-174 323,-174 612,-174 612,-174 618,-174 624,-180 624,-186 624,-186 624,-208 624,-208 624,-214 618,-220 612,-220"/>
+<text text-anchor="middle" x="467.5" y="-200.6" font-family="DejaVu Sans" font-size="13.00">Theorem 5: residual / zero&#45;set convergence</text>
+<text text-anchor="middle" x="467.5" y="-186.6" font-family="DejaVu Sans" font-size="13.00">unique root =&gt; point convergence</text>
+</g>
+<!-- alternative&#45;&gt;roots -->
+<g id="edge6" class="edge">
+<title>alternative&#45;&gt;roots</title>
+<path fill="none" stroke="#567581" d="M467.5,-279.76C467.5,-265.31 467.5,-244.37 467.5,-227.3"/>
+<polygon fill="#567581" stroke="#567581" points="469.95,-227.26 467.5,-220.26 465.05,-227.26 469.95,-227.26"/>
+</g>
+<!-- roots&#45;&gt;stop -->
+<g id="edge7" class="edge">
+<title>roots&#45;&gt;stop</title>
+<path fill="none" stroke="#567581" d="M447.27,-173.67C437.54,-162.93 425.79,-149.96 415.51,-138.61"/>
+<polygon fill="#567581" stroke="#567581" points="417.11,-136.73 410.6,-133.18 413.48,-140.02 417.11,-136.73"/>
+</g>
+<!-- localanalysis -->
+<g id="node10" class="node">
+<title>localanalysis</title>
+<path fill="#eef5f6" stroke="#678a95" d="M1248,-321C1248,-321 991,-321 991,-321 985,-321 979,-315 979,-309 979,-309 979,-287 979,-287 979,-281 985,-275 991,-275 991,-275 1248,-275 1248,-275 1254,-275 1260,-281 1260,-287 1260,-287 1260,-309 1260,-309 1260,-315 1254,-321 1248,-321"/>
+<text text-anchor="middle" x="1119.5" y="-301.6" font-family="DejaVu Sans" font-size="13.00">C3 regularity / divided&#45;difference limits</text>
+<text text-anchor="middle" x="1119.5" y="-287.6" font-family="DejaVu Sans" font-size="13.00">Checked true&#45;data error coefficient</text>
+</g>
+<!-- localalgebra&#45;&gt;localanalysis -->
+<g id="edge10" class="edge">
+<title>localalgebra&#45;&gt;localanalysis</title>
+<path fill="none" stroke="#567581" d="M1189.69,-366.8C1177.63,-355.15 1161.45,-339.52 1147.66,-326.2"/>
+<polygon fill="#567581" stroke="#567581" points="1149.04,-324.13 1142.31,-321.03 1145.64,-327.65 1149.04,-324.13"/>
+</g>
+<!-- cycle -->
+<g id="node14" class="node">
+<title>cycle</title>
+<path fill="#eef5f6" stroke="#678a95" d="M1388,-133C1388,-133 1109,-133 1109,-133 1103,-133 1097,-127 1097,-121 1097,-121 1097,-99 1097,-99 1097,-93 1103,-87 1109,-87 1109,-87 1388,-87 1388,-87 1394,-87 1400,-93 1400,-99 1400,-99 1400,-121 1400,-121 1400,-127 1394,-133 1388,-133"/>
+<text text-anchor="middle" x="1248.5" y="-113.6" font-family="DejaVu Sans" font-size="13.00">Proposition 10: uniform interpolation cone</text>
+<text text-anchor="middle" x="1248.5" y="-99.6" font-family="DejaVu Sans" font-size="13.00">Contraction / separation / pair recurrence</text>
+</g>
+<!-- localalgebra&#45;&gt;cycle -->
+<g id="edge14" class="edge">
+<title>localalgebra&#45;&gt;cycle</title>
+<path fill="none" stroke="#567581" d="M1232.27,-366.96C1246.32,-355.73 1262.63,-339.67 1270.5,-321 1299.49,-252.18 1291.67,-225.17 1272.5,-153 1271.28,-148.42 1269.44,-143.82 1267.3,-139.42"/>
+<polygon fill="#567581" stroke="#567581" points="1269.43,-138.21 1263.99,-133.17 1265.1,-140.5 1269.43,-138.21"/>
+<text text-anchor="middle" x="1374" y="-243.8" font-family="Times,serif" font-size="14.00">proved uniform bounds</text>
+</g>
+<!-- onesided -->
+<g id="node16" class="node">
+<title>onesided</title>
+<path fill="#eef5f6" stroke="#678a95" d="M1600.5,-321C1600.5,-321 1340.5,-321 1340.5,-321 1334.5,-321 1328.5,-315 1328.5,-309 1328.5,-309 1328.5,-287 1328.5,-287 1328.5,-281 1334.5,-275 1340.5,-275 1340.5,-275 1600.5,-275 1600.5,-275 1606.5,-275 1612.5,-281 1612.5,-287 1612.5,-287 1612.5,-309 1612.5,-309 1612.5,-315 1606.5,-321 1600.5,-321"/>
+<text text-anchor="middle" x="1470.5" y="-301.6" font-family="DejaVu Sans" font-size="13.00">Proposition 12: actual AB tail</text>
+<text text-anchor="middle" x="1470.5" y="-287.6" font-family="DejaVu Sans" font-size="13.00">Positive factor limit / golden&#45;ratio order</text>
+</g>
+<!-- localalgebra&#45;&gt;onesided -->
+<g id="edge18" class="edge">
+<title>localalgebra&#45;&gt;onesided</title>
+<path fill="none" stroke="#567581" d="M1260.41,-366.9C1299.13,-354.38 1352.23,-337.22 1395.35,-323.29"/>
+<polygon fill="#567581" stroke="#567581" points="1396.28,-325.56 1402.18,-321.08 1394.77,-320.9 1396.28,-325.56"/>
+</g>
+<!-- localbounds -->
+<g id="node12" class="node">
+<title>localbounds</title>
+<path fill="#eef5f6" stroke="#678a95" d="M1202.5,-220C1202.5,-220 960.5,-220 960.5,-220 954.5,-220 948.5,-214 948.5,-208 948.5,-208 948.5,-186 948.5,-186 948.5,-180 954.5,-174 960.5,-174 960.5,-174 1202.5,-174 1202.5,-174 1208.5,-174 1214.5,-180 1214.5,-186 1214.5,-186 1214.5,-208 1214.5,-208 1214.5,-214 1208.5,-220 1202.5,-220"/>
+<text text-anchor="middle" x="1081.5" y="-200.6" font-family="DejaVu Sans" font-size="13.00">Uniform C3 local estimates</text>
+<text text-anchor="middle" x="1081.5" y="-186.6" font-family="DejaVu Sans" font-size="13.00">Clamp / closing / residual42 decision</text>
+</g>
+<!-- localanalysis&#45;&gt;localbounds -->
+<g id="edge11" class="edge">
+<title>localanalysis&#45;&gt;localbounds</title>
+<path fill="none" stroke="#567581" d="M1064.36,-274.83C1056.83,-269.46 1050.11,-262.91 1045.5,-255 1039.89,-245.37 1043.44,-235.01 1050.1,-225.81"/>
+<polygon fill="#567581" stroke="#567581" points="1052.11,-227.23 1054.6,-220.24 1048.3,-224.14 1052.11,-227.23"/>
+<text text-anchor="middle" x="1138.5" y="-243.8" font-family="Times,serif" font-size="14.00">proved C3 neighbourhood</text>
+</g>
+<!-- localanalysis&#45;&gt;cycle -->
+<g id="edge15" class="edge">
+<title>localanalysis&#45;&gt;cycle</title>
+<path fill="none" stroke="#567581" d="M1209.29,-274.88C1218.16,-269.61 1226.19,-263.08 1232.5,-255 1258.01,-222.33 1257.3,-172.05 1253.57,-140.37"/>
+<polygon fill="#567581" stroke="#567581" points="1255.96,-139.75 1252.62,-133.13 1251.1,-140.39 1255.96,-139.75"/>
+</g>
+<!-- localorder -->
+<g id="node11" class="node">
+<title>localorder</title>
+<path fill="#eef5f6" stroke="#678a95" d="M914.5,-220C914.5,-220 658.5,-220 658.5,-220 652.5,-220 646.5,-214 646.5,-208 646.5,-208 646.5,-186 646.5,-186 646.5,-180 652.5,-174 658.5,-174 658.5,-174 914.5,-174 914.5,-174 920.5,-174 926.5,-180 926.5,-186 926.5,-186 926.5,-208 926.5,-208 926.5,-214 920.5,-220 914.5,-220"/>
+<text text-anchor="middle" x="786.5" y="-200.6" font-family="DejaVu Sans" font-size="13.00">Lemma 8: tribonacci Q&#45;order</text>
+<text text-anchor="middle" x="786.5" y="-186.6" font-family="DejaVu Sans" font-size="13.00">Checked stable logarithmic recurrence</text>
+</g>
+<!-- localassembly -->
+<g id="node13" class="node">
+<title>localassembly</title>
+<path fill="#eef5f6" stroke="#678a95" d="M938.5,-133C938.5,-133 684.5,-133 684.5,-133 678.5,-133 672.5,-127 672.5,-121 672.5,-121 672.5,-99 672.5,-99 672.5,-93 678.5,-87 684.5,-87 684.5,-87 938.5,-87 938.5,-87 944.5,-87 950.5,-93 950.5,-99 950.5,-99 950.5,-121 950.5,-121 950.5,-127 944.5,-133 938.5,-133"/>
+<text text-anchor="middle" x="811.5" y="-113.6" font-family="DejaVu Sans" font-size="13.00">Theorem 9: actual guarded state orbit</text>
+<text text-anchor="middle" x="811.5" y="-99.6" font-family="DejaVu Sans" font-size="13.00">History invariance / tribonacci Q&#45;order</text>
+</g>
+<!-- localorder&#45;&gt;localassembly -->
+<g id="edge13" class="edge">
+<title>localorder&#45;&gt;localassembly</title>
+<path fill="none" stroke="#567581" d="M793.07,-173.67C796.08,-163.42 799.7,-151.13 802.92,-140.17"/>
+<polygon fill="#567581" stroke="#567581" points="805.35,-140.59 804.98,-133.18 800.65,-139.21 805.35,-140.59"/>
+</g>
+<!-- localbounds&#45;&gt;localassembly -->
+<g id="edge12" class="edge">
+<title>localbounds&#45;&gt;localassembly</title>
+<path fill="none" stroke="#567581" d="M1011.62,-174C973.96,-162.15 927.42,-147.49 888.69,-135.3"/>
+<polygon fill="#567581" stroke="#567581" points="888.97,-132.82 881.56,-133.06 887.5,-137.49 888.97,-132.82"/>
+</g>
+<!-- localbounds&#45;&gt;cycle -->
+<g id="edge16" class="edge">
+<title>localbounds&#45;&gt;cycle</title>
+<path fill="none" stroke="#567581" d="M1124.94,-173.89C1147.56,-162.38 1175.31,-148.25 1198.78,-136.31"/>
+<polygon fill="#567581" stroke="#567581" points="1200.15,-138.36 1205.28,-133 1197.93,-133.99 1200.15,-138.36"/>
+</g>
+<!-- cycleorder -->
+<g id="node15" class="node">
+<title>cycleorder</title>
+<path fill="#eef5f6" stroke="#678a95" d="M1380,-46C1380,-46 1117,-46 1117,-46 1111,-46 1105,-40 1105,-34 1105,-34 1105,-12 1105,-12 1105,-6 1111,0 1117,0 1117,0 1380,0 1380,0 1386,0 1392,-6 1392,-12 1392,-12 1392,-34 1392,-34 1392,-40 1386,-46 1380,-46"/>
+<text text-anchor="middle" x="1248.5" y="-26.6" font-family="DejaVu Sans" font-size="13.00">Corollary 11: alternating orders 9/5, 5/3</text>
+<text text-anchor="middle" x="1248.5" y="-12.6" font-family="DejaVu Sans" font-size="13.00">Cycle&#45;normalized sqrt(3)</text>
+</g>
+<!-- cycle&#45;&gt;cycleorder -->
+<g id="edge17" class="edge">
+<title>cycle&#45;&gt;cycleorder</title>
+<path fill="none" stroke="#567581" d="M1248.5,-86.67C1248.5,-76.52 1248.5,-64.37 1248.5,-53.48"/>
+<polygon fill="#567581" stroke="#567581" points="1250.95,-53.18 1248.5,-46.18 1246.05,-53.18 1250.95,-53.18"/>
+</g>
+</g>
+</svg>

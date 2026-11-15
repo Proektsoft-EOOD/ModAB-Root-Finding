@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-10",
+  "manuscript_title": "Rational ModAB: safeguarded interpolation and global residual convergence",
+  "paper_status": "New standalone working manuscript; separate from submitted ModAB revision",
+  "pages": 13,
+  "numbered_results": 6,
+  "figures": 2,
+  "tables": 2,
+  "latex_compile": "PASS, XeLaTeX, three passes",
+  "undefined_references": 0,
+  "overfull_boxes": 0,
+  "all_pages_visually_reviewed": true,
+  "paper_map_numbering": "PASS (1\u20136; R1\u2013R6 aliases preserved)",
+  "proof_files_changed": 0,
+  "proof_files_compared": 39,
+  "proof_release": "0.6.0",
+  "audited_statements": 472,
+  "new_statements_since_modab_baseline": 92,
+  "new_statements_in_document_restructure": 0,
+  "kernel_rerun_for_document_restructure": false,
+  "kernel_evidence": "Existing compiled source files unchanged; original logs retained in Lean validation directory",
+  "github_published": false,
+  "github_urls_unchanged": true,
+  "research_tasks_remaining": [
+    "Asymptotic local-order proof for the actual history/corrections if claimed",
+    "Controlled comparative benchmark study",
+    "Full floating-point source-to-model refinement if claimed"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/Proektsoft-EOOD/ModAB-Root-Finding",
+  "commit": "64a95b1dce05551feaa2934e45d37fee23a9b2e8",
+  "commit_time": "2026-11-09T21:08:59+02:00",
+  "inspection_date": "2026-11-10",
+  "files": [
+    {
+      "path": "C#/Root/Solvers/RModAB.cs",
+      "sha256": "ef6ec7e072ac1d9033b5735170739562d872ddcf83a3357e95598f29ee2d2753"
+    },
+    {
+      "path": "C#/Root/Node.cs",
+      "sha256": "6a342e9a1c25b985a3d8719713f24faada0238359eba41430548123b224626ee"
+    },
+    {
+      "path": "C#/Root/Solvers/Solver.cs",
+      "sha256": "72565abfb8c68547c820099c612f2a4f1137aeed976f4c9748a9a4eb1c286738"
+    },
+    {
+      "path": "Python/Native/ModAB.py",
+      "sha256": "e7287ab0741013dea97fc1d8c2a779b96a2c2c4b22f1c65639dbb066aface75a"
+    }
+  ]
+}

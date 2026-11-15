@@ -1,0 +1,3 @@
+From https://github.com/lean-dojo/FloatLib
+ * branch            1e83f09ed8c41a953cf8f93d26c210778177b94a -> FETCH_HEAD
+HEAD is now at 1e83f09 Add finite-value zero, square-root domain and cast finiteness lemmas

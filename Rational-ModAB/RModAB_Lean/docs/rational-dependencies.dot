@@ -1,0 +1,35 @@
+digraph G {
+rankdir=TB; graph [bgcolor="transparent",pad="0.2",nodesep="0.3",ranksep="0.55"];
+node [shape=box,style="rounded,filled",fillcolor="#eef5f6",color="#678a95",fontname="DejaVu Sans",fontsize=13,margin="0.15,0.12"];
+edge [color="#567581",arrowsize=0.7];
+old [label="Existing secant and sign lemmas"];
+rational [label="Propositions 1–2: rational limit / closing
+closed-interval admissibility"];
+phase [label="Existing capped phase / schedule"];
+capped [label="Theorem 3: capped width bound
+Wn <= W0 / 2^floor(n/7)"];
+run [label="SourceRun.exactRun
+membership and schedule derived"];
+alternative [label="Theorem 4: width OR residual tends to zero"];
+roots [label="Theorem 5: residual / zero-set convergence
+unique root => point convergence"];
+stop [label="Proposition 6: dynamic width tolerance reached
+unique root + positive tolerance floor"];
+old -> rational; rational -> capped; phase -> capped; rational -> run;
+run -> alternative; alternative -> roots; roots -> stop; rational -> stop;
+localalgebra [label="Proposition 7: mixed-ordinate error identity"];
+localanalysis [label="C3 regularity / divided-difference limits\nChecked true-data error coefficient"];
+localorder [label="Lemma 8: tribonacci Q-order\nChecked stable logarithmic recurrence"];
+localbounds [label="Uniform C3 local estimates\nClamp / closing / residual42 decision"];
+localassembly [label="Theorem 9: actual guarded state orbit\nHistory invariance / tribonacci Q-order"];
+cycle [label="Proposition 10: uniform interpolation cone\nContraction / separation / pair recurrence"];
+cycleorder [label="Corollary 11: alternating orders 9/5, 5/3\nCycle-normalized sqrt(3)"];
+onesided [label="Proposition 12: actual AB tail\nPositive factor limit / golden-ratio order"];
+rational -> localalgebra; localalgebra -> localanalysis;
+localanalysis -> localbounds [label="proved C3 neighbourhood"];
+localbounds -> localassembly; localorder -> localassembly;
+localalgebra -> cycle [label="proved uniform bounds"];
+localanalysis -> cycle; localbounds -> cycle;
+cycle -> cycleorder; localalgebra -> onesided;
+{rank=same;rational;phase;} {rank=same;capped;run;}
+}

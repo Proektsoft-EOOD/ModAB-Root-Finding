@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-11",
+  "proof_release": "0.8.0",
+  "lean_version": "4.34.0",
+  "status": "PASS",
+  "audited_statements": 800,
+  "rational_extension_statements": 420,
+  "statements_added_this_release": 133,
+  "local_statements_added_since_0_6": 328,
+  "compiled_authored_declarations": 1027,
+  "new_proof_modules": [
+    "ModAB/RationalAlternating.lean",
+    "ModAB/RationalCurvature.lean",
+    "ModAB/RationalCycleComplete.lean",
+    "ModAB/RationalCycleIntermediate.lean",
+    "ModAB/RationalCycleNeighborhood.lean",
+    "ModAB/RationalCycleSafeguards.lean",
+    "ModAB/RationalCycleState.lean",
+    "ModAB/RationalCycleStateGuards.lean",
+    "ModAB/RationalCycleStateUpdate.lean",
+    "ModAB/RationalCycleTransport.lean",
+    "ModAB/RationalCycleUniform.lean",
+    "ModAB/RationalCycleUniformAlgebra.lean",
+    "ModAB/RationalCycleUniformBridge.lean",
+    "ModAB/RationalLocalComplete.lean",
+    "ModAB/RationalLocalNeighborhood.lean",
+    "ModAB/RationalLocalState.lean",
+    "ModAB/RationalOneSidedComplete.lean",
+    "ModAB/RationalSecantLocal.lean"
+  ],
+  "new_proof_module_count": 18,
+  "previous_proof_modules_compared": 46,
+  "previous_proof_modules_changed": 0,
+  "dependency_pins_unchanged": true,
+  "modular_build": {
+    "status": "PASS",
+    "jobs": 3505,
+    "exit_code": 0
+  },
+  "audit": {
+    "status": "PASS",
+    "statements": 800,
+    "exit_code": 0
+  },
+  "focused_single_file": {
+    "file": "RModAB_Live.lean",
+    "status": "PASS",
+    "statements": 420,
+    "exit_code": 0
+  },
+  "complete_single_file": {
+    "file": "ModAB_Live_Complete.lean",
+    "status": "PASS",
+    "statements": 800,
+    "exit_code": 0
+  },
+  "allowed_transitive_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "admitted_proofs": 0,
+  "browser_lean_live_tested": false,
+  "local_correspondence_complete": true,
+  "remaining_local_correspondence_obligations": [],
+  "connected_local_theorems": {
+    "Theorem 9": "ModAB.Rational.LocalComplete.local_alternating_complete",
+    "Proposition 10 and Corollary 11": "ModAB.Rational.CycleComplete.local_pair_complete",
+    "Proposition 12": "ModAB.Rational.OneSidedComplete.smooth_rawPoint_one_sided_hasQOrder"
+  },
+  "closed_interfaces": [
+    "C3 positive-K assumptions choose a uniform neighbourhood and derive actual guarded state iteration, invariants and tribonacci Q-order.",
+    "C3 negative-K assumptions derive uniform raw pair coefficients, denominator guards, both actual AB/history updates, invariant pair cone and asymptotic orders.",
+    "Actual one-sided AB updates and the stated convergent unmodified tail derive bounded scaling and a positive limiting weight."
+  ],
+  "scope": "Exact-real local algorithm with zero stopping tolerances and no iteration budget; conclusions under the paper's explicit hypotheses.",
+  "one_sided_hypotheses_retained": "Convergent unmodified one-sided tail and nonzero limiting coefficient, as stated in Proposition 12.",
+  "outside_stated_scope": [
+    "Automatic entry into a specified local regime from every initial bracket",
+    "Classification of the degenerate one-sided zero limiting coefficient",
+    "Complete C# binary64 executable equivalence",
+    "Universal 200-visit bound"
+  ],
+  "paper_results": 12,
+  "paper_map_numbers_and_labels": "PASS: all 12 match the compiled LaTeX auxiliary file",
+  "previous_release_anchors_preserved": 1042,
+  "original_ModAB_anchors_preserved": true,
+  "source_hashes_match_manifest": true,
+  "evidence_sha256": {
+    "build_0_8.log": "3d4c77373b20cd2f6b37a7a72af7968a6bbf9adf31c40938cf75de47b7a98838",
+    "audit_0_8.log": "3fc89633a668d3ed4a283870d6da2f182f738f4dc04a4a9d6f6c745c7950dee8",
+    "live_focused_0_8.log": "a83ca7177b55a75faf449eb99493d008cd04156839fe500c85198a1622a1719c",
+    "live_complete_0_8.log": "aca963a9d3b52fd1359b229939e6e37ce7289d33062aedfbd62eafaaab3e33fd",
+    "coverage_0_8.log": "986f433c2900a4a01f0d5cdfd7f67ae2fd0951ac1e85e0521f5ac88e2b7f06a2",
+    "inventory_compiled.jsonl": "f09671d77c57b5a913c3e885d45bb4e2429579072c0b2044e1997ca856bb22cb",
+    "independent_local_scope_audit.txt": "390d90090a5e80b0946ad3040d7c3149aec419c02514bf92fc930c3d75aca610"
+  },
+  "source_manifest_sha256": "2569db091132154c0de67e368b26659b722bf92ad0ee244ba76356d0cc1e5f9e",
+  "github_published": false,
+  "github_urls_unchanged": true
+}

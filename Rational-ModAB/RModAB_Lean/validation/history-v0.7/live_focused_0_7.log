@@ -1,0 +1,367 @@
+RModAB_Live.lean:138:63: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:138:78: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:327:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:344:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:659:27: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:665:27: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+RModAB_Live.lean:1061:2: warning: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+RModAB_Live.lean:1115:2: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1125:6: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1291:8: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:1294:8: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+RModAB_Live.lean:1407:65: warning: `if_true` has been deprecated: Use `ite_true` instead
+RModAB_Live.lean:1406:13: warning: This simp argument is unused:
+  slope_def_field
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, gluedQuadratic, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RModAB_Live.lean:1406:29: warning: This simp argument is unused:
+  gluedQuadratic
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, slope_def_field, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RModAB_Live.lean:1409:33: warning: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+RModAB_Live.lean:1409:33: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+RModAB_Live.lean:1426:33: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1435:33: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1471:26: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:2102:8: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:2114:8: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+RModAB_Live.lean:4926:2: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:4947:85: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:4952:54: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:4963:4: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ModAB.Rational.secant_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.working_ratio_negative: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.working_second_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.secant_normalized: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.radius_pos: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.radius_le_left: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.radius_le_right: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_bounds: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_margins: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_eq_self: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_fallback_denominator: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_fallback_curvature: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.sourceProposal_mem_closed: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.sourceProposal_interior_of_ne_right: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_is_sourceProposal: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_mem_closed: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_left_separation: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_right_separation: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_right_fallback_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.numerator_ne_zero_of_denominator_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.normalized_interpolation_equations: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordHistory_true_values: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordHistory_dropped_true: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_true_values: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_history_true: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_reuse_left: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_reuse_right: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_left_eq_recordHistory: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_right_eq_recordHistory: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordUpdate_fresh: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordUpdate_at_most_one_modified: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.correction_true_denominator: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.abFactor_lt_one: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.abFactor_mem_Ioo: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.scaled_linear_candidate_example: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.updated_invariants_closed: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.closed_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.closed_zeros: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_global_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_global_width: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_width_seven: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_finite_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.eventually_short_steps: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.no_convergent_separated_tail: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.exists_width_stop_of_converges: [propext, Classical.choice, Quot.sound]
+ModAB.RationalResidual.limit_is_zero: [propext, Classical.choice, Quot.sound]
+ModAB.RationalResidual.eventually_near_zero_set: [propext, Classical.choice, Quot.sound]
+ModAB.RationalResidual.tendsto_unique_zero: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.decision_step: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.forty_two_test: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.step_nonnegative: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.run_nonnegative: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.step_nonincrease: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.width_antitone: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.count_monotone: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.step_count_bound: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.bisection_count_bound: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.count_unbounded: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.infinite_bisections: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.continuing_step: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.continuing_suffix: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.small_widths_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.geometric_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.width_or_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.finite_combined_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.exact_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.point_endpoint: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.point_mem: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.point_mem_initial: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.exact_zeros: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.residual_of_width: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.global_residual_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.finite_residual_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.eta42_global_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.eventually_near_zero_set: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.unique_root_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.width_stop_with_closing: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_closed_update: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.proposal_mem_of_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_candidate_mem: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_width_step: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_bisection_width: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_policy: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_global_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_unique_root_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_closing_separation: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_finite_width_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.eta42_source_finite_width: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_add: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_smul: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_barycentric: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_affine: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_swap_last: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_swap_first: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_cyclic: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.baryRoot_swap_last: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_change_third: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_error_decomposition: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.baryRoot_error_identity: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.pole_identity: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.pole_identity_from_values: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.poleValue_margin: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.baryRoot_true_error: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.rescale_div: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.dd2_scaled_third: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.poleValue_scaled_third: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.baryRoot_scaled_error: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.scaled_crossing_ratio: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.scaled_pole_pos: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.scaled_denominator_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.scaled_error_positive_side: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.scaled_error_negative_side: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.delta_bound_of_same_side: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.negative_coefficient_of_same_side: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.weight_lower_bound: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.weight_from_delta: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.baryRoot_scaled_between: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.bary_denominator_eq: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.bary_denominator_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.baryRoot_eq_rawPoint: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAlgebra.rawPoint_eq_baryRoot: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.tendsto_zero_of_contraction: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.energy_coercive: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.forcing_sq_le_energy: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.energy_update: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.energy_contracts: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.tendsto_zero_of_second_order: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrderStability.tendsto_zero_of_recurrence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.exists_order_root: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.order_root_unique: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.tau_lower: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.tau_upper: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.tau_cubic: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.one_lt_tau: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.tau_pos: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.characteristic_factorization: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.log_abs_recurrence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.transformed_recurrence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.ratio_eq_exp_log_difference: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.q_ratio_of_log_difference: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.three_error_recurrence_log_limit: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.three_error_recurrence_q_ratio: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.three_error_recurrence_hasQOrder: [propext, Classical.choice, Quot.sound]
+ModAB.RationalOrder.eventual_three_error_recurrence_hasQOrder: [propext, Classical.choice, Quot.sound]
+ModAB.RationalGoldenOrder.tendsto_zero_of_first_order: [propext, Classical.choice, Quot.sound]
+ModAB.RationalGoldenOrder.log_abs_recurrence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalGoldenOrder.two_error_recurrence_log_limit: [propext, Classical.choice, Quot.sound]
+ModAB.RationalGoldenOrder.two_error_recurrence_q_ratio: [propext, Classical.choice, Quot.sound]
+ModAB.RationalGoldenOrder.two_error_recurrence_hasQOrder: [propext, Classical.choice, Quot.sound]
+ModAB.RationalGoldenOrder.eventual_two_error_recurrence_hasQOrder: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.triple_error_bound: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.pair_error_bound: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.radius_lower_of_secant_error: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.limited_eq_raw_of_local_estimates: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.forty_two_residual_of_local_bounds: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.nextMode_interpolation_of_forty_two: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.closeCandidate_zero: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.interior_of_local_error: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.local_operational_bridge: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.positive_coefficient_crossing: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.crossing_left_to_right_restores_true: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.crossing_right_to_left_restores_true: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.recurrence_local_invariant: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.recurrence_tendsto_zero: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalSafeguards.bounded_coefficient_recurrence_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.cubicCoeff_identity: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.cubicCoeff_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.abs_cubicCoeff_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.first_order_identity: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.second_order_identity: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.first_constant: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.second_constant: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.first_order_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.second_order_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.alternating_orders_product: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.alternating_orders_geometric_mean: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.firstCoeff_abs: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.secondCoeff_abs: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Cycle.cycle_orders_of_coefficients: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Cone.latest_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Cone.opposite_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Cone.history_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Cone.ordered_errors: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.product_bound: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.pair_signs: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.pair_preserves_cone: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Cone.enlarge_radius: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.all_cones: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.history_geometric_bound: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.errors_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.separation_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.firstCoeff_eq: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.secondCoeff_eq: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.orders: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.latest_cubic_identity: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.latest_cubic_constant: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.CycleEntry.Run.latest_cubic_order: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.power_quotient_limit: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.dslope_hasDerivAt_of_ne: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.dslope_hasDerivAt_same: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.first_numerator_derivative: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.first_continuousAt_same: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.first_hasDerivAt_of_ne: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.first_hasDerivAt_same: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.second_numerator_derivative: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.second_continuousAt_same: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.dslope_hasDerivAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.first_hasDerivAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.second_continuousAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.contDiffAt_dslope: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.deriv_dslope_at: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.DSlope.second_deriv_dslope_at: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.quadratic_at_third: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.exists_second_derivative_eq_twice_dd2: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd1_of_derivatives: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd2_of_derivatives: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd2_of_contDiff_two: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_poleValue_of_contDiff_two: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_error_coefficient_of_contDiff_two: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.exists_second_derivative_dd2_arbitrary_of_derivatives: [propext,
+ Classical.choice,
+ Quot.sound]
+ModAB.Rational.LocalAnalysis.exists_second_derivative_dd2_arbitrary: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd2_arbitrary_of_contDiff_two: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.dd1_comm: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd1_arbitrary_of_contDiff_one: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_error_coefficient_arbitrary_of_contDiff_two: [propext,
+ Classical.choice,
+ Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd2_arbitrary_of_derivatives: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_dd1_arbitrary_of_derivatives: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_divided_differences_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_poleValue_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.LocalAnalysis.tendsto_error_coefficient_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_at: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_off_root: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_continuousAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_contDiffAt_of_dslope: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.analyticAt_dslope: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_analyticAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.reciprocal_second_derivative: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.iteratedDeriv_shift_at: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.iteratedDeriv_shift_at_point: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.hasDerivAt_vanishing_factor: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.factor_second_derivative: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.factor_third_derivative_at: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.dslope_derivative_coefficients_of_contDiff: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.dslope_derivative_coefficients: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_second_coefficient_of_dslope: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_second_coefficient: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_error_constant_of_dslope: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_error_constant: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_exists_contDiffOn_interval: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_contDiffAt_of_contDiff: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_second_coefficient_of_contDiff: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_error_constant_of_contDiff: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.Regularity.regularizedReciprocal_exists_contDiffOn_interval_of_contDiff: [propext,
+ Classical.choice,
+ Quot.sound]
+ModAB.Rational.AnalyticBridge.tendsto_analytic_error_coefficient: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.AnalyticBridge.eventually_analytic_denominator_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.AnalyticBridge.tendsto_normalized_rational_error: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.AnalyticBridge.eventually_raw_denominator_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.AnalyticBridge.tendsto_normalized_rawPoint_error: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.SmoothBridge.tendsto_smooth_error_coefficient: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.SmoothBridge.eventually_smooth_denominator_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.SmoothBridge.tendsto_normalized_rational_error: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.SmoothBridge.eventually_raw_denominator_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.SmoothBridge.tendsto_normalized_rawPoint_error: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.weight_antitone_of_factors: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.delta_monotone_of_weight_antitone: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.exists_delta_weight_limit: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.exists_positive_weight_limit: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.exists_positive_weight_limit_of_same_side: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_dd2_fixed_endpoint: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_poleValue_fixed_endpoint: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.baryRoot_error_eq_mixedCoefficient: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_mixedCoefficient: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_dd1_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_dd2_fixed_endpoint_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_poleValue_fixed_endpoint_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSided.tendsto_mixedCoefficient_of_contDiffAt: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSidedAssembly.barycentric_one_sided_hasQOrder: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSidedAssembly.barycentric_one_sided_hasQOrder_of_bounded_scaling: [propext,
+ Classical.choice,
+ Quot.sound]
+ModAB.Rational.OneSidedAssembly.rawPoint_barycentric_bridge: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.OneSidedAssembly.rawPoint_one_sided_hasQOrder_of_bounded_scaling: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalAssembly.bounded_coefficient_recurrence_hasQOrder: [propext, Classical.choice, Quot.sound]
+ModAB.RationalLocalAssembly.cycle_cone_hasQOrders: [propext, Classical.choice, Quot.sound]
+PASS: 287 declarations; only standard logical axioms.

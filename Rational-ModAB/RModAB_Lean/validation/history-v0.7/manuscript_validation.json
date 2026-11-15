@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-11",
+  "manuscript_title": "Rational ModAB: safeguarded interpolation, global convergence and local rates",
+  "paper_status": "Existing standalone follow-up expanded; submitted predecessor and reviewer response unchanged",
+  "pages": 22,
+  "numbered_results": 12,
+  "figures": 3,
+  "tables": 3,
+  "proof_release": "0.7.0",
+  "latex_compile": "PASS, pdfLaTeX, repeated passes",
+  "undefined_references": 0,
+  "overfull_boxes": 0,
+  "latex_warnings": 0,
+  "visual_review": "New mathematical pages, numerical figure, first page and final correspondence/conclusion pages reviewed at readable resolution",
+  "paper_map_numbering": "PASS (1–12; R1–R6 preserved, L1–L6 added)",
+  "audited_statements": 667,
+  "new_local_statements": 195,
+  "old_proof_modules_changed": 0,
+  "old_proof_modules_compared": 31,
+  "kernel_rerun": true,
+  "github_published": false,
+  "github_urls_unchanged": true,
+  "pdf_sha256": "26515014de3289289bd0c01982384cb9d0be9d725c3d85f0185445ffd8fa51ad",
+  "numerical_validation": {
+    "exp": {
+      "steps": 8,
+      "precision_digits": [
+        3000,
+        4000
+      ],
+      "maximum_log_ratio_difference": "0.0",
+      "all_clamp_ratios_below_0_7": true,
+      "all_residual_ratios_below_1_42": true,
+      "last_log_ratio": "1.8398940897720407465634394765368757114983909634485",
+      "last_constant": "0.4858968029513517573643907158947436658951808123693"
+    },
+    "log": {
+      "steps": 9,
+      "precision_digits": [
+        3000,
+        4000
+      ],
+      "maximum_log_ratio_difference": "0.0",
+      "all_clamp_ratios_below_0_7": true,
+      "all_residual_ratios_below_1_42": true,
+      "last_log_ratio": "1.8007047336830008515073204637191045691052969312917",
+      "last_constant": "0.37010717248715334805111050872376143699691962507276"
+    }
+  },
+  "remaining_interfaces": [
+    "Theorem 9: full local smoothness, history and curvature hypotheses to the complete source-state iteration remain an analytic/state assembly; individual safeguard and recurrence implications are checked.",
+    "Proposition 10: derivation of uniform negative step-coefficient bounds from interpolation remains an analytic interface; invariant cone, convergence, separation and order consequences are checked.",
+    "Proposition 12: the connected one-sided theorem assumes bounded positive scaling and a nonzero limiting coefficient; no automatic full-solver entry or degenerate C=0 classification is claimed.",
+    "No whole floating-point implementation refinement or comparative performance ranking is claimed."
+  ]
+}

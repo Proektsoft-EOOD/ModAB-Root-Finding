@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-10",
+  "proof_release": "0.6.0",
+  "change_kind": "Documentation-only refresh for a separate standalone RModAB follow-up paper",
+  "standalone_entries": [
+    "Proposition 1",
+    "Proposition 2",
+    "Theorem 3",
+    "Theorem 4",
+    "Theorem 5",
+    "Proposition 6"
+  ],
+  "preserved_aliases": {
+    "R1": "Proposition 1",
+    "R2": "Proposition 2",
+    "R3": "Theorem 3",
+    "R4": "Theorem 4",
+    "R5": "Theorem 5",
+    "R6": "Proposition 6"
+  },
+  "previous_ModAB_article": "Separate submitted revision; its numbering, map, anchor IDs and proof bodies are preserved",
+  "audited_statements": 472,
+  "mapped_declarations": 633,
+  "new_proved_statements_in_this_refresh": 0,
+  "all_proof_release_files_byte_identical": true,
+  "audit_names_and_order_unchanged": true,
+  "declaration_names_and_order_unchanged": true,
+  "historical_map_byte_identical": true,
+  "coverage": "PASS",
+  "coverage_output": "PASS: 472 audited statements, 633 mapped declarations, 91 inherited proof steps, 23 original ModAB article entries and 6 standalone RModAB paper entries (1\u20136; aliases R1\u2013R6 preserved); source hashes and all historical/current anchors agree. Proof release 0.6.0 unchanged.",
+  "capped_formula": "Wn <= W0 / 2^floor(n/7)",
+  "kernel_checks_rerun_for_documentation_refresh": false,
+  "prior_kernel_validation": "formal_extension_validation.json and the original compiler/audit logs",
+  "prior_manuscript_artifacts": "Page counts and PDF hashes in formal_extension_validation.json are historical and do not describe the standalone follow-up paper",
+  "project_url": "https://github.com/Proektsoft-EOOD/ModAB-Root-Finding/tree/main/MDPI-Algorithms-Data-2/ModAB.Switching.Lean",
+  "proof_map_url": "https://proektsoft-eood.github.io/ModAB-Root-Finding/MDPI-Algorithms-Data-2/ModAB.Switching.Lean/ModAB_Proof_Map.html",
+  "publication_state": "Local documentation prepared; no GitHub or Pages update performed",
+  "commands": [
+    "python3 tools/build_rational_map.py",
+    "python3 tools/check_audit_coverage.py"
+  ]
+}

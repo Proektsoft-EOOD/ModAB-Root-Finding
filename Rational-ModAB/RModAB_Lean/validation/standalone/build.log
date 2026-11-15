@@ -1,0 +1,418 @@
+✔ [3178/3207] Built FloatLib.Floats.Formats.BinaryInterchange.Format.Definition (992ms)
+✔ [3179/3207] Built FloatLib.Floats.Formats.BinaryInterchange.Format.Properties (703ms)
+✔ [3180/3207] Built FloatLib.Floats.Formats.Flocq.Theory.Rounding.Predicates (2.8s)
+✔ [3181/3207] Built FloatLib.Numerics.Exact.Dyadic.Basic (1.3s)
+✔ [3182/3209] Built FloatLib.Floats.Formats.BinaryInterchange.Format.Storage (385ms)
+✔ [3183/3210] Built FloatLib.Floats.Formats.BinaryInterchange.Format.Runtime (389ms)
+✔ [3184/3212] Built FloatLib.Numerics.Capabilities.Radix (4.1s)
+✔ [3185/3212] Built FloatLib.Numerics.Quantization.Deterministic.Quotient (1.3s)
+✔ [3186/3214] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Carrier (1.8s)
+✔ [3187/3216] Built FloatLib.Numerics.Quantization.Deterministic.ModularPower (1.4s)
+✔ [3188/3216] Built FloatLib.Floats.Formats.Flocq.Theory.Core (2.6s)
+✔ [3189/3216] Built FloatLib.Numerics.Quantization.Deterministic.ShiftRight (2.1s)
+✔ [3190/3216] Built FloatLib.Numerics.Quantization.Deterministic.Rational (2.4s)
+✔ [3191/3216] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Lean (1.5s)
+✔ [3192/3216] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Fields.Optimized (1.2s)
+✔ [3193/3218] Built FloatLib.Floats.Formats.Flocq.Theory.Format.Magnitude (2.4s)
+✔ [3194/3218] Built FloatLib.Floats.Formats.Flocq.Theory.Format.Formats (3.6s)
+✔ [3195/3220] Built FloatLib.Numerics.Quantization.Deterministic (1.5s)
+✔ [3196/3220] Built FloatLib.Floats.Formats.Flocq.Theory.Rounding.Core (4.4s)
+✔ [3197/3220] Built FloatLib.Floats.Formats.Flocq.Theory.Format.Digits (2.2s)
+✔ [3198/3220] Built FloatLib.Numerics.Exact.Dyadic.Arithmetic.Runtime (1.1s)
+✔ [3199/3220] Built FloatLib.Numerics.Exact.RationalBinary (1.4s)
+⚠ [3200/3220] Built ModAB.Switching (15s)
+warning: ModAB/Switching.lean:93:63: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Switching.lean:93:78: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Switching.lean:282:48: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Switching.lean:299:48: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3201/3220] Built FloatLib.Floats.Formats.BinaryInterchange.Dyadic.Core (2.7s)
+✔ [3202/3223] Built FloatLib.Floats.Formats.Flocq.Theory.Format.Generic (1.0s)
+✔ [3203/3223] Built FloatLib.Floats.Formats.Flocq.Theory.Error.Bounds (1.7s)
+✔ [3204/3225] Built FloatLib.Floats.Formats.Flocq.Calculation.Operations (1.7s)
+✔ [3205/3225] Built FloatLib.Floats.Formats.BinaryInterchange.Dyadic.Rounding (1.5s)
+✔ [3206/3225] Built FloatLib.Floats.Formats.Flocq.Theory.Rounding.Properties (1.8s)
+✔ [3207/3226] Built FloatLib.Floats.Formats.Flocq.Theory.Format.Theorems (1.8s)
+✔ [3208/3226] Built FloatLib.Numerics.Exact.Dyadic.Comparison.Runtime (1.0s)
+✔ [3209/3226] Built FloatLib.Floats.Formats.Flocq.Theory.Error.Relative (2.1s)
+✔ [3210/3226] Built FloatLib.Floats.Formats.Flocq.Theory.Analysis.Ulp (2.1s)
+✔ [3212/3226] Built FloatLib.Floats.Formats.BinaryInterchange.Dyadic.Rational (1.1s)
+✔ [3213/3226] Built FloatLib.Floats.Formats.Flocq.Theory.Error.Exactness (1.3s)
+✔ [3214/3231] Built FloatLib.Numerics.Exact.Dyadic.Comparison.Proof (995ms)
+✔ [3215/3231] Built FloatLib.Numerics.Exact.Dyadic.Real (977ms)
+✔ [3216/3231] Built FloatLib.Floats.Formats.Flocq.Theory.Rounding.Generic (2.1s)
+✔ [3217/3232] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Power (1.9s)
+✔ [3218/3233] Built FloatLib.Numerics.Exact.Dyadic.Order (1.4s)
+✔ [3219/3233] Built FloatLib.Floats.Formats.Flocq.Theory.Analysis.Neighbors (2.2s)
+✔ [3220/3235] Built FloatLib.Floats.Formats.BinaryInterchange.Dyadic.Decode (1.4s)
+✔ [3221/3235] Built FloatLib.Floats.Formats.Flocq.Theory.Error.Directed (1.8s)
+✔ [3222/3235] Built FloatLib.Floats.Formats.Flocq.Theory.Rounding.Order (1.9s)
+✔ [3223/3235] Built FloatLib.Floats.Formats.BinaryInterchange.ModelRounding.Runtime (1.5s)
+✔ [3224/3235] Built FloatLib.Numerics.Exact.Dyadic.Arithmetic.Proof (1.6s)
+✔ [3225/3238] Built FloatLib.Numerics.Bitwise (1.0s)
+✔ [3226/3241] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Runtime (492ms)
+✔ [3227/3241] Built FloatLib.Floats.Formats.BinaryInterchange.Dyadic.Classification (1.4s)
+✔ [3228/3243] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Packing.Bounds (1.2s)
+✔ [3229/3248] Built FloatLib.Floats.Formats.Flocq.Theory.Error.Multiplication (2.1s)
+✔ [3230/3249] Built FloatLib.Floats.Formats.BinaryInterchange.Model.RealSemantics (1.9s)
+✔ [3231/3249] Built FloatLib.Floats.Formats.BinaryInterchange.RoundDyadicImpl.Runtime (1.0s)
+✔ [3232/3249] Built FloatLib.Numerics.Operation.Context (381ms)
+✔ [3233/3249] Built FloatLib.Floats.Formats.BinaryInterchange.Rounding.NearestEven (3.7s)
+✔ [3234/3249] Built FloatLib.Floats.Formats.BinaryInterchange.Rounding.Mode (442ms)
+✔ [3235/3249] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Packing.Special (2.1s)
+✔ [3236/3250] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Scaling (2.3s)
+⚠ [3237/3250] Built ModAB.Binary64 (4.5s)
+warning: ModAB/Binary64.lean:119:20: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3238/3250] Built FloatLib.Floats.Formats.BinaryInterchange.ModelRounding.Proof (2.8s)
+✔ [3239/3251] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Fields.Proof (3.0s)
+✔ [3240/3251] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Quotient (2.6s)
+✔ [3241/3259] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Logarithm (2.2s)
+✔ [3242/3259] Built FloatLib.Floats.Formats.BinaryInterchange.Model.Packing.Finite (2.2s)
+✔ [3243/3259] Built FloatLib.Floats.Formats.BinaryInterchange.RoundDyadicImpl.Proof (2.5s)
+✔ [3244/3259] Built FloatLib.Floats.Formats.Flocq.Theory.Rounding.Nearest (3.3s)
+✔ [3245/3259] Built FloatLib.Floats.Formats.Flocq.Calculation.Bracket (3.7s)
+✔ [3246/3261] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.NearestEven (2.6s)
+✔ [3247/3263] Built ModAB.RoundedProgram (5.9s)
+✔ [3248/3263] Built FloatLib.Floats.Formats.BinaryInterchange.Rounding.Directed.Dyadic (1.7s)
+✔ [3249/3263] Built FloatLib.Floats.ExecFloat.Backends.Generic.ProductRound.Runtime (1.1s)
+✔ [3250/3263] Built FloatLib.Floats.Formats.Flocq.Calculation.Round (2.5s)
+✔ [3251/3263] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Dyadic.Core.Runtime (1.6s)
+✔ [3252/3265] Built FloatLib.Floats.ExecFloat.Backends.Generic.QuotientRound.Runtime (1.9s)
+✔ [3253/3265] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Basic (2.0s)
+✔ [3254/3268] Built FloatLib.Floats.ExecFloat.Backends.Generic.ScaleAdd.Runtime (1.6s)
+✔ [3255/3268] Built FloatLib.Kernels.FixedWord.Core.Runtime (1.5s)
+✔ [3256/3268] Built FloatLib.Floats.Formats.BinaryInterchange.Rounding.Proof (2.1s)
+✔ [3257/3268] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Dyadic.Packing (2.1s)
+✔ [3258/3269] Built FloatLib.Floats.Formats.BinaryInterchange.Format.Catalog (400ms)
+✔ [3259/3272] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Packing.Grid (1.8s)
+✔ [3260/3272] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Finite.Runtime (859ms)
+✔ [3261/3272] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Base.Runtime (985ms)
+✔ [3262/3272] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Positive (1.8s)
+✔ [3263/3272] Built FloatLib.Kernels.FixedWord.Difference.Runtime (1.1s)
+✔ [3264/3272] Built FloatLib.Kernels.FixedWord.Product.Runtime (1.3s)
+✔ [3265/3276] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Rounding.Runtime (1.0s)
+✔ [3266/3278] Built FloatLib.Kernels.FixedWord.SignedMagnitude.Runtime (797ms)
+✔ [3267/3278] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Signed (1.6s)
+✔ [3268/3278] Built FloatLib.Kernels.FixedWord.LimbRound.Runtime (1.5s)
+✔ [3269/3280] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Core.Runtime (1.0s)
+✔ [3270/3288] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Addition.Runtime (1.2s)
+✔ [3271/3289] Built FloatLib.Floats.ExecFloat.Backends.Generic.Kernel.Runtime (5.9s)
+✔ [3272/3289] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Core.Runtime (1.1s)
+✔ [3273/3289] Built FloatLib.Kernels.FixedWord.IntegerSquareRoot.Runtime (1.0s)
+✔ [3274/3291] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Dyadic.Core.Proof (2.3s)
+✔ [3275/3291] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Addition.Runtime (1.6s)
+✔ [3276/3291] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Subtraction.Runtime (1.6s)
+✔ [3277/3291] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Core.Runtime (1.8s)
+✔ [3278/3291] Built FloatLib.Floats.ExecFloat.Backends.Generic.ScaledSqrt.Runtime (940ms)
+✔ [3279/3291] Built FloatLib.Floats.Formats.BinaryInterchange.Spec.Division (1.2s)
+✔ [3280/3293] Built FloatLib.Floats.ExecFloat.Backends.Word.ProductRound.Runtime (971ms)
+✔ [3281/3293] Built FloatLib.Kernels.FixedWord.Quotient.Runtime (1.1s)
+✔ [3282/3297] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Internal (1.5s)
+✔ [3283/3297] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Runtime (1.2s)
+✔ [3284/3297] Built FloatLib.Floats.ExecFloat.Backends.Word.ModelSqrt.Runtime (1.1s)
+✔ [3285/3297] Built FloatLib.Kernels.FixedWord.Quotient.Compiler (1.0s)
+✔ [3286/3297] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Division.Runtime (1.2s)
+✔ [3287/3298] Built FloatLib.Kernels.FixedWord.CertifiedDivision.Runtime (1.7s)
+✔ [3288/3300] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Addition.Runtime (1.6s)
+✔ [3289/3300] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Div.Runtime (1.2s)
+✔ [3290/3300] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Division.Runtime (994ms)
+✔ [3291/3303] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Division.Runtime (1.0s)
+✔ [3292/3303] Built FloatLib.Floats.ExecFloat.Backends.Generic.Sqrt.Runtime (2.6s)
+✔ [3293/3303] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Fma.Runtime (1.3s)
+✔ [3294/3305] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Fma.Runtime (1.7s)
+✔ [3295/3307] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Multiplication.Runtime (1.3s)
+✔ [3296/3307] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Div.Runtime (1.7s)
+✔ [3297/3307] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Multiplication.Runtime (854ms)
+✔ [3298/3307] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Mul.Runtime (1.1s)
+✔ [3299/3310] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Finite.Runtime (2.2s)
+✔ [3300/3310] Built FloatLib.Floats.ExecFloat.Backends.Word.TwoWordMul.Runtime (931ms)
+✔ [3301/3311] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Fma.Runtime (1.9s)
+✔ [3302/3317] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Sqrt.Runtime (993ms)
+✔ [3303/3317] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Sqrt.Runtime (885ms)
+✔ [3304/3318] Built FloatLib.Kernels.FixedWord.RestoringSqrt.Runtime (1.0s)
+✔ [3305/3320] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Mul.Runtime (1.1s)
+✔ [3306/3320] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Add.Runtime (1.6s)
+✔ [3307/3320] Built FloatLib.Kernels.FixedWord.RestoringSqrt.Compiler (899ms)
+✔ [3308/3326] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.FmaWord.Runtime (3.0s)
+✔ [3309/3326] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.SqrtWord.Runtime (1.9s)
+✔ [3310/3326] Built FloatLib.Floats.Formats.BinaryInterchange.Model.ERealSemantics (1.7s)
+✔ [3311/3326] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Sqrt.Runtime (1.1s)
+✔ [3312/3329] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Fma.Runtime (960ms)
+✔ [3313/3330] Built FloatLib.Numerics.ShiftRightJam (791ms)
+✔ [3314/3334] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Sqrt.Runtime (1.1s)
+✔ [3315/3334] Built FloatLib.Floats.ExecFloat.Backends.Generic.AddDyadic.Runtime (1.2s)
+✔ [3316/3336] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.SignedSemantics.Core (3.3s)
+✔ [3317/3339] Built FloatLib.Numerics.ShiftRightJam.Proof (1.8s)
+✔ [3318/3346] Built FloatLib.Floats.ExecFloat.Backends.Generic.AddDyadic.Proof (1.5s)
+✔ [3319/3347] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Add.Runtime (5.9s)
+✔ [3320/3347] Built FloatLib.Kernels.FixedWord.Core.Proof.Word (1.9s)
+✔ [3321/3347] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.Runtime (1.2s)
+✔ [3322/3347] Built FloatLib.Floats.Formats.BinaryInterchange.Model.SignedERealSemantics (1.6s)
+✔ [3323/3349] Built FloatLib.Floats.ExecFloat.Backends.Generic.ProductRound.Proof (3.2s)
+✔ [3324/3349] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.PositiveBounds (2.2s)
+✔ [3325/3349] Built FloatLib.Kernels.FixedWord.Core.Proof.UInt128 (1.8s)
+✔ [3326/3349] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.Finiteness (2.0s)
+✔ [3327/3349] Built FloatLib.Numerics.IEEEStatus (630ms)
+✔ [3328/3349] Built FloatLib.Floats.Formats.BinaryInterchange.Rounding.Directed.Runtime (3.0s)
+✔ [3329/3349] Built FloatLib.Floats.ExecFloat.Backends.Generic.ScaleAdd.Proof (2.1s)
+✔ [3330/3349] Built FloatLib.Kernels.FixedWord.Core.Proof.Rounding (3.8s)
+✔ [3331/3349] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Bounds (1.6s)
+✔ [3332/3353] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Packing.Internal (1.3s)
+✔ [3333/3356] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Packing.Branches (1.8s)
+✔ [3334/3358] Built FloatLib.Kernels.FixedWord.Core.Proof (871ms)
+✔ [3335/3358] Built FloatLib.Floats.Formats.BinaryInterchange.Status.Runtime (2.9s)
+✔ [3336/3358] Built FloatLib.Floats.Formats.BinaryInterchange.Model.ExactValue (1.6s)
+✔ [3337/3358] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Packing.Downward (1.5s)
+✔ [3338/3358] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.Packing.Upward (1.8s)
+✔ [3339/3358] Built FloatLib.Floats.ExecFloat.Backends.Generic.QuotientRound.GeneralProof (4.3s)
+✔ [3340/3358] Built FloatLib.Kernels.FixedWord.IntegerSquareRoot.Proof (1.5s)
+✔ [3341/3358] Built FloatLib.Floats.Formats.BinaryInterchange.Operations.TotalOrder.Runtime (1.2s)
+✔ [3342/3358] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Core.Proof (1.5s)
+✔ [3343/3358] Built FloatLib.Floats.Formats.BinaryInterchange.Analysis.DyadicOrder (2.2s)
+✔ [3344/3358] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.RoundingSemantics.Quotient (2.2s)
+✔ [3345/3360] Built FloatLib.Floats.ExecFloat.Backends.Generic.ScaledSqrt.Proof (2.0s)
+✔ [3346/3360] Built FloatLib.Floats.ExecFloat.Backends.Generic.Kernel.Proof (2.3s)
+✔ [3347/3365] Built FloatLib.Floats.Formats.BinaryInterchange.Operations.TotalOrder.ExactValue (2.2s)
+✔ [3348/3365] Built FloatLib.Floats.ExecFloat.Backends.Word.ModelSqrt.Proof (810ms)
+✔ [3349/3365] Built FloatLib.Floats.ExecFloat.Backends.Word.ProductRound.Proof (2.2s)
+✔ [3350/3367] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.RoundingSemantics.Branches (2.6s)
+✔ [3351/3367] Built FloatLib.Floats.Formats.BinaryInterchange.Operations.TotalOrder.Encoding (1.8s)
+✔ [3352/3369] Built FloatLib.Kernels.FixedWord.Product.Proof (2.9s)
+✔ [3353/3370] Built FloatLib.Floats.ExecFloat.Backends.Generic.Sqrt.Proof (2.5s)
+✔ [3354/3370] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.RoundingSemantics.RoundedReal (3.3s)
+✔ [3355/3370] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Exact (2.8s)
+✔ [3356/3370] Built FloatLib.Kernels.FixedWord.LimbRound.Proof.UInt128 (2.2s)
+✔ [3357/3371] Built FloatLib.Floats.Formats.BinaryInterchange.Spec.Dyadic (2.2s)
+✔ [3358/3371] Built FloatLib.Floats.Formats.BinaryInterchange.DirectedSemantics.Rational.RoundingSemantics.Executable (2.2s)
+✔ [3359/3371] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Finite.Proof (2.2s)
+✔ [3360/3371] Built FloatLib.Kernels.FixedWord.Difference.Proof (4.8s)
+✔ [3361/3373] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.DivisionReference (978ms)
+✔ [3362/3373] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Finite.Proof (1.5s)
+✔ [3363/3376] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Add.Proof (2.6s)
+✔ [3364/3378] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Packing (1.7s)
+✔ [3365/3379] Built FloatLib.Kernels.FixedWord.LimbRound.Proof.UInt256 (6.5s)
+✔ [3366/3379] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Rounding.Proof (2.1s)
+✔ [3367/3382] Built FloatLib.Kernels.FixedWord.LimbRound.Proof (764ms)
+✔ [3368/3382] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Base.Proof (841ms)
+✔ [3369/3382] Built FloatLib.Kernels.FixedWord.SignedMagnitude.Proof (1.7s)
+✔ [3370/3382] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.SignedMagnitude.Proof (814ms)
+✔ [3371/3384] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Multiplication.Proof (1.8s)
+✔ [3372/3385] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Core.Proof (3.0s)
+✔ [3373/3387] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Fma.Proof (3.1s)
+✔ [3374/3387] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Addition.Proof (3.7s)
+✔ [3375/3387] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Core.Proof (19s)
+✔ [3376/3387] Built FloatLib.Kernels.FixedWord.Quotient.Proof (3.2s)
+✔ [3377/3387] Built FloatLib.Floats.ExecFloat.Backends.Word.NormalPair.Proof (1.6s)
+✔ [3378/3387] Built FloatLib.Floats.ExecFloat.Backends.Generic.QuotientRound.Proof (2.1s)
+✔ [3379/3390] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Proof (4.8s)
+✔ [3380/3390] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Subtraction.Proof (3.2s)
+✔ [3381/3391] Built FloatLib.Floats.ExecFloat.Backends.Word.Quotient.Proof (1.9s)
+✔ [3382/3391] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Addition.Proof (2.5s)
+✔ [3383/3393] Built FloatLib.Kernels.FixedWord.Quotient.Restoring128Proof (1.5s)
+✔ [3384/3393] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Addition.Proof (2.3s)
+✔ [3385/3393] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Div.Proof (2.4s)
+✔ [3386/3398] Built FloatLib.Kernels.FixedWord.CertifiedDivision.Proof (1.8s)
+✔ [3387/3398] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Division.Proof (2.1s)
+✔ [3388/3398] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Agreement (7.4s)
+✔ [3389/3398] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Division.Proof (2.7s)
+✔ [3390/3399] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Division.Proof (5.6s)
+✔ [3391/3401] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Multiplication.Proof (5.6s)
+✔ [3392/3401] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Fma.Proof (5.8s)
+✔ [3393/3401] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Add.Proof (7.1s)
+✔ [3394/3401] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Div.Proof (3.7s)
+✔ [3395/3402] Built FloatLib.Floats.ExecFloat.Backends.Word.Small.Mul.Proof (3.8s)
+✔ [3396/3405] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.FmaWord.Proof (1.7s)
+✔ [3397/3412] Built FloatLib.Floats.Formats.BinaryInterchange.Spec.SquareRoot (1.8s)
+✔ [3398/3414] Built FloatLib.Floats.ExecFloat.Backends.Word.TwoWordMul.Proof (3.9s)
+✔ [3399/3416] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Fma.Proof (6.7s)
+✔ [3400/3416] Built FloatLib.Floats.ExecFloat.Backends.SqrtArithmetic (1.6s)
+✔ [3401/3416] Built FloatLib.Kernels.FixedWord.RestoringSqrt.Proof (2.1s)
+✔ [3402/3429] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Fma.Proof (1.5s)
+✔ [3403/3429] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.Constants (1.5s)
+✔ [3404/3429] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Mul.Proof (1.8s)
+✔ [3405/3434] Built FloatLib.Floats.Formats.BinaryInterchange.Operations.Compare.Runtime (1.2s)
+✔ [3406/3434] Built FloatLib.Floats.ExecFloat.Backends.SqrtNormalRounding (1.9s)
+✔ [3408/3434] Built FloatLib.Floats.Formats.BinaryInterchange.Operations.Compare.Proof (2.4s)
+✔ [3409/3434] Built FloatLib.Floats.ExecFloat.Backends.FixedLimb.Pair.Sqrt.Proof (3.9s)
+✔ [3410/3461] Built FloatLib.Floats.ExecFloat.Backends.Word.Narrow.Sqrt.Proof (2.6s)
+✔ [3421/3461] Built ModAB.Cubic (6.4s)
+⚠ [3422/3466] Built ModAB.Phase (7.2s)
+warning: ModAB/Phase.lean:96:27: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Phase.lean:102:27: `if_neg` has been deprecated: Use `ite_eq_right` instead
+✔ [3424/3466] Built ModAB.RationalSpacing (1.9s)
+✔ [3425/3470] Built FloatLib.Floats.ExecFloat.Backends.Word.Full.Sqrt.Proof (3.9s)
+✔ [3429/3473] Built ModAB.RationalOrderStability (3.1s)
+✔ [3433/3473] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.SqrtWord.Proof (2.1s)
+✔ [3434/3475] Built ModAB.Schedule (4.4s)
+⚠ [3436/3475] Built ModAB.Unscaled (5.8s)
+warning: ModAB/Unscaled.lean:34:15: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ModAB/Unscaled.lean:74:51: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: ModAB/Unscaled.lean:74:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Unscaled.lean:74:47: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Unscaled.lean:168:28: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ModAB/Unscaled.lean:168:28: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+✔ [3437/3475] Built ModAB.RationalOrder (3.8s)
+✔ [3438/3475] Built FloatLib.Floats.ExecFloat.Backends.Dispatch.Sqrt.Proof (1.7s)
+✔ [3439/3475] Built ModAB.RationalCycle (3.5s)
+⚠ [3441/3475] Built ModAB.Global (3.4s)
+warning: ModAB/Global.lean:157:2: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+⚠ [3442/3477] Built ModAB.Bracketing (3.8s)
+warning: ModAB/Bracketing.lean:20:2: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Bracketing.lean:30:6: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3444/3505] Built ModAB.RationalDSlope (3.4s)
+✔ [3446/3505] Built ModAB.RationalGoldenOrder (2.0s)
+✔ [3447/3505] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.Proof (1.6s)
+✔ [3450/3505] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.Semantics (1.0s)
+⚠ [3451/3505] Built ModAB.Convergence (2.7s)
+warning: ModAB/Convergence.lean:42:8: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Convergence.lean:45:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+✔ [3453/3505] Built ModAB.RationalCycleEntry (3.6s)
+✔ [3454/3505] Built ModAB.Residual (3.1s)
+✔ [3455/3505] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.DivisionSemantics (1.9s)
+✔ [3456/3505] Built ModAB.RationalResidual (2.2s)
+✔ [3458/3505] Built FloatLib.Floats.Formats.BinaryInterchange.Arithmetic.SignedSemantics.Subtraction (1.6s)
+⚠ [3459/3505] Built ModAB.ExamplesBase (2.9s)
+warning: ModAB/ExamplesBase.lean:30:65: `if_true` has been deprecated: Use `ite_true` instead
+warning: ModAB/ExamplesBase.lean:29:13: This simp argument is unused:
+  slope_def_field
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, gluedQuadratic, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ModAB/ExamplesBase.lean:29:29: This simp argument is unused:
+  gluedQuadratic
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, slope_def_field, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ModAB/ExamplesBase.lean:32:33: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ModAB/ExamplesBase.lean:32:33: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ModAB/ExamplesBase.lean:49:33: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/ExamplesBase.lean:58:33: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/ExamplesBase.lean:94:26: `if_pos` has been deprecated: Use `ite_eq_left` instead
+⚠ [3460/3505] Built ModAB.RationalBridge (3.1s)
+warning: ModAB/RationalBridge.lean:25:8: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/RationalBridge.lean:37:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+✔ [3461/3505] Built ModAB.RationalRegularity (3.2s)
+✔ [3462/3505] Built ModAB.IEEE64 (3.2s)
+✔ [3463/3505] Built ModAB.TopEntry (3.0s)
+✔ [3464/3505] Built ModAB.RationalUncapped (3.5s)
+✔ [3465/3505] Built ModAB.OneSided (4.1s)
+⚠ [3466/3505] Built ModAB.Uncapped (5.6s)
+warning: ModAB/Uncapped.lean:22:61: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Uncapped.lean:22:76: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Uncapped.lean:29:61: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Uncapped.lean:29:76: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3467/3505] Built ModAB.Rational (4.6s)
+✔ [3468/3505] Built ModAB.TopOneSided (3.3s)
+⚠ [3469/3505] Built ModAB.Eta42 (4.1s)
+warning: ModAB/Eta42.lean:22:20: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Eta42.lean:113:8: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Eta42.lean:260:6: `if_neg` has been deprecated: Use `ite_eq_right` instead
+warning: ModAB/Eta42.lean:260:16: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Eta42.lean:265:6: `if_neg` has been deprecated: Use `ite_eq_right` instead
+✔ [3470/3505] Built ModAB.Expressions (8.6s)
+✔ [3471/3505] Built ModAB.TopUncapped (4.6s)
+✔ [3472/3505] Built ModAB.RationalAssembly (4.1s)
+✔ [3473/3505] Built ModAB.RationalLocalSafeguards (4.4s)
+✔ [3474/3505] Built ModAB.RationalLocalAlgebra (4.9s)
+✔ [3475/3505] Built ModAB.Source (3.2s)
+✔ [3476/3505] Built ModAB.RationalLocalAssembly (3.5s)
+✔ [3477/3505] Built ModAB.RationalCycleUniformAlgebra (3.7s)
+✔ [3478/3505] Built ModAB.RationalSecantLocal (9.1s)
+⚠ [3479/3505] Built ModAB.RationalLocalAnalysis (3.2s)
+warning: ModAB/RationalLocalAnalysis.lean:31:2: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/RationalLocalAnalysis.lean:52:85: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/RationalLocalAnalysis.lean:57:54: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/RationalLocalAnalysis.lean:68:4: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3480/3505] Built ModAB.RationalAnalyticBridge (3.1s)
+✔ [3481/3505] Built ModAB.RationalOneSided (3.2s)
+✔ [3482/3505] Built ModAB.RationalCurvature (3.1s)
+✔ [3483/3505] Built ModAB.SourceProof (5.9s)
+✔ [3484/3505] Built ModAB.RationalSmoothBridge (2.8s)
+✔ [3485/3505] Built ModAB.RationalOneSidedAssembly (2.8s)
+⚠ [3486/3505] Built ModAB.Correctness (2.8s)
+warning: ModAB/Correctness.lean:29:25: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3487/3505] Built ModAB.RationalCycleSafeguards (4.6s)
+✔ [3488/3505] Built ModAB.RationalCycleUniform (3.6s)
+✔ [3489/3505] Built ModAB.RationalLocalNeighborhood (3.4s)
+✔ [3490/3505] Built ModAB.RationalOneSidedComplete (3.9s)
+✔ [3491/3505] Built ModAB.Decision (2.9s)
+✔ [3492/3505] Built ModAB.RationalCycleState (2.0s)
+✔ [3493/3505] Built ModAB.RationalCycleUniformBridge (3.2s)
+✔ [3494/3505] Built ModAB.PaperBridges (2.9s)
+✔ [3495/3505] Built ModAB.RationalLocalState (4.4s)
+✔ [3496/3505] Built ModAB.RationalCycleIntermediate (2.8s)
+✔ [3497/3505] Built ModAB.RationalCycleStateUpdate (3.2s)
+✔ [3498/3505] Built ModAB.RationalAlternating (3.6s)
+✔ [3499/3505] Built ModAB.RationalCycleTransport (3.8s)
+✔ [3500/3505] Built ModAB.RationalCycleNeighborhood (9.3s)
+✔ [3501/3505] Built ModAB.RationalLocalComplete (8.7s)
+✔ [3502/3505] Built ModAB.RationalCycleStateGuards (2.7s)
+✔ [3503/3505] Built ModAB.RationalCycleComplete (3.6s)
+✔ [3504/3505] Built ModAB (2.3s)
+Build completed successfully (3505 jobs).

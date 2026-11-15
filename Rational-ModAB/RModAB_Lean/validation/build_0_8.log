@@ -1,0 +1,150 @@
+⚠ [3184/3358] Replayed ModAB.Switching
+warning: ModAB/Switching.lean:93:63: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Switching.lean:93:78: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Switching.lean:282:48: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Switching.lean:299:48: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [3194/3358] Replayed ModAB.Binary64
+warning: ModAB/Binary64.lean:119:20: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [3422/3505] Replayed ModAB.Correctness
+warning: ModAB/Correctness.lean:29:25: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [3426/3505] Replayed ModAB.Unscaled
+warning: ModAB/Unscaled.lean:34:15: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ModAB/Unscaled.lean:74:51: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: ModAB/Unscaled.lean:74:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Unscaled.lean:74:47: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Unscaled.lean:168:28: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ModAB/Unscaled.lean:168:28: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+⚠ [3427/3505] Replayed ModAB.Phase
+warning: ModAB/Phase.lean:96:27: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Phase.lean:102:27: `if_neg` has been deprecated: Use `ite_eq_right` instead
+⚠ [3429/3505] Replayed ModAB.Global
+warning: ModAB/Global.lean:157:2: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+⚠ [3432/3505] Replayed ModAB.Bracketing
+warning: ModAB/Bracketing.lean:20:2: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Bracketing.lean:30:6: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [3433/3505] Replayed ModAB.Convergence
+warning: ModAB/Convergence.lean:42:8: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Convergence.lean:45:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+⚠ [3446/3505] Replayed ModAB.ExamplesBase
+warning: ModAB/ExamplesBase.lean:30:65: `if_true` has been deprecated: Use `ite_true` instead
+warning: ModAB/ExamplesBase.lean:29:13: This simp argument is unused:
+  slope_def_field
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, gluedQuadratic, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ModAB/ExamplesBase.lean:29:29: This simp argument is unused:
+  gluedQuadratic
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, slope_def_field, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ModAB/ExamplesBase.lean:32:33: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ModAB/ExamplesBase.lean:32:33: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ModAB/ExamplesBase.lean:49:33: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/ExamplesBase.lean:58:33: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/ExamplesBase.lean:94:26: `if_pos` has been deprecated: Use `ite_eq_left` instead
+⚠ [3448/3505] Replayed ModAB.Uncapped
+warning: ModAB/Uncapped.lean:22:61: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Uncapped.lean:22:76: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Uncapped.lean:29:61: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Uncapped.lean:29:76: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [3452/3505] Replayed ModAB.Eta42
+warning: ModAB/Eta42.lean:22:20: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Eta42.lean:113:8: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/Eta42.lean:260:6: `if_neg` has been deprecated: Use `ite_eq_right` instead
+warning: ModAB/Eta42.lean:260:16: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/Eta42.lean:265:6: `if_neg` has been deprecated: Use `ite_eq_right` instead
+⚠ [3454/3505] Replayed ModAB.RationalBridge
+warning: ModAB/RationalBridge.lean:25:8: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: ModAB/RationalBridge.lean:37:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+⚠ [3473/3505] Replayed ModAB.RationalLocalAnalysis
+warning: ModAB/RationalLocalAnalysis.lean:31:2: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/RationalLocalAnalysis.lean:52:85: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/RationalLocalAnalysis.lean:57:54: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ModAB/RationalLocalAnalysis.lean:68:4: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [3486/3505] Built ModAB.RationalCurvature (5.2s)
+✔ [3487/3505] Built ModAB.RationalCycleUniform (5.2s)
+✔ [3488/3505] Built ModAB.RationalLocalNeighborhood (5.3s)
+✔ [3489/3505] Built ModAB.RationalCycleUniformAlgebra (5.7s)
+✔ [3490/3505] Built ModAB.RationalOneSidedComplete (5.9s)
+✔ [3491/3505] Built ModAB.RationalCycleState (4.0s)
+✔ [3492/3505] Built ModAB.RationalSecantLocal (9.9s)
+✔ [3493/3505] Built ModAB.RationalCycleUniformBridge (4.5s)
+✔ [3494/3505] Built ModAB.RationalLocalState (5.2s)
+✔ [3495/3505] Built ModAB.RationalCycleIntermediate (3.5s)
+✔ [3496/3505] Built ModAB.RationalCycleStateUpdate (4.3s)
+✔ [3497/3505] Built ModAB.RationalAlternating (4.6s)
+✔ [3498/3505] Built ModAB.RationalCycleSafeguards (5.0s)
+✔ [3499/3505] Built ModAB.RationalCycleTransport (3.9s)
+✔ [3500/3505] Built ModAB.RationalLocalComplete (9.2s)
+✔ [3501/3505] Built ModAB.RationalCycleNeighborhood (10s)
+✔ [3502/3505] Built ModAB.RationalCycleStateGuards (3.8s)
+✔ [3503/3505] Built ModAB.RationalCycleComplete (4.2s)
+✔ [3504/3505] Built ModAB (3.5s)
+Build completed successfully (3505 jobs).

@@ -1,0 +1,504 @@
+{
+  "date_utc": "2026-11-14T18:05:08.194894+00:00",
+  "environment": {
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "machine": "x86_64",
+    "lean": "Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release)",
+    "lake": "Lake version 5.0.0-src+293d5d0 (Lean version 4.34.0)",
+    "LEAN_NUM_THREADS": "4"
+  },
+  "proof_sources": {
+    "Audit.lean": {
+      "sha256": "6f7b15a5dda10cc19088e8ea98bbcb7691066af4e3c66311ed65b7df507b097a",
+      "baseline_sha256": "6f7b15a5dda10cc19088e8ea98bbcb7691066af4e3c66311ed65b7df507b097a",
+      "byte_identical": true
+    },
+    "ExportInventory.lean": {
+      "sha256": "e9590e08dd6b60248a2d36b13f202a3806a77d65a56589e4fba6b267d60d8ce8",
+      "baseline_sha256": "e9590e08dd6b60248a2d36b13f202a3806a77d65a56589e4fba6b267d60d8ce8",
+      "byte_identical": true
+    },
+    "ModAB/Binary64.lean": {
+      "sha256": "bd178e94b5ed66db7e2034b5c5120c392a7fbcaa105cb13e495cf5c0d6f5249e",
+      "baseline_sha256": "bd178e94b5ed66db7e2034b5c5120c392a7fbcaa105cb13e495cf5c0d6f5249e",
+      "byte_identical": true
+    },
+    "ModAB/Bracketing.lean": {
+      "sha256": "465c02b3d13578a1dd25dd3a53b156b6db66daef83af0361ebd5c6c72beaa238",
+      "baseline_sha256": "465c02b3d13578a1dd25dd3a53b156b6db66daef83af0361ebd5c6c72beaa238",
+      "byte_identical": true
+    },
+    "ModAB/Convergence.lean": {
+      "sha256": "514fa7087ccd2de336c9df863c80197abbc81e4d0f0af3ddd84a004b731f273d",
+      "baseline_sha256": "514fa7087ccd2de336c9df863c80197abbc81e4d0f0af3ddd84a004b731f273d",
+      "byte_identical": true
+    },
+    "ModAB/Correctness.lean": {
+      "sha256": "9ec4aabaf979bf09df20b6ba9f6ae95d0317f84dcda5db6e1aade942fbaab6e6",
+      "baseline_sha256": "9ec4aabaf979bf09df20b6ba9f6ae95d0317f84dcda5db6e1aade942fbaab6e6",
+      "byte_identical": true
+    },
+    "ModAB/Cubic.lean": {
+      "sha256": "1d9048dfbf099a7698f3013200d28c6c651a988f639463e7fa6e9bccc6bf15f8",
+      "baseline_sha256": "1d9048dfbf099a7698f3013200d28c6c651a988f639463e7fa6e9bccc6bf15f8",
+      "byte_identical": true
+    },
+    "ModAB/Decision.lean": {
+      "sha256": "03a7a09926e4b231328e09818ea5af294e60379c5f488937e3596610050662b3",
+      "baseline_sha256": "03a7a09926e4b231328e09818ea5af294e60379c5f488937e3596610050662b3",
+      "byte_identical": true
+    },
+    "ModAB/Eta42.lean": {
+      "sha256": "06060bcd4965db057dda44b4388a037d69a27e7718a01582d949eb202e1fdcb2",
+      "baseline_sha256": "06060bcd4965db057dda44b4388a037d69a27e7718a01582d949eb202e1fdcb2",
+      "byte_identical": true
+    },
+    "ModAB/ExamplesBase.lean": {
+      "sha256": "f9cf1df72d0aaec9b770bf58cc9be584f50fc4415a11c7efe9e7b5ddafb6589d",
+      "baseline_sha256": "f9cf1df72d0aaec9b770bf58cc9be584f50fc4415a11c7efe9e7b5ddafb6589d",
+      "byte_identical": true
+    },
+    "ModAB/Expressions.lean": {
+      "sha256": "eaf2a1d2806acabc3eba9dc8fb40594515f1bd73ef82d1b89c8bae007c7adc2a",
+      "baseline_sha256": "eaf2a1d2806acabc3eba9dc8fb40594515f1bd73ef82d1b89c8bae007c7adc2a",
+      "byte_identical": true
+    },
+    "ModAB/Global.lean": {
+      "sha256": "6ced4266e19e2274688cdf46880acd7212ac8dd623dad61afbd734f6b318be7d",
+      "baseline_sha256": "6ced4266e19e2274688cdf46880acd7212ac8dd623dad61afbd734f6b318be7d",
+      "byte_identical": true
+    },
+    "ModAB/IEEE64.lean": {
+      "sha256": "9472e580545df77e829efa3494e557f5d16cc1590f3c5836cc4d913b851e28f0",
+      "baseline_sha256": "9472e580545df77e829efa3494e557f5d16cc1590f3c5836cc4d913b851e28f0",
+      "byte_identical": true
+    },
+    "ModAB/OneSided.lean": {
+      "sha256": "1477311640588dca243e3e4a3e3bd5dbbf035383ac44788edb931f96f6010627",
+      "baseline_sha256": "1477311640588dca243e3e4a3e3bd5dbbf035383ac44788edb931f96f6010627",
+      "byte_identical": true
+    },
+    "ModAB/PaperBridges.lean": {
+      "sha256": "14b191e03f6adf0c5dd35e3e93d6155ac9a010278b5c44d3e8b0bbdd3b2ddedf",
+      "baseline_sha256": "14b191e03f6adf0c5dd35e3e93d6155ac9a010278b5c44d3e8b0bbdd3b2ddedf",
+      "byte_identical": true
+    },
+    "ModAB/Phase.lean": {
+      "sha256": "fbdeed08a7c32d8176be8a46d05c24627250d8b75f962934af1abb75b0450f41",
+      "baseline_sha256": "fbdeed08a7c32d8176be8a46d05c24627250d8b75f962934af1abb75b0450f41",
+      "byte_identical": true
+    },
+    "ModAB/Rational.lean": {
+      "sha256": "f0aaf5f8a01be3b5ac2eb43cdbfb6edc99a0c31112765a245588b2efabf01410",
+      "baseline_sha256": "f0aaf5f8a01be3b5ac2eb43cdbfb6edc99a0c31112765a245588b2efabf01410",
+      "byte_identical": true
+    },
+    "ModAB/RationalAlternating.lean": {
+      "sha256": "78ad1a17bc2add60afb669f77529a5ca78e2b61c8ba9462909fb92f2e6d2420c",
+      "baseline_sha256": "78ad1a17bc2add60afb669f77529a5ca78e2b61c8ba9462909fb92f2e6d2420c",
+      "byte_identical": true
+    },
+    "ModAB/RationalAnalyticBridge.lean": {
+      "sha256": "5ea25177ced53ba3759bc22bddb385948be7a1be44e332acbfcbab270eb3f324",
+      "baseline_sha256": "5ea25177ced53ba3759bc22bddb385948be7a1be44e332acbfcbab270eb3f324",
+      "byte_identical": true
+    },
+    "ModAB/RationalAssembly.lean": {
+      "sha256": "827d35250b57ad1d83a956a8492b204fca2f3e3a8dae12d02f9a994ab1081871",
+      "baseline_sha256": "827d35250b57ad1d83a956a8492b204fca2f3e3a8dae12d02f9a994ab1081871",
+      "byte_identical": true
+    },
+    "ModAB/RationalBridge.lean": {
+      "sha256": "22f650037beb8578241972d9434889b986f8f12c79ca4279d3cb339aa0295edb",
+      "baseline_sha256": "22f650037beb8578241972d9434889b986f8f12c79ca4279d3cb339aa0295edb",
+      "byte_identical": true
+    },
+    "ModAB/RationalCurvature.lean": {
+      "sha256": "02d9ec767b71a2f0e8451b38ca9e41f96ce419ff0e4fb60a7b650cb351084cdb",
+      "baseline_sha256": "02d9ec767b71a2f0e8451b38ca9e41f96ce419ff0e4fb60a7b650cb351084cdb",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycle.lean": {
+      "sha256": "e2d23ea9ccb6f6266170ade36217d5208742cb1f0e54378658388287a6cd6eaf",
+      "baseline_sha256": "e2d23ea9ccb6f6266170ade36217d5208742cb1f0e54378658388287a6cd6eaf",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleComplete.lean": {
+      "sha256": "6d3cb89869dfc4cb1d84d113257a7869279a9616802dc05c45972cf327f844e5",
+      "baseline_sha256": "6d3cb89869dfc4cb1d84d113257a7869279a9616802dc05c45972cf327f844e5",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleEntry.lean": {
+      "sha256": "654713b19b56ea5c9bb5d519d2a9c7065f3368731a2ebce6be9c011f6b0a813c",
+      "baseline_sha256": "654713b19b56ea5c9bb5d519d2a9c7065f3368731a2ebce6be9c011f6b0a813c",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleIntermediate.lean": {
+      "sha256": "3907c8736be2e4853e34baddb7e422fd65c47002fdb4793ad8fa43c05dec65af",
+      "baseline_sha256": "3907c8736be2e4853e34baddb7e422fd65c47002fdb4793ad8fa43c05dec65af",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleNeighborhood.lean": {
+      "sha256": "6ef1b5c9759fb39cc1828b5ed7563dc2f5587f7461a0a0440f40afe44032e1eb",
+      "baseline_sha256": "6ef1b5c9759fb39cc1828b5ed7563dc2f5587f7461a0a0440f40afe44032e1eb",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleSafeguards.lean": {
+      "sha256": "010bc8270aad877b6d80b894121f788dbd6ad44ba980ae32cb0780463c94ea6f",
+      "baseline_sha256": "010bc8270aad877b6d80b894121f788dbd6ad44ba980ae32cb0780463c94ea6f",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleState.lean": {
+      "sha256": "a11d9caed4597239dc435fe1ed528c4d3fca8b124339425deb469f78eac7e059",
+      "baseline_sha256": "a11d9caed4597239dc435fe1ed528c4d3fca8b124339425deb469f78eac7e059",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleStateGuards.lean": {
+      "sha256": "8bbf68dfaa33d014f068ad57f38230b9bd92f590ef39d83e16d03bf0a9e7acbe",
+      "baseline_sha256": "8bbf68dfaa33d014f068ad57f38230b9bd92f590ef39d83e16d03bf0a9e7acbe",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleStateUpdate.lean": {
+      "sha256": "20b8bb3a4d0c2ec176dec62940c04796405570c39ed996d29e82c195e9ecd895",
+      "baseline_sha256": "20b8bb3a4d0c2ec176dec62940c04796405570c39ed996d29e82c195e9ecd895",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleTransport.lean": {
+      "sha256": "27059615edf1dbe252f3e7861a32d2e5cac66442041661c03c0534f7d4daeb82",
+      "baseline_sha256": "27059615edf1dbe252f3e7861a32d2e5cac66442041661c03c0534f7d4daeb82",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleUniform.lean": {
+      "sha256": "301f4f754d3ed0b9761afedafe11601761d62ee1279a497142fb9b68ce3a2f5c",
+      "baseline_sha256": "301f4f754d3ed0b9761afedafe11601761d62ee1279a497142fb9b68ce3a2f5c",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleUniformAlgebra.lean": {
+      "sha256": "3516549b0d8a52237b238d11b34b5abaeb1f7ca83f497f8b7bacbbbfac8ad87f",
+      "baseline_sha256": "3516549b0d8a52237b238d11b34b5abaeb1f7ca83f497f8b7bacbbbfac8ad87f",
+      "byte_identical": true
+    },
+    "ModAB/RationalCycleUniformBridge.lean": {
+      "sha256": "96525de637166fa96b78a2d3a720b78fbbcce6a26e20c8cabd5195c9485adf70",
+      "baseline_sha256": "96525de637166fa96b78a2d3a720b78fbbcce6a26e20c8cabd5195c9485adf70",
+      "byte_identical": true
+    },
+    "ModAB/RationalDSlope.lean": {
+      "sha256": "7c70dbfc12a236be6d63c426e50e3e6220c7cf62b9f2ba022f6e06325e380cf7",
+      "baseline_sha256": "7c70dbfc12a236be6d63c426e50e3e6220c7cf62b9f2ba022f6e06325e380cf7",
+      "byte_identical": true
+    },
+    "ModAB/RationalGoldenOrder.lean": {
+      "sha256": "5eab103495dd146642e85bb84018739ea7129d0303f350e2161db90b796f2a6f",
+      "baseline_sha256": "5eab103495dd146642e85bb84018739ea7129d0303f350e2161db90b796f2a6f",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalAlgebra.lean": {
+      "sha256": "a65208bd7552b19687a0001930937ca6e9ef8b6a5728b016107b1655f0c72abe",
+      "baseline_sha256": "a65208bd7552b19687a0001930937ca6e9ef8b6a5728b016107b1655f0c72abe",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalAnalysis.lean": {
+      "sha256": "b6ea4198bb451d11f6b00d8551fcdb902a4ef7c516f92d7c7a4ce114bf1f30db",
+      "baseline_sha256": "b6ea4198bb451d11f6b00d8551fcdb902a4ef7c516f92d7c7a4ce114bf1f30db",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalAssembly.lean": {
+      "sha256": "7e180ae6b222807efe0e85a9c939a21df1ea1757797ee22f568d09dc900310e2",
+      "baseline_sha256": "7e180ae6b222807efe0e85a9c939a21df1ea1757797ee22f568d09dc900310e2",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalComplete.lean": {
+      "sha256": "b10535b16e6adc29960dac6a54b51b602ce875e00d73eb90d9bb5d90e6084e48",
+      "baseline_sha256": "b10535b16e6adc29960dac6a54b51b602ce875e00d73eb90d9bb5d90e6084e48",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalNeighborhood.lean": {
+      "sha256": "6474fa9726d68c41dd854d2feb8739719cfd1f94cb9e3286505617253f9a3e87",
+      "baseline_sha256": "6474fa9726d68c41dd854d2feb8739719cfd1f94cb9e3286505617253f9a3e87",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalSafeguards.lean": {
+      "sha256": "32d7c44f0913a299f5846ff8fa00110e97c8bb2f495e63c0843ab6956c8bec25",
+      "baseline_sha256": "32d7c44f0913a299f5846ff8fa00110e97c8bb2f495e63c0843ab6956c8bec25",
+      "byte_identical": true
+    },
+    "ModAB/RationalLocalState.lean": {
+      "sha256": "c987f92a83aabdbf5f490268bad110ecccd673d7cc1e0254869fde8e7f2c32a6",
+      "baseline_sha256": "c987f92a83aabdbf5f490268bad110ecccd673d7cc1e0254869fde8e7f2c32a6",
+      "byte_identical": true
+    },
+    "ModAB/RationalOneSided.lean": {
+      "sha256": "38210df9c1856811fb5cbd9c8552f0c8dcd72e7dfcecda3ff2da2ab37d76002d",
+      "baseline_sha256": "38210df9c1856811fb5cbd9c8552f0c8dcd72e7dfcecda3ff2da2ab37d76002d",
+      "byte_identical": true
+    },
+    "ModAB/RationalOneSidedAssembly.lean": {
+      "sha256": "eee8daeef57ff99bab6533f7100fad33b6f64e0bc85de22638f0ff633d6ad704",
+      "baseline_sha256": "eee8daeef57ff99bab6533f7100fad33b6f64e0bc85de22638f0ff633d6ad704",
+      "byte_identical": true
+    },
+    "ModAB/RationalOneSidedComplete.lean": {
+      "sha256": "e3d0a13ccd03a1a617f85362c8adcf7ad2282b0a346d4b4b92e73ce5395d5d77",
+      "baseline_sha256": "e3d0a13ccd03a1a617f85362c8adcf7ad2282b0a346d4b4b92e73ce5395d5d77",
+      "byte_identical": true
+    },
+    "ModAB/RationalOrder.lean": {
+      "sha256": "6d21e4310969eddf5dc8859208f6b76e3b033d4ab159a330589b41d4684d226e",
+      "baseline_sha256": "6d21e4310969eddf5dc8859208f6b76e3b033d4ab159a330589b41d4684d226e",
+      "byte_identical": true
+    },
+    "ModAB/RationalOrderStability.lean": {
+      "sha256": "1de08b9957e644baf19ee415d9a4349e79a3820ecd91f45f7a8213017eccfa43",
+      "baseline_sha256": "1de08b9957e644baf19ee415d9a4349e79a3820ecd91f45f7a8213017eccfa43",
+      "byte_identical": true
+    },
+    "ModAB/RationalRegularity.lean": {
+      "sha256": "a7a58008ea623b56b1b3b72d8c4d936fc5e96ec544309458362d7d3d094e88f4",
+      "baseline_sha256": "a7a58008ea623b56b1b3b72d8c4d936fc5e96ec544309458362d7d3d094e88f4",
+      "byte_identical": true
+    },
+    "ModAB/RationalResidual.lean": {
+      "sha256": "3ceba3a1f411e4c899e6f34357449cf8d57c9d00ed16f0073de37193aa193dea",
+      "baseline_sha256": "3ceba3a1f411e4c899e6f34357449cf8d57c9d00ed16f0073de37193aa193dea",
+      "byte_identical": true
+    },
+    "ModAB/RationalSecantLocal.lean": {
+      "sha256": "2404b61365d7d4610f0f16f054fcf6388ba07b15c485f91a7c26fc2a3b18e834",
+      "baseline_sha256": "2404b61365d7d4610f0f16f054fcf6388ba07b15c485f91a7c26fc2a3b18e834",
+      "byte_identical": true
+    },
+    "ModAB/RationalSmoothBridge.lean": {
+      "sha256": "5063dea36b5742d851c8819d513958369dd66c6b02d6e4a85e801c189894029d",
+      "baseline_sha256": "5063dea36b5742d851c8819d513958369dd66c6b02d6e4a85e801c189894029d",
+      "byte_identical": true
+    },
+    "ModAB/RationalSpacing.lean": {
+      "sha256": "678c8e6ce64de999c7b8ca89de15b0a0025522aabcd23445a4eb9d744ccfa43f",
+      "baseline_sha256": "678c8e6ce64de999c7b8ca89de15b0a0025522aabcd23445a4eb9d744ccfa43f",
+      "byte_identical": true
+    },
+    "ModAB/RationalUncapped.lean": {
+      "sha256": "32cae8fa0aa62ff4ee2a18112ae03c9edaa7dc431ff81f887460a16ecb8b4cdc",
+      "baseline_sha256": "32cae8fa0aa62ff4ee2a18112ae03c9edaa7dc431ff81f887460a16ecb8b4cdc",
+      "byte_identical": true
+    },
+    "ModAB/Residual.lean": {
+      "sha256": "971e8fbfa17019d77af1b9218463732930d6bb0d766b8cde8fda5d3c72ac9f7f",
+      "baseline_sha256": "971e8fbfa17019d77af1b9218463732930d6bb0d766b8cde8fda5d3c72ac9f7f",
+      "byte_identical": true
+    },
+    "ModAB/RoundedProgram.lean": {
+      "sha256": "bf01d41fd1f168f79a911bf946450b10db838c0576c925b7d4e300b61cde0259",
+      "baseline_sha256": "bf01d41fd1f168f79a911bf946450b10db838c0576c925b7d4e300b61cde0259",
+      "byte_identical": true
+    },
+    "ModAB/Schedule.lean": {
+      "sha256": "0000c9c68c04e27377a3e5e19a6ed1cb10803761eb7fc734927e64b282adda43",
+      "baseline_sha256": "0000c9c68c04e27377a3e5e19a6ed1cb10803761eb7fc734927e64b282adda43",
+      "byte_identical": true
+    },
+    "ModAB/Source.lean": {
+      "sha256": "6378d91473290d37e7e8af146338c18c8374b485e0bfd09bd8c222b9f94179fa",
+      "baseline_sha256": "6378d91473290d37e7e8af146338c18c8374b485e0bfd09bd8c222b9f94179fa",
+      "byte_identical": true
+    },
+    "ModAB/SourceProof.lean": {
+      "sha256": "f9774e46349200d8ead370acaf08c4784cbe59768f55fab7bbdda807783c89d4",
+      "baseline_sha256": "f9774e46349200d8ead370acaf08c4784cbe59768f55fab7bbdda807783c89d4",
+      "byte_identical": true
+    },
+    "ModAB/Switching.lean": {
+      "sha256": "24e7ea0ef475573ac1f7ec8250c80235dc6f2eaadb3fa6d2a76cd7c2a02d226c",
+      "baseline_sha256": "24e7ea0ef475573ac1f7ec8250c80235dc6f2eaadb3fa6d2a76cd7c2a02d226c",
+      "byte_identical": true
+    },
+    "ModAB/TopEntry.lean": {
+      "sha256": "6997ecc188bad6947e4bad4d37ced20ca18b1bdfa5eb9372fa245c22fd46869d",
+      "baseline_sha256": "6997ecc188bad6947e4bad4d37ced20ca18b1bdfa5eb9372fa245c22fd46869d",
+      "byte_identical": true
+    },
+    "ModAB/TopOneSided.lean": {
+      "sha256": "d2630e9ecc2f9370d6492f6aa432eec2e78c9a6277dab7872e531aca011bc11a",
+      "baseline_sha256": "d2630e9ecc2f9370d6492f6aa432eec2e78c9a6277dab7872e531aca011bc11a",
+      "byte_identical": true
+    },
+    "ModAB/TopUncapped.lean": {
+      "sha256": "2026fe720c7fc5728110b9f85be0711d23c41dab03407f5de82c9125f4336e3f",
+      "baseline_sha256": "2026fe720c7fc5728110b9f85be0711d23c41dab03407f5de82c9125f4336e3f",
+      "byte_identical": true
+    },
+    "ModAB/Uncapped.lean": {
+      "sha256": "12f4f124a0819af63fdc41af97ab825e472c18fb3bc4869fb957abb158a03299",
+      "baseline_sha256": "12f4f124a0819af63fdc41af97ab825e472c18fb3bc4869fb957abb158a03299",
+      "byte_identical": true
+    },
+    "ModAB/Unscaled.lean": {
+      "sha256": "a001f7d9f2b165eea7e0cad1368100abb82ee6eee0d9a352ae5818c9358189d5",
+      "baseline_sha256": "a001f7d9f2b165eea7e0cad1368100abb82ee6eee0d9a352ae5818c9358189d5",
+      "byte_identical": true
+    },
+    "ModAB.lean": {
+      "sha256": "f6fe2b0d7591e206450f10bd2e463ebf1ede03334e8bd411ba31b59ba1a3b94f",
+      "baseline_sha256": "f6fe2b0d7591e206450f10bd2e463ebf1ede03334e8bd411ba31b59ba1a3b94f",
+      "byte_identical": true
+    },
+    "ModAB_Live_Complete.lean": {
+      "sha256": "e55e33febdf9a6e73ccdf82f2dc5149e5c4b5b4b7bf7b250c4384128a664d385",
+      "baseline_sha256": "e55e33febdf9a6e73ccdf82f2dc5149e5c4b5b4b7bf7b250c4384128a664d385",
+      "byte_identical": true
+    },
+    "RModAB_Live.lean": {
+      "sha256": "df2cce7b7027e377f4f828f73ec3331481452e71888f578a83a56e1ba3afb7f1",
+      "baseline_sha256": "df2cce7b7027e377f4f828f73ec3331481452e71888f578a83a56e1ba3afb7f1",
+      "byte_identical": true
+    }
+  },
+  "dependency_revisions": [
+    {
+      "name": "mathlib",
+      "expected": "5ed2965256430c3649e86755f9576b54eca72435",
+      "actual": "5ed2965256430c3649e86755f9576b54eca72435",
+      "matches": true
+    },
+    {
+      "name": "plausible",
+      "expected": "118aa17ee84656b8bd727fef7c458ee8c833385c",
+      "actual": "118aa17ee84656b8bd727fef7c458ee8c833385c",
+      "matches": true
+    },
+    {
+      "name": "LeanSearchClient",
+      "expected": "ddf04cf3949fa556442341e87d47f9f6e6074707",
+      "actual": "ddf04cf3949fa556442341e87d47f9f6e6074707",
+      "matches": true
+    },
+    {
+      "name": "importGraph",
+      "expected": "e928b72544873815af278d38681b31c0293588e3",
+      "actual": "e928b72544873815af278d38681b31c0293588e3",
+      "matches": true
+    },
+    {
+      "name": "proofwidgets",
+      "expected": "106ff4fafc74ef4ac99d81dbf3ab399118f497a5",
+      "actual": "106ff4fafc74ef4ac99d81dbf3ab399118f497a5",
+      "matches": true
+    },
+    {
+      "name": "aesop",
+      "expected": "355695d523e41d0554926416cba2a2b3544fbbc9",
+      "actual": "355695d523e41d0554926416cba2a2b3544fbbc9",
+      "matches": true
+    },
+    {
+      "name": "Qq",
+      "expected": "6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259",
+      "actual": "6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259",
+      "matches": true
+    },
+    {
+      "name": "batteries",
+      "expected": "f2effa3d803fda822b1f97b806c47cf2adfbcbc2",
+      "actual": "f2effa3d803fda822b1f97b806c47cf2adfbcbc2",
+      "matches": true
+    },
+    {
+      "name": "Cli",
+      "expected": "e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204",
+      "actual": "e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204",
+      "matches": true
+    },
+    {
+      "name": "floatlib",
+      "expected": "1e83f09ed8c41a953cf8f93d26c210778177b94a",
+      "actual": "1e83f09ed8c41a953cf8f93d26c210778177b94a",
+      "matches": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "modular_build",
+      "command": [
+        "lake",
+        "build",
+        "ModAB"
+      ],
+      "exit_code": 0,
+      "seconds": 207.569,
+      "log": "build.log",
+      "log_sha256": "79fa2b5a72d18b024fa30ee6da40c7f637b67469ada4bc96afb609cc02d7f925"
+    },
+    {
+      "name": "axiom_audit",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "Audit.lean"
+      ],
+      "exit_code": 0,
+      "seconds": 4.477,
+      "log": "audit.log",
+      "log_sha256": "3fc89633a668d3ed4a283870d6da2f182f738f4dc04a4a9d6f6c745c7950dee8"
+    },
+    {
+      "name": "focused_live",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "RModAB_Live.lean"
+      ],
+      "exit_code": 0,
+      "seconds": 38.281,
+      "log": "live_focused.log",
+      "log_sha256": "a83ca7177b55a75faf449eb99493d008cd04156839fe500c85198a1622a1719c"
+    },
+    {
+      "name": "complete_live",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "ModAB_Live_Complete.lean"
+      ],
+      "exit_code": 0,
+      "seconds": 174.655,
+      "log": "live_complete.log",
+      "log_sha256": "aca963a9d3b52fd1359b229939e6e37ce7289d33062aedfbd62eafaaab3e33fd"
+    },
+    {
+      "name": "compiled_inventory",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "ExportInventory.lean"
+      ],
+      "exit_code": 0,
+      "seconds": 12.572,
+      "log": "inventory_compiled.jsonl",
+      "log_sha256": "f09671d77c57b5a913c3e885d45bb4e2429579072c0b2044e1997ca856bb22cb"
+    }
+  ],
+  "status": "PASS",
+  "browser_lean_live_tested": false,
+  "pins_and_configuration": {
+    "lean-toolchain": {
+      "sha256": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+      "baseline_sha256": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+      "byte_identical": true
+    },
+    "lakefile.toml": {
+      "sha256": "907983875ec7daeacdabcf9e8433ed145273b9dca7317ab6141427ddc72fbb74",
+      "baseline_sha256": "907983875ec7daeacdabcf9e8433ed145273b9dca7317ab6141427ddc72fbb74",
+      "byte_identical": true
+    },
+    "lake-manifest.json": {
+      "sha256": "d022bcd489b18d273c5744dc12a8171846785085ab276e63afb8175913f3cd62",
+      "baseline_sha256": "d022bcd489b18d273c5744dc12a8171846785085ab276e63afb8175913f3cd62",
+      "byte_identical": true
+    }
+  }
+}

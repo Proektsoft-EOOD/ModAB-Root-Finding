@@ -1,0 +1,152 @@
+RModAB_Live.lean:115:63: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:115:78: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:304:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:321:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:636:27: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:642:27: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+RModAB_Live.lean:1038:2: warning: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+RModAB_Live.lean:1092:2: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1102:6: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1268:8: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:1271:8: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+RModAB_Live.lean:1384:65: warning: `if_true` has been deprecated: Use `ite_true` instead
+RModAB_Live.lean:1383:13: warning: This simp argument is unused:
+  slope_def_field
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, gluedQuadratic, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RModAB_Live.lean:1383:29: warning: This simp argument is unused:
+  gluedQuadratic
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [hx, slope_def_field, gluedSlope]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RModAB_Live.lean:1386:33: warning: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+RModAB_Live.lean:1386:33: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+RModAB_Live.lean:1403:33: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1412:33: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+RModAB_Live.lean:1448:26: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:2079:8: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+RModAB_Live.lean:2091:8: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+ModAB.Rational.secant_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.working_ratio_negative: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.working_second_ne_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.secant_normalized: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.radius_pos: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.radius_le_left: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.radius_le_right: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_bounds: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_margins: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.limited_eq_self: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_fallback_denominator: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_fallback_curvature: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.sourceProposal_mem_closed: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.sourceProposal_interior_of_ne_right: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.candidate_is_sourceProposal: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_mem_closed: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_left_separation: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_right_separation: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.closeCandidate_right_fallback_interior: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.numerator_ne_zero_of_denominator_zero: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.normalized_interpolation_equations: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordHistory_true_values: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordHistory_dropped_true: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_true_values: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_history_true: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_reuse_left: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_reuse_right: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_left_eq_recordHistory: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordSourceHistory_right_eq_recordHistory: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordUpdate_fresh: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.recordUpdate_at_most_one_modified: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.correction_true_denominator: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.abFactor_lt_one: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.abFactor_mem_Ioo: [propext, Classical.choice, Quot.sound]
+ModAB.Rational.scaled_linear_candidate_example: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.updated_invariants_closed: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.closed_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.closed_zeros: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_global_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_global_width: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_width_seven: [propext, Classical.choice, Quot.sound]
+ModAB.RationalBridge.capped_finite_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.eventually_short_steps: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.no_convergent_separated_tail: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.exists_width_stop_of_converges: [propext, Classical.choice, Quot.sound]
+ModAB.RationalResidual.limit_is_zero: [propext, Classical.choice, Quot.sound]
+ModAB.RationalResidual.eventually_near_zero_set: [propext, Classical.choice, Quot.sound]
+ModAB.RationalResidual.tendsto_unique_zero: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.decision_step: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.forty_two_test: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.step_nonnegative: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.run_nonnegative: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.step_nonincrease: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.width_antitone: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.count_monotone: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.step_count_bound: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.bisection_count_bound: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.count_unbounded: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.infinite_bisections: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.continuing_step: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.continuing_suffix: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.small_widths_tendsto: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.geometric_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.width_or_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.finite_combined_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.exact_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.point_endpoint: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.point_mem: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.point_mem_initial: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.exact_zeros: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.residual_of_width: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.global_residual_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.finite_residual_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.eta42_global_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.eventually_near_zero_set: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.unique_root_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalUncapped.width_stop_with_closing: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_closed_update: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.proposal_mem_of_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_invariants: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_candidate_mem: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_width_step: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_bisection_width: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_policy: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_global_residual: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_unique_root_convergence: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_closing_separation: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.source_finite_width_tolerance: [propext, Classical.choice, Quot.sound]
+ModAB.RationalAssembly.eta42_source_finite_width: [propext, Classical.choice, Quot.sound]
+PASS: 92 declarations; only standard logical axioms.
