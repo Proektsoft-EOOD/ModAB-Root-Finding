@@ -88,12 +88,12 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**RModAB**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1871**</mark>| 
+   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1870**</mark>| 
    AVG|       48|       28|       27|       34|       21|       28|       20| <mark>**19**</mark>| 
 MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**11**</mark>| 
    MIN|        3|        4|        4|        3|        3|        4|        3| <mark>**3**</mark>| 
    MAX|       53|      102|      102|      202|       70|      102|       78| <mark>**56**</mark>| 
-FACTOR|   2.610x|   1.502x|   1.480x|   1.831x|   1.129x|   1.502x|   1.065x| <mark>**1.000x**</mark>| 
+FACTOR|   2.611x|   1.503x|   1.481x|   1.832x|   1.129x|   1.503x|   1.066x| <mark>**1.000x**</mark>| 
 
 
 #### Execution times  (ms per problem, 200 iterations)

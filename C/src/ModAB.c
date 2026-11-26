@@ -207,6 +207,8 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
     // Each return from A&B to bisection halves the margin of the switching test, so that
     // borderline switches are rejected after unsuccessful A&B phases.
     double margin = 1.0;
+    const int MAX_RESIDUAL_STEPS = 3; // Max consecutive A&B steps kept by a 4x residual reduction alone
+    int residualSteps = 0;
     int last = 0; // Endpoint set by the last evaluation: 1 = x1, -1 = x2, 0 = none
     double xl = NAN, fl = NAN, xr = NAN, fr = NAN; // Last endpoints dropped on each side
     for (int i = 1; i <= maxIter; ++i) {
@@ -297,11 +299,23 @@ EXPORT double modAB_find_root(double (*f)(double), double x1, double x2, double 
                 x2 = x3; f2 = y2 = y3; last = -1;
             }
             // Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
-            // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
-            if (x2 - x1 > threshold && 42.0 * fabs(y3) >= fmin(fabs(yl), fabs(yr))) {
-                bisection = true;
-                side = 0;
-                margin *= 0.5;
+            // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1), or more than
+            // 4 times for no more than MAX_RESIDUAL_STEPS consecutive steps. Near a root where |f| grows as x^2, a 4x
+            // smaller residual halves the distance to the root, as bisection does.
+            if (x2 - x1 > threshold) {
+                double yMin = fmin(fabs(yl), fabs(yr)), ay3 = fabs(y3); // Best true residual of the bracket
+                if (42.0 * ay3 < yMin) {
+                    // Fast residual progress: needs no cap
+                } else if (residualSteps < MAX_RESIDUAL_STEPS && 4.0 * ay3 < yMin) {
+                    ++residualSteps;
+                } else {
+                    bisection = true;
+                    side = 0;
+                    margin *= 0.5;
+                    residualSteps = 0;
+                }
+            } else {
+                residualSteps = 0;
             }
         }
     }

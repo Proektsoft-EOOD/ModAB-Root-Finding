@@ -41,6 +41,8 @@ namespace Proektsoft.Root
             // Each return from AB to bisection halves the margin of the switching test, so that
             // borderline switches are rejected after unsuccessful AB phases.
             var fallbacks = 0;
+            const int MaxResidualSteps = 3; // Max consecutive AB steps kept by a 4x smaller residual alone.
+            var residualSteps = 0;
             var lastMoved = 0; // The endpoint set by the last evaluation: LEFT, RIGHT or 0 for none.
             // The last endpoints dropped on each side.
             double xl = double.NaN, yl = double.NaN, xr = double.NaN, yr = double.NaN;
@@ -143,14 +145,34 @@ namespace Proektsoft.Root
                         }
                         p2 = p3; f2 = y3; lastMoved = RIGHT;
                     }
+                    // Fallback if AB fails to reduce the bracket width, unless it still shrinks the
+                    // residual more than 42 times (2^(1074/200) = 41.4: at this rate the residual
+                    // underflows within 200 steps from |y| = 1), or shrinks it more than 4 times for no
+                    // more than MaxResidualSteps consecutive steps. Near a root where |f| grows as x²,
+                    // a 4x smaller residual halves the distance to the root, as bisection does; with 2x,
+                    // the slow one-sided AB steps on such roots were kept (f101: 63 evaluations vs 56).
                     dx = p2.X - p1.X;
-                    if (dx > fallbackThreshold &&
-                        42 * Math.Abs(y3) >= Math.Min(Math.Abs(y1), Math.Abs(y2)))
+                    if (dx > fallbackThreshold)
                     {
-                        isAB = false;
-                        sideMoved = 0;
-                        ++fallbacks;
+                        var yMin = Math.Min(Math.Abs(y1), Math.Abs(y2)); // Best true residual of the bracket
+                        var a3 = Math.Abs(y3);
+                        if (42 * a3 < yMin)
+                        {
+                            // Fast residual progress: needs no cap.
+                        }
+                        else if (residualSteps < MaxResidualSteps && 4 * a3 < yMin)
+                            ++residualSteps;
+                        else
+                        {
+                            isAB = false;
+                            sideMoved = 0;
+                            ++fallbacks;
+                            residualSteps = 0;
+                        }
                     }
+                    else
+                        residualSteps = 0;
+
                     fallbackThreshold *= 0.5;
                 }
                 else if (SameSign(p1.Y, y3)) // Bisection step
@@ -199,7 +221,8 @@ namespace Proektsoft.Root
             double q1 = y1 * k, q3 = y3 * k;
             var c = 1.0 - q1;
             double w = x2 - x1, u = x3 - x1;
-            var t = w * u * q1 * (q3 - 1.0) / (w * (q3 - q1) - u * q3 * c);
+            var D = w * (q3 - q1) - u * q3 * c;
+            var t = w * u * q1 * (q3 - 1.0) / D;
             if (!double.IsFinite(t))
                 return Node.SafeSecant(x1, y1, x2, y2);
 

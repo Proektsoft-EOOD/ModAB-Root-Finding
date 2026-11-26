@@ -158,6 +158,9 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
     # Each return from A&B to bisection halves the margin of the switching test, so that
     # borderline switches are rejected after unsuccessful A&B phases.
     cdef double margin = 1.0
+    cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by a 4x residual reduction alone
+    cdef int residual_steps = 0
+    cdef double y_min
     if x2 < x1:
         x1, x2 = x2, x1
 
@@ -269,11 +272,22 @@ cpdef double modAB_root(object f, double x1, double x2, double y=0.0,
                 x2, y2, f2, last = x3, y3, y3, -1  # Also store the unmodified y2 value to be used for bisection fallback
 
             # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
-            # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
-            if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):
-                bisection = 1
-                side = 0
-                margin *= 0.5
+            # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1), or more than
+            # 4 times for no more than MAX_RESIDUAL_STEPS consecutive steps. Near a root where |f| grows as x^2, a 4x
+            # smaller residual halves the distance to the root, as bisection does.
+            if x2 - x1 > threshold:
+                y_min = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket
+                if 42.0 * ay3 < y_min:
+                    pass  # Fast residual progress: needs no cap
+                elif residual_steps < MAX_RESIDUAL_STEPS and 4.0 * ay3 < y_min:
+                    residual_steps += 1
+                else:
+                    bisection = 1
+                    side = 0
+                    margin *= 0.5
+                    residual_steps = 0
+            else:
+                residual_steps = 0
     return NAN
 
 

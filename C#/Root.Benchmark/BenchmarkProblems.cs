@@ -16,7 +16,7 @@ namespace Root.Benchmark
 
         private static readonly double[] noisyLineRoots = NoisyLineRoots.Build();
 
-        // Test examples from various publications as specified bellow
+        // Test examples from various publications as specified below
         internal static readonly Problem[] Set1 =
         {
             //Sérgio Galdino. A family of regula falsi root-finding methods

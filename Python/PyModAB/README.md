@@ -70,9 +70,10 @@ Returns the number of function evaluations from the last root-finding call.
 
 ### Version history
 
-Version 1.2.2 adds two safeguards to the rational step, proposed by L. Tomov. When `1/y2` or the step `t` is not finite (a subnormal residual, or overflow on a very wide bracket), the step falls back to the Anderson-Björck secant point instead of reusing an endpoint of the bracket. The benchmark is unchanged at 1871 evaluations. On his examples, `2^-1022·(x - 0.173)` on [-0.764, 1.604] needs 4 evaluations instead of 118, `x - 1` on [-1e300, 1e300] needs 5 instead of 10, and `x - 1e-100` on the same bracket converges in 5 evaluations instead of failing after 202.
+Version 1.2.3 keeps more Anderson-Björck steps that make good progress on the residual. When a step does not shrink the bracket fast enough, it is still kept if it cuts the residual more than 42 times, as before, or more than 4 times for at most 3 steps in a row; otherwise the search falls back to bisection. Near a root where |f| grows as x², a 4x smaller residual halves the distance to the root, as bisection does. The benchmark needs 1870 evaluations instead of 1871, and a skewed function such as `0.001·(x - 0.3)` left of the root and `(x - 0.3)·(1 + 10⁴·(x - 0.3)⁴)` right of it, on [0, 1], needs 18 evaluations instead of 27 at `atol = 1e-12`.
 
 Earlier versions:
+- **1.2.2** – Two safeguards in the rational step, proposed by L. Tomov: a non-finite `1/y2` or step `t` falls back to the Anderson-Björck secant point instead of reusing an endpoint of the bracket; 1871 evaluations on the benchmark.
 - **1.2.1** – The rational step goes through the Anderson-Björck-corrected bracket, and a step too far from the secant point is clamped to 0.7 of its distance to the nearer endpoint; 1871 evaluations on the benchmark.
 - **1.2.0** – The rational modab (RModAB): a rational correction bends the secant step to follow the curvature of the function, and a closing step keeps each new point at least half the tolerance away from the endpoint just evaluated; 1881 evaluations on the benchmark.
 - **1.1.4** – Each fallback to bisection halves the margin of the switching test, and a switching bisection on a plateau does not count as a side move; 1951 evaluations on the benchmark.
@@ -118,12 +119,12 @@ The modAB algorithm is benchmarked against the available algorithms in Python/Sc
 
   Func|   bisect|   brentq|   brenth|   ridder|   chandr| cybrentq| modAB_ct| <mark>**RModAB**</mark>|
 ----- | ------: | ------: | ------: | ------: | ------: | ------: | ------: | ------: |
-   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1871**</mark>| 
+   SUM|     4883|     2810|     2769|     3425|     2112|     2810|     1993| <mark>**1870**</mark>| 
    AVG|       48|       28|       27|       34|       21|       28|       20| <mark>**19**</mark>| 
 MEDIAN|       49|       13|       12|       16|       12|       13|       13| <mark>**11**</mark>| 
    MIN|        3|        4|        4|        3|        3|        4|        3| <mark>**3**</mark>| 
    MAX|       53|      102|      102|      202|       70|      102|       78| <mark>**56**</mark>| 
-FACTOR|   2.610x|   1.502x|   1.480x|   1.831x|   1.129x|   1.502x|   1.065x| <mark>**1.000x**</mark>| 
+FACTOR|   2.611x|   1.503x|   1.481x|   1.832x|   1.129x|   1.503x|   1.066x| <mark>**1.000x**</mark>| 
 
 #### Execution times  (ms per problem, 200 iterations)
 

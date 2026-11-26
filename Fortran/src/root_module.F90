@@ -2799,6 +2799,9 @@
     integer :: side !! for tracking the side
     logical :: switching !! this bisection switches to A&B
     real(wp) :: margin !! margin factor of the switching test
+    integer,parameter :: max_residual_steps = 3 !! max consecutive A&B steps kept by a 4x residual reduction alone
+    integer :: residual_steps !! consecutive A&B steps kept by the residual reduction alone
+    real(wp) :: y_min !! best true residual of the bracket before the update
     real(wp),parameter :: plateau_ratio = 0.99_wp
         !! A switching bisection whose midpoint reduces the residual of the replaced endpoint by less
         !! than 1 % lies on a plateau; the first A&B step is then not rescaled.
@@ -2811,6 +2814,7 @@
     ! Each return from A&B to bisection halves the margin of the switching test, so that
     ! borderline switches are rejected after unsuccessful A&B phases.
     margin = 1.0_wp
+    residual_steps = 0
     threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
     last = 0
     have_l = .false.; have_r = .false.
@@ -2923,11 +2927,23 @@
             end if
             ! if Anderson-Bjork is not shrinking the interval fast enough, fall back to bisection,
             ! unless it still shrinks the residual more than 42 times
-            ! (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
-            if (x2-x1 > threshold .and. 42.0_wp*abs(y3) >= min(abs(yl),abs(yr))) then
-                bis  = .true. ! reset to bisection.
-                side = 0
-                margin = 0.5_wp*margin
+            ! (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1),
+            ! or more than 4 times for no more than max_residual_steps consecutive steps. Near a root
+            ! where |f| grows as x^2, a 4x smaller residual halves the distance to the root, as bisection does.
+            if (x2-x1 > threshold) then
+                y_min = min(abs(yl),abs(yr))
+                if (42.0_wp*abs(y3) < y_min) then
+                    ! fast residual progress: needs no cap
+                else if (residual_steps < max_residual_steps .and. 4.0_wp*abs(y3) < y_min) then
+                    residual_steps = residual_steps + 1
+                else
+                    bis  = .true. ! reset to bisection.
+                    side = 0
+                    margin = 0.5_wp*margin
+                    residual_steps = 0
+                end if
+            else
+                residual_steps = 0
             end if
         end if
 

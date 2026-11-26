@@ -2579,7 +2579,7 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_y2 __pyx_string_tab[30]
 #define __pyx_n_u_ytol __pyx_string_tab[31]
 #define __pyx_kp_b_iso88591_a_9AS __pyx_string_tab[32]
-#define __pyx_kp_b_iso88591_A_88I_2_A_A_Zz_1_s_A_E_Q_5_q_AT __pyx_string_tab[33]
+#define __pyx_kp_b_iso88591_A_88I_2_A_A_Zz_1_a_s_A_E_Q_5_q __pyx_string_tab[33]
 #define __pyx_kp_b_iso88591_at4t1 __pyx_string_tab[34]
 #define __pyx_kp_b_iso88591_A_Q __pyx_string_tab[35]
 #define __pyx_float_0_0 __pyx_number_tab[0]
@@ -3608,6 +3608,9 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   double __pyx_v_fr;
   double __pyx_v_PLATEAU_RATIO;
   double __pyx_v_margin;
+  int __pyx_v_MAX_RESIDUAL_STEPS;
+  int __pyx_v_residual_steps;
+  double __pyx_v_y_min;
   double __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -3688,14 +3691,32 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
  *     # Each return from A&B to bisection halves the margin of the switching test, so that
  *     # borderline switches are rejected after unsuccessful A&B phases.
  *     cdef double margin = 1.0             # <<<<<<<<<<<<<<
- *     if x2 < x1:
- *         x1, x2 = x2, x1
+ *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by a 4x residual reduction alone
+ *     cdef int residual_steps = 0
 */
   __pyx_v_margin = 1.0;
 
   /* "cymodab.pyx":161
  *     # borderline switches are rejected after unsuccessful A&B phases.
  *     cdef double margin = 1.0
+ *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by a 4x residual reduction alone             # <<<<<<<<<<<<<<
+ *     cdef int residual_steps = 0
+ *     cdef double y_min
+*/
+  __pyx_v_MAX_RESIDUAL_STEPS = 3;
+
+  /* "cymodab.pyx":162
+ *     cdef double margin = 1.0
+ *     cdef int MAX_RESIDUAL_STEPS = 3  # Max consecutive A&B steps kept by a 4x residual reduction alone
+ *     cdef int residual_steps = 0             # <<<<<<<<<<<<<<
+ *     cdef double y_min
+ *     if x2 < x1:
+*/
+  __pyx_v_residual_steps = 0;
+
+  /* "cymodab.pyx":164
+ *     cdef int residual_steps = 0
+ *     cdef double y_min
  *     if x2 < x1:             # <<<<<<<<<<<<<<
  *         x1, x2 = x2, x1
  * 
@@ -3705,8 +3726,8 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   if (__pyx_t_1) {
 
 
-    /* "cymodab.pyx":162
- *     cdef double margin = 1.0
+    /* "cymodab.pyx":165
+ *     cdef double y_min
  *     if x2 < x1:
  *         x1, x2 = x2, x1             # <<<<<<<<<<<<<<
  * 
@@ -3719,16 +3740,16 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     __pyx_v_x1 = __pyx_t_2;
     __pyx_v_x2 = __pyx_t_3;
 
-    /* "cymodab.pyx":161
- *     # borderline switches are rejected after unsuccessful A&B phases.
- *     cdef double margin = 1.0
+    /* "cymodab.pyx":164
+ *     cdef int residual_steps = 0
+ *     cdef double y_min
  *     if x2 < x1:             # <<<<<<<<<<<<<<
  *         x1, x2 = x2, x1
  * 
 */
   }
 
-  /* "cymodab.pyx":164
+  /* "cymodab.pyx":167
  *         x1, x2 = x2, x1
  * 
  *     epsy = ytol * c_max(fabs(y), 1.0)             # <<<<<<<<<<<<<<
@@ -3737,7 +3758,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   __pyx_v_epsy = (__pyx_v_ytol * __pyx_f_7cymodab_c_max(fabs(__pyx_v_y), 1.0));
 
-  /* "cymodab.pyx":165
+  /* "cymodab.pyx":168
  * 
  *     epsy = ytol * c_max(fabs(y), 1.0)
  *     y1 = f(x1) - y             # <<<<<<<<<<<<<<
@@ -3747,7 +3768,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   __pyx_t_5 = NULL;
   __Pyx_INCREF(__pyx_v_f);
   __pyx_t_6 = __pyx_v_f; 
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_x1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_x1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_8 = 1;
   #if CYTHON_UNPACK_METHODS
@@ -3767,20 +3788,20 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 165, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
   }
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_7); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_7); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_v_y1 = __pyx_t_3;
 
-  /* "cymodab.pyx":166
+  /* "cymodab.pyx":169
  *     epsy = ytol * c_max(fabs(y), 1.0)
  *     y1 = f(x1) - y
  *     if fabs(y1) <= epsy:             # <<<<<<<<<<<<<<
@@ -3792,7 +3813,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   if (__pyx_t_1) {
 
 
-    /* "cymodab.pyx":167
+    /* "cymodab.pyx":170
  *     y1 = f(x1) - y
  *     if fabs(y1) <= epsy:
  *         return x1             # <<<<<<<<<<<<<<
@@ -3805,7 +3826,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     }
     goto __pyx_L0;
 
-    /* "cymodab.pyx":166
+    /* "cymodab.pyx":169
  *     epsy = ytol * c_max(fabs(y), 1.0)
  *     y1 = f(x1) - y
  *     if fabs(y1) <= epsy:             # <<<<<<<<<<<<<<
@@ -3814,7 +3835,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   }
 
-  /* "cymodab.pyx":169
+  /* "cymodab.pyx":172
  *         return x1
  * 
  *     y2 = f(x2) - y             # <<<<<<<<<<<<<<
@@ -3824,7 +3845,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   __pyx_t_6 = NULL;
   __Pyx_INCREF(__pyx_v_f);
   __pyx_t_4 = __pyx_v_f; 
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_x2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_x2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_8 = 1;
   #if CYTHON_UNPACK_METHODS
@@ -3844,20 +3865,20 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 169, __pyx_L1_error)
+    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 172, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
   }
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_y2 = __pyx_t_3;
 
-  /* "cymodab.pyx":170
+  /* "cymodab.pyx":173
  * 
  *     y2 = f(x2) - y
  *     if fabs(y2) <= epsy:             # <<<<<<<<<<<<<<
@@ -3869,7 +3890,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   if (__pyx_t_1) {
 
 
-    /* "cymodab.pyx":171
+    /* "cymodab.pyx":174
  *     y2 = f(x2) - y
  *     if fabs(y2) <= epsy:
  *         return x2             # <<<<<<<<<<<<<<
@@ -3882,7 +3903,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     }
     goto __pyx_L0;
 
-    /* "cymodab.pyx":170
+    /* "cymodab.pyx":173
  * 
  *     y2 = f(x2) - y
  *     if fabs(y2) <= epsy:             # <<<<<<<<<<<<<<
@@ -3891,7 +3912,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   }
 
-  /* "cymodab.pyx":175
+  /* "cymodab.pyx":178
  *     # NaN has no usable sign, and same_sign is false for it, so it must
  *     # be rejected before the predicate is used to update a bracket.
  *     if isnan(y1) or isnan(y2) or same_sign(y1, y2):             # <<<<<<<<<<<<<<
@@ -3927,7 +3948,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   if (__pyx_t_1) {
 
 
-    /* "cymodab.pyx":176
+    /* "cymodab.pyx":179
  *     # be rejected before the predicate is used to update a bracket.
  *     if isnan(y1) or isnan(y2) or same_sign(y1, y2):
  *         return NAN  # No sign change - no root guaranteed             # <<<<<<<<<<<<<<
@@ -3940,7 +3961,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     }
     goto __pyx_L0;
 
-    /* "cymodab.pyx":175
+    /* "cymodab.pyx":178
  *     # NaN has no usable sign, and same_sign is false for it, so it must
  *     # be rejected before the predicate is used to update a bracket.
  *     if isnan(y1) or isnan(y2) or same_sign(y1, y2):             # <<<<<<<<<<<<<<
@@ -3949,7 +3970,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   }
 
-  /* "cymodab.pyx":178
+  /* "cymodab.pyx":181
  *         return NAN  # No sign change - no root guaranteed
  * 
  *     f1 = y1             # <<<<<<<<<<<<<<
@@ -3958,7 +3979,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   __pyx_v_f1 = __pyx_v_y1;
 
-  /* "cymodab.pyx":179
+  /* "cymodab.pyx":182
  * 
  *     f1 = y1
  *     f2 = y2  # Values for symmetry check kept unmodified by A&B corrections             # <<<<<<<<<<<<<<
@@ -3967,7 +3988,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   __pyx_v_f2 = __pyx_v_y2;
 
-  /* "cymodab.pyx":180
+  /* "cymodab.pyx":183
  *     f1 = y1
  *     f2 = y2  # Values for symmetry check kept unmodified by A&B corrections
  *     side = 0             # <<<<<<<<<<<<<<
@@ -3976,7 +3997,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   __pyx_v_side = 0;
 
-  /* "cymodab.pyx":181
+  /* "cymodab.pyx":184
  *     f2 = y2  # Values for symmetry check kept unmodified by A&B corrections
  *     side = 0
  *     bisection = 1             # <<<<<<<<<<<<<<
@@ -3985,7 +4006,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   __pyx_v_bisection = 1;
 
-  /* "cymodab.pyx":182
+  /* "cymodab.pyx":185
  *     side = 0
  *     bisection = 1
  *     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough             # <<<<<<<<<<<<<<
@@ -3994,7 +4015,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
   __pyx_v_threshold = (__pyx_v_x2 - __pyx_v_x1);
 
-  /* "cymodab.pyx":183
+  /* "cymodab.pyx":186
  *     bisection = 1
  *     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
  *     for _ in range(maxiter):             # <<<<<<<<<<<<<<
@@ -4008,7 +4029,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
     __pyx_v__ = __pyx_t_12;
 
-    /* "cymodab.pyx":184
+    /* "cymodab.pyx":187
  *     threshold = x2 - x1  # Threshold to fall back to bisection if AB fails to shrink the interval enough
  *     for _ in range(maxiter):
  *         dx = x2 - x1  # Bracket width             # <<<<<<<<<<<<<<
@@ -4017,7 +4038,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
     __pyx_v_dx = (__pyx_v_x2 - __pyx_v_x1);
 
-    /* "cymodab.pyx":185
+    /* "cymodab.pyx":188
  *     for _ in range(maxiter):
  *         dx = x2 - x1  # Bracket width
  *         if bisection:             # <<<<<<<<<<<<<<
@@ -4029,7 +4050,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     if (__pyx_t_1) {
 
 
-      /* "cymodab.pyx":186
+      /* "cymodab.pyx":189
  *         dx = x2 - x1  # Bracket width
  *         if bisection:
  *             x3 = safe_midpoint(x1, x2)             # <<<<<<<<<<<<<<
@@ -4038,7 +4059,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       __pyx_v_x3 = __pyx_f_7cymodab_safe_midpoint(__pyx_v_x1, __pyx_v_x2);
 
-      /* "cymodab.pyx":187
+      /* "cymodab.pyx":190
  *         if bisection:
  *             x3 = safe_midpoint(x1, x2)
  *             epsx = xtol * c_max(fabs(x3), 1.0)             # <<<<<<<<<<<<<<
@@ -4047,7 +4068,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       __pyx_v_epsx = (__pyx_v_xtol * __pyx_f_7cymodab_c_max(fabs(__pyx_v_x3), 1.0));
 
-      /* "cymodab.pyx":185
+      /* "cymodab.pyx":188
  *     for _ in range(maxiter):
  *         dx = x2 - x1  # Bracket width
  *         if bisection:             # <<<<<<<<<<<<<<
@@ -4057,7 +4078,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       goto __pyx_L12;
     }
 
-    /* "cymodab.pyx":192
+    /* "cymodab.pyx":195
  *             # secant when the curvature changes sign within the bracket. A missing endpoint is
  *             # NaN, which fails both tests, so it needs no check of its own.
  *             if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr):             # <<<<<<<<<<<<<<
@@ -4070,7 +4091,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":193
+        /* "cymodab.pyx":196
  *             # NaN, which fails both tests, so it needs no check of its own.
  *             if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr):
  *                 x3 = safe_secant(x1, y1, x2, y2)             # <<<<<<<<<<<<<<
@@ -4079,7 +4100,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_x3 = __pyx_f_7cymodab_safe_secant(__pyx_v_x1, __pyx_v_y1, __pyx_v_x2, __pyx_v_y2);
 
-        /* "cymodab.pyx":192
+        /* "cymodab.pyx":195
  *             # secant when the curvature changes sign within the bracket. A missing endpoint is
  *             # NaN, which fails both tests, so it needs no check of its own.
  *             if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr):             # <<<<<<<<<<<<<<
@@ -4089,7 +4110,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L13;
       }
 
-      /* "cymodab.pyx":194
+      /* "cymodab.pyx":197
  *             if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr):
  *                 x3 = safe_secant(x1, y1, x2, y2)
  *             elif last == 1:             # <<<<<<<<<<<<<<
@@ -4101,7 +4122,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":195
+        /* "cymodab.pyx":198
  *                 x3 = safe_secant(x1, y1, x2, y2)
  *             elif last == 1:
  *                 x3 = rational_step(x1, y1, x2, y2, xl, fl)             # <<<<<<<<<<<<<<
@@ -4110,7 +4131,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_x3 = __pyx_f_7cymodab_rational_step(__pyx_v_x1, __pyx_v_y1, __pyx_v_x2, __pyx_v_y2, __pyx_v_xl, __pyx_v_fl);
 
-        /* "cymodab.pyx":194
+        /* "cymodab.pyx":197
  *             if curvature_changes_sign(xl, fl, x1, f1, x2, f2, xr, fr):
  *                 x3 = safe_secant(x1, y1, x2, y2)
  *             elif last == 1:             # <<<<<<<<<<<<<<
@@ -4120,7 +4141,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L13;
       }
 
-      /* "cymodab.pyx":197
+      /* "cymodab.pyx":200
  *                 x3 = rational_step(x1, y1, x2, y2, xl, fl)
  *             else:
  *                 x3 = rational_step(x1, y1, x2, y2, xr, fr)             # <<<<<<<<<<<<<<
@@ -4132,7 +4153,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       }
       __pyx_L13:;
 
-      /* "cymodab.pyx":198
+      /* "cymodab.pyx":201
  *             else:
  *                 x3 = rational_step(x1, y1, x2, y2, xr, fr)
  *             epsx = xtol * c_max(fabs(x3), 1.0)             # <<<<<<<<<<<<<<
@@ -4141,7 +4162,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       __pyx_v_epsx = (__pyx_v_xtol * __pyx_f_7cymodab_c_max(fabs(__pyx_v_x3), 1.0));
 
-      /* "cymodab.pyx":202
+      /* "cymodab.pyx":205
  *             # of the endpoint just evaluated and the bracket does not shrink. A step of epsx/2
  *             # towards the far side then crosses the root and closes the bracket.
  *             h = 0.5 * epsx             # <<<<<<<<<<<<<<
@@ -4150,7 +4171,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       __pyx_v_h = (0.5 * __pyx_v_epsx);
 
-      /* "cymodab.pyx":203
+      /* "cymodab.pyx":206
  *             # towards the far side then crosses the root and closes the bracket.
  *             h = 0.5 * epsx
  *             if last == 1:             # <<<<<<<<<<<<<<
@@ -4162,7 +4183,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":204
+        /* "cymodab.pyx":207
  *             h = 0.5 * epsx
  *             if last == 1:
  *                 if x3 - x1 < h and x1 + h < x2:             # <<<<<<<<<<<<<<
@@ -4188,7 +4209,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":205
+          /* "cymodab.pyx":208
  *             if last == 1:
  *                 if x3 - x1 < h and x1 + h < x2:
  *                     x3 = x1 + h             # <<<<<<<<<<<<<<
@@ -4197,7 +4218,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_x3 = (__pyx_v_x1 + __pyx_v_h);
 
-          /* "cymodab.pyx":204
+          /* "cymodab.pyx":207
  *             h = 0.5 * epsx
  *             if last == 1:
  *                 if x3 - x1 < h and x1 + h < x2:             # <<<<<<<<<<<<<<
@@ -4206,7 +4227,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         }
 
-        /* "cymodab.pyx":203
+        /* "cymodab.pyx":206
  *             # towards the far side then crosses the root and closes the bracket.
  *             h = 0.5 * epsx
  *             if last == 1:             # <<<<<<<<<<<<<<
@@ -4216,7 +4237,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L14;
       }
 
-      /* "cymodab.pyx":206
+      /* "cymodab.pyx":209
  *                 if x3 - x1 < h and x1 + h < x2:
  *                     x3 = x1 + h
  *             elif x2 - x3 < h and x2 - h > x1:             # <<<<<<<<<<<<<<
@@ -4242,7 +4263,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":207
+        /* "cymodab.pyx":210
  *                     x3 = x1 + h
  *             elif x2 - x3 < h and x2 - h > x1:
  *                 x3 = x2 - h             # <<<<<<<<<<<<<<
@@ -4251,7 +4272,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_x3 = (__pyx_v_x2 - __pyx_v_h);
 
-        /* "cymodab.pyx":206
+        /* "cymodab.pyx":209
  *                 if x3 - x1 < h and x1 + h < x2:
  *                     x3 = x1 + h
  *             elif x2 - x3 < h and x2 - h > x1:             # <<<<<<<<<<<<<<
@@ -4263,7 +4284,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     }
     __pyx_L12:;
 
-    /* "cymodab.pyx":209
+    /* "cymodab.pyx":212
  *                 x3 = x2 - h
  * 
  *         if dx <= epsx:  # x-convergence check             # <<<<<<<<<<<<<<
@@ -4275,7 +4296,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     if (__pyx_t_1) {
 
 
-      /* "cymodab.pyx":210
+      /* "cymodab.pyx":213
  * 
  *         if dx <= epsx:  # x-convergence check
  *             return x3             # <<<<<<<<<<<<<<
@@ -4288,7 +4309,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       }
       goto __pyx_L0;
 
-      /* "cymodab.pyx":209
+      /* "cymodab.pyx":212
  *                 x3 = x2 - h
  * 
  *         if dx <= epsx:  # x-convergence check             # <<<<<<<<<<<<<<
@@ -4297,7 +4318,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
     }
 
-    /* "cymodab.pyx":212
+    /* "cymodab.pyx":215
  *             return x3
  * 
  *         switching = 0  # This bisection switches to A&B             # <<<<<<<<<<<<<<
@@ -4306,7 +4327,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
     __pyx_v_switching = 0;
 
-    /* "cymodab.pyx":213
+    /* "cymodab.pyx":216
  * 
  *         switching = 0  # This bisection switches to A&B
  *         if bisection:             # <<<<<<<<<<<<<<
@@ -4318,7 +4339,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     if (__pyx_t_1) {
 
 
-      /* "cymodab.pyx":214
+      /* "cymodab.pyx":217
  *         switching = 0  # This bisection switches to A&B
  *         if bisection:
  *             y3 = f(x3) - y  # Function value at midpoint             # <<<<<<<<<<<<<<
@@ -4328,7 +4349,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       __pyx_t_4 = NULL;
       __Pyx_INCREF(__pyx_v_f);
       __pyx_t_7 = __pyx_v_f; 
-      __pyx_t_6 = PyFloat_FromDouble(__pyx_v_x3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 214, __pyx_L1_error)
+      __pyx_t_6 = PyFloat_FromDouble(__pyx_v_x3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_8 = 1;
       #if CYTHON_UNPACK_METHODS
@@ -4348,20 +4369,20 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 214, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
       }
-      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 214, __pyx_L1_error)
+      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_6 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 214, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_5, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 214, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 217, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_v_y3 = __pyx_t_3;
 
-      /* "cymodab.pyx":215
+      /* "cymodab.pyx":218
  *         if bisection:
  *             y3 = f(x3) - y  # Function value at midpoint
  *             dy = f2 - f1             # <<<<<<<<<<<<<<
@@ -4370,7 +4391,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       __pyx_v_dy = (__pyx_v_f2 - __pyx_v_f1);
 
-      /* "cymodab.pyx":216
+      /* "cymodab.pyx":219
  *             y3 = f(x3) - y  # Function value at midpoint
  *             dy = f2 - f1
  *             if isfinite(dy):  # Avoids overflow in the calculations below             # <<<<<<<<<<<<<<
@@ -4382,7 +4403,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":217
+        /* "cymodab.pyx":220
  *             dy = f2 - f1
  *             if isfinite(dy):  # Avoids overflow in the calculations below
  *                 ym = (f1 + f2) * 0.5  # Ordinate of chord at midpoint; f1, f2 have opposite signs             # <<<<<<<<<<<<<<
@@ -4391,7 +4412,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_ym = ((__pyx_v_f1 + __pyx_v_f2) * 0.5);
 
-        /* "cymodab.pyx":218
+        /* "cymodab.pyx":221
  *             if isfinite(dy):  # Avoids overflow in the calculations below
  *                 ym = (f1 + f2) * 0.5  # Ordinate of chord at midpoint; f1, f2 have opposite signs
  *                 r = 1.0 - fabs(ym / dy)  # Symmetry factor             # <<<<<<<<<<<<<<
@@ -4400,7 +4421,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_r = (1.0 - fabs((__pyx_v_ym / __pyx_v_dy)));
 
-        /* "cymodab.pyx":219
+        /* "cymodab.pyx":222
  *                 ym = (f1 + f2) * 0.5  # Ordinate of chord at midpoint; f1, f2 have opposite signs
  *                 r = 1.0 - fabs(ym / dy)  # Symmetry factor
  *                 k = r * r  # Deviation factor             # <<<<<<<<<<<<<<
@@ -4409,7 +4430,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_k = (__pyx_v_r * __pyx_v_r);
 
-        /* "cymodab.pyx":221
+        /* "cymodab.pyx":224
  *                 k = r * r  # Deviation factor
  *                 # k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
  *                 if fabs(ym - y3) < (k * fabs(ym) + k * fabs(y3)) * margin:             # <<<<<<<<<<<<<<
@@ -4421,7 +4442,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":222
+          /* "cymodab.pyx":225
  *                 # k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
  *                 if fabs(ym - y3) < (k * fabs(ym) + k * fabs(y3)) * margin:
  *                     bisection = 0             # <<<<<<<<<<<<<<
@@ -4430,7 +4451,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_bisection = 0;
 
-          /* "cymodab.pyx":223
+          /* "cymodab.pyx":226
  *                 if fabs(ym - y3) < (k * fabs(ym) + k * fabs(y3)) * margin:
  *                     bisection = 0
  *                     switching = 1             # <<<<<<<<<<<<<<
@@ -4439,7 +4460,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_switching = 1;
 
-          /* "cymodab.pyx":224
+          /* "cymodab.pyx":227
  *                     bisection = 0
  *                     switching = 1
  *                     threshold = C * dx  # Safety factor: skips two AB steps before the first fallback             # <<<<<<<<<<<<<<
@@ -4448,7 +4469,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_threshold = (__pyx_v_C * __pyx_v_dx);
 
-          /* "cymodab.pyx":225
+          /* "cymodab.pyx":228
  *                     switching = 1
  *                     threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
  *                     y1 = f1  # A&B starts from the true residuals             # <<<<<<<<<<<<<<
@@ -4457,7 +4478,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_y1 = __pyx_v_f1;
 
-          /* "cymodab.pyx":226
+          /* "cymodab.pyx":229
  *                     threshold = C * dx  # Safety factor: skips two AB steps before the first fallback
  *                     y1 = f1  # A&B starts from the true residuals
  *                     y2 = f2             # <<<<<<<<<<<<<<
@@ -4466,7 +4487,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_y2 = __pyx_v_f2;
 
-          /* "cymodab.pyx":221
+          /* "cymodab.pyx":224
  *                 k = r * r  # Deviation factor
  *                 # k*|ym| + k*|y3| cannot overflow; an infinite y3 fails the test.
  *                 if fabs(ym - y3) < (k * fabs(ym) + k * fabs(y3)) * margin:             # <<<<<<<<<<<<<<
@@ -4475,7 +4496,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         }
 
-        /* "cymodab.pyx":216
+        /* "cymodab.pyx":219
  *             y3 = f(x3) - y  # Function value at midpoint
  *             dy = f2 - f1
  *             if isfinite(dy):  # Avoids overflow in the calculations below             # <<<<<<<<<<<<<<
@@ -4484,7 +4505,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       }
 
-      /* "cymodab.pyx":213
+      /* "cymodab.pyx":216
  * 
  *         switching = 0  # This bisection switches to A&B
  *         if bisection:             # <<<<<<<<<<<<<<
@@ -4494,7 +4515,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       goto __pyx_L21;
     }
 
-    /* "cymodab.pyx":229
+    /* "cymodab.pyx":232
  *         else:
  *             # If x3 got clamped, reuse the true residual stored at the endpoint.
  *             if x3 == x1:             # <<<<<<<<<<<<<<
@@ -4507,7 +4528,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":230
+        /* "cymodab.pyx":233
  *             # If x3 got clamped, reuse the true residual stored at the endpoint.
  *             if x3 == x1:
  *                 y3 = f1             # <<<<<<<<<<<<<<
@@ -4516,7 +4537,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_y3 = __pyx_v_f1;
 
-        /* "cymodab.pyx":229
+        /* "cymodab.pyx":232
  *         else:
  *             # If x3 got clamped, reuse the true residual stored at the endpoint.
  *             if x3 == x1:             # <<<<<<<<<<<<<<
@@ -4526,7 +4547,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L24;
       }
 
-      /* "cymodab.pyx":231
+      /* "cymodab.pyx":234
  *             if x3 == x1:
  *                 y3 = f1
  *             elif x3 == x2:             # <<<<<<<<<<<<<<
@@ -4538,7 +4559,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":232
+        /* "cymodab.pyx":235
  *                 y3 = f1
  *             elif x3 == x2:
  *                 y3 = f2             # <<<<<<<<<<<<<<
@@ -4547,7 +4568,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         __pyx_v_y3 = __pyx_v_f2;
 
-        /* "cymodab.pyx":231
+        /* "cymodab.pyx":234
  *             if x3 == x1:
  *                 y3 = f1
  *             elif x3 == x2:             # <<<<<<<<<<<<<<
@@ -4557,7 +4578,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L24;
       }
 
-      /* "cymodab.pyx":234
+      /* "cymodab.pyx":237
  *                 y3 = f2
  *             else:
  *                 y3 = f(x3) - y             # <<<<<<<<<<<<<<
@@ -4568,7 +4589,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         __pyx_t_7 = NULL;
         __Pyx_INCREF(__pyx_v_f);
         __pyx_t_5 = __pyx_v_f; 
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_x3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_x3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 237, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __pyx_t_8 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -4588,22 +4609,22 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 234, __pyx_L1_error)
+          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 237, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
         }
-        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 234, __pyx_L1_error)
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_y); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 237, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_4 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyNumber_Subtract_object_float(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 237, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 234, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_v_y3 = __pyx_t_3;
       }
       __pyx_L24:;
 
-      /* "cymodab.pyx":236
+      /* "cymodab.pyx":239
  *                 y3 = f(x3) - y
  * 
  *             threshold *= 0.5             # <<<<<<<<<<<<<<
@@ -4614,7 +4635,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     }
     __pyx_L21:;
 
-    /* "cymodab.pyx":238
+    /* "cymodab.pyx":241
  *             threshold *= 0.5
  * 
  *         ay3 = fabs(y3)             # <<<<<<<<<<<<<<
@@ -4623,7 +4644,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
     __pyx_v_ay3 = fabs(__pyx_v_y3);
 
-    /* "cymodab.pyx":239
+    /* "cymodab.pyx":242
  * 
  *         ay3 = fabs(y3)
  *         if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path             # <<<<<<<<<<<<<<
@@ -4635,7 +4656,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     if (__pyx_t_1) {
 
 
-      /* "cymodab.pyx":240
+      /* "cymodab.pyx":243
  *         ay3 = fabs(y3)
  *         if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path
  *             if ay3 <= epsy:             # <<<<<<<<<<<<<<
@@ -4647,7 +4668,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":241
+        /* "cymodab.pyx":244
  *         if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path
  *             if ay3 <= epsy:
  *                 return x3             # <<<<<<<<<<<<<<
@@ -4660,7 +4681,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         }
         goto __pyx_L0;
 
-        /* "cymodab.pyx":240
+        /* "cymodab.pyx":243
  *         ay3 = fabs(y3)
  *         if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path
  *             if ay3 <= epsy:             # <<<<<<<<<<<<<<
@@ -4669,7 +4690,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
       }
 
-      /* "cymodab.pyx":243
+      /* "cymodab.pyx":246
  *                 return x3
  *             # A NaN residual has no usable sign, so the bracket cannot be updated.
  *             return NAN             # <<<<<<<<<<<<<<
@@ -4682,7 +4703,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       }
       goto __pyx_L0;
 
-      /* "cymodab.pyx":239
+      /* "cymodab.pyx":242
  * 
  *         ay3 = fabs(y3)
  *         if not ay3 > epsy:  # Exit on y-convergence or NaN with a single branch on the hot path             # <<<<<<<<<<<<<<
@@ -4691,7 +4712,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
     }
 
-    /* "cymodab.pyx":245
+    /* "cymodab.pyx":248
  *             return NAN
  * 
  *         if bisection:             # <<<<<<<<<<<<<<
@@ -4703,7 +4724,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
     if (__pyx_t_1) {
 
 
-      /* "cymodab.pyx":246
+      /* "cymodab.pyx":249
  * 
  *         if bisection:
  *             if same_sign(f1, y3):  # Same sign check             # <<<<<<<<<<<<<<
@@ -4715,7 +4736,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":247
+        /* "cymodab.pyx":250
  *         if bisection:
  *             if same_sign(f1, y3):  # Same sign check
  *                 xl, fl = x1, f1             # <<<<<<<<<<<<<<
@@ -4729,7 +4750,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         __pyx_v_xl = __pyx_t_3;
         __pyx_v_fl = __pyx_t_2;
 
-        /* "cymodab.pyx":248
+        /* "cymodab.pyx":251
  *             if same_sign(f1, y3):  # Same sign check
  *                 xl, fl = x1, f1
  *                 x1, f1, last = x3, y3, 1             # <<<<<<<<<<<<<<
@@ -4746,7 +4767,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         __pyx_v_f1 = __pyx_t_3;
         __pyx_v_last = __pyx_t_13;
 
-        /* "cymodab.pyx":246
+        /* "cymodab.pyx":249
  * 
  *         if bisection:
  *             if same_sign(f1, y3):  # Same sign check             # <<<<<<<<<<<<<<
@@ -4756,7 +4777,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L28;
       }
 
-      /* "cymodab.pyx":250
+      /* "cymodab.pyx":253
  *                 x1, f1, last = x3, y3, 1
  *             else:
  *                 xr, fr = x2, f2             # <<<<<<<<<<<<<<
@@ -4771,7 +4792,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         __pyx_v_xr = __pyx_t_3;
         __pyx_v_fr = __pyx_t_2;
 
-        /* "cymodab.pyx":251
+        /* "cymodab.pyx":254
  *             else:
  *                 xr, fr = x2, f2
  *                 x2, f2, last = x3, y3, -1             # <<<<<<<<<<<<<<
@@ -4790,7 +4811,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       }
       __pyx_L28:;
 
-      /* "cymodab.pyx":245
+      /* "cymodab.pyx":248
  *             return NAN
  * 
  *         if bisection:             # <<<<<<<<<<<<<<
@@ -4800,7 +4821,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       goto __pyx_L27;
     }
 
-    /* "cymodab.pyx":253
+    /* "cymodab.pyx":256
  *                 x2, f2, last = x3, y3, -1
  *         else:
  *             yl, yr = f1, f2  # True residuals of the bracket before the update             # <<<<<<<<<<<<<<
@@ -4815,7 +4836,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       __pyx_v_yl = __pyx_t_3;
       __pyx_v_yr = __pyx_t_2;
 
-      /* "cymodab.pyx":254
+      /* "cymodab.pyx":257
  *         else:
  *             yl, yr = f1, f2  # True residuals of the bracket before the update
  *             if same_sign(f1, y3):  # Same sign check             # <<<<<<<<<<<<<<
@@ -4827,7 +4848,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":255
+        /* "cymodab.pyx":258
  *             yl, yr = f1, f2  # True residuals of the bracket before the update
  *             if same_sign(f1, y3):  # Same sign check
  *                 if side == 1:             # <<<<<<<<<<<<<<
@@ -4839,7 +4860,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":256
+          /* "cymodab.pyx":259
  *             if same_sign(f1, y3):  # Same sign check
  *                 if side == 1:
  *                     y2 *= ab_factor(y3, y1)             # <<<<<<<<<<<<<<
@@ -4848,7 +4869,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_y2 = (__pyx_v_y2 * __pyx_f_7cymodab_ab_factor(__pyx_v_y3, __pyx_v_y1));
 
-          /* "cymodab.pyx":255
+          /* "cymodab.pyx":258
  *             yl, yr = f1, f2  # True residuals of the bracket before the update
  *             if same_sign(f1, y3):  # Same sign check
  *                 if side == 1:             # <<<<<<<<<<<<<<
@@ -4858,7 +4879,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
           goto __pyx_L30;
         }
 
-        /* "cymodab.pyx":257
+        /* "cymodab.pyx":260
  *                 if side == 1:
  *                     y2 *= ab_factor(y3, y1)
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yl):             # <<<<<<<<<<<<<<
@@ -4884,7 +4905,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":258
+          /* "cymodab.pyx":261
  *                     y2 *= ab_factor(y3, y1)
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yl):
  *                     side = 1  # A switching bisection on a plateau starts the A&B phase afresh             # <<<<<<<<<<<<<<
@@ -4893,7 +4914,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_side = 1;
 
-          /* "cymodab.pyx":257
+          /* "cymodab.pyx":260
  *                 if side == 1:
  *                     y2 *= ab_factor(y3, y1)
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yl):             # <<<<<<<<<<<<<<
@@ -4903,7 +4924,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         }
         __pyx_L30:;
 
-        /* "cymodab.pyx":259
+        /* "cymodab.pyx":262
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yl):
  *                     side = 1  # A switching bisection on a plateau starts the A&B phase afresh
  *                 if x3 != x1:             # <<<<<<<<<<<<<<
@@ -4915,7 +4936,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":260
+          /* "cymodab.pyx":263
  *                     side = 1  # A switching bisection on a plateau starts the A&B phase afresh
  *                 if x3 != x1:
  *                     xl, fl = x1, f1             # <<<<<<<<<<<<<<
@@ -4929,7 +4950,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
           __pyx_v_xl = __pyx_t_2;
           __pyx_v_fl = __pyx_t_3;
 
-          /* "cymodab.pyx":259
+          /* "cymodab.pyx":262
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yl):
  *                     side = 1  # A switching bisection on a plateau starts the A&B phase afresh
  *                 if x3 != x1:             # <<<<<<<<<<<<<<
@@ -4938,7 +4959,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         }
 
-        /* "cymodab.pyx":261
+        /* "cymodab.pyx":264
  *                 if x3 != x1:
  *                     xl, fl = x1, f1
  *                 x1, y1, f1, last = x3, y3, y3, 1  # Also store the unmodified y1 value to be used for bisection fallback             # <<<<<<<<<<<<<<
@@ -4958,7 +4979,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         __pyx_v_f1 = __pyx_t_14;
         __pyx_v_last = __pyx_t_13;
 
-        /* "cymodab.pyx":254
+        /* "cymodab.pyx":257
  *         else:
  *             yl, yr = f1, f2  # True residuals of the bracket before the update
  *             if same_sign(f1, y3):  # Same sign check             # <<<<<<<<<<<<<<
@@ -4968,7 +4989,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         goto __pyx_L29;
       }
 
-      /* "cymodab.pyx":263
+      /* "cymodab.pyx":266
  *                 x1, y1, f1, last = x3, y3, y3, 1  # Also store the unmodified y1 value to be used for bisection fallback
  *             else:
  *                 if side == -1:             # <<<<<<<<<<<<<<
@@ -4981,7 +5002,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":264
+          /* "cymodab.pyx":267
  *             else:
  *                 if side == -1:
  *                     y1 *= ab_factor(y3, y2)             # <<<<<<<<<<<<<<
@@ -4990,7 +5011,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_y1 = (__pyx_v_y1 * __pyx_f_7cymodab_ab_factor(__pyx_v_y3, __pyx_v_y2));
 
-          /* "cymodab.pyx":263
+          /* "cymodab.pyx":266
  *                 x1, y1, f1, last = x3, y3, y3, 1  # Also store the unmodified y1 value to be used for bisection fallback
  *             else:
  *                 if side == -1:             # <<<<<<<<<<<<<<
@@ -5000,7 +5021,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
           goto __pyx_L34;
         }
 
-        /* "cymodab.pyx":265
+        /* "cymodab.pyx":268
  *                 if side == -1:
  *                     y1 *= ab_factor(y3, y2)
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yr):             # <<<<<<<<<<<<<<
@@ -5026,7 +5047,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":266
+          /* "cymodab.pyx":269
  *                     y1 *= ab_factor(y3, y2)
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yr):
  *                     side = -1  # A switching bisection on a plateau starts the A&B phase afresh             # <<<<<<<<<<<<<<
@@ -5035,7 +5056,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
           __pyx_v_side = -1;
 
-          /* "cymodab.pyx":265
+          /* "cymodab.pyx":268
  *                 if side == -1:
  *                     y1 *= ab_factor(y3, y2)
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yr):             # <<<<<<<<<<<<<<
@@ -5045,7 +5066,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         }
         __pyx_L34:;
 
-        /* "cymodab.pyx":267
+        /* "cymodab.pyx":270
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yr):
  *                     side = -1  # A switching bisection on a plateau starts the A&B phase afresh
  *                 if x3 != x2:             # <<<<<<<<<<<<<<
@@ -5057,7 +5078,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
         if (__pyx_t_1) {
 
 
-          /* "cymodab.pyx":268
+          /* "cymodab.pyx":271
  *                     side = -1  # A switching bisection on a plateau starts the A&B phase afresh
  *                 if x3 != x2:
  *                     xr, fr = x2, f2             # <<<<<<<<<<<<<<
@@ -5071,7 +5092,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
           __pyx_v_xr = __pyx_t_14;
           __pyx_v_fr = __pyx_t_2;
 
-          /* "cymodab.pyx":267
+          /* "cymodab.pyx":270
  *                 elif not switching or ay3 <= PLATEAU_RATIO * fabs(yr):
  *                     side = -1  # A switching bisection on a plateau starts the A&B phase afresh
  *                 if x3 != x2:             # <<<<<<<<<<<<<<
@@ -5080,7 +5101,7 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
 */
         }
 
-        /* "cymodab.pyx":269
+        /* "cymodab.pyx":272
  *                 if x3 != x2:
  *                     xr, fr = x2, f2
  *                 x2, y2, f2, last = x3, y3, y3, -1  # Also store the unmodified y2 value to be used for bisection fallback             # <<<<<<<<<<<<<<
@@ -5102,75 +5123,154 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
       }
       __pyx_L29:;
 
-      /* "cymodab.pyx":273
- *             # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
- *             # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
- *             if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):             # <<<<<<<<<<<<<<
- *                 bisection = 1
- *                 side = 0
+      /* "cymodab.pyx":278
+ *             # 4 times for no more than MAX_RESIDUAL_STEPS consecutive steps. Near a root where |f| grows as x^2, a 4x
+ *             # smaller residual halves the distance to the root, as bisection does.
+ *             if x2 - x1 > threshold:             # <<<<<<<<<<<<<<
+ *                 y_min = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket
+ *                 if 42.0 * ay3 < y_min:
 */
-      __pyx_t_9 = ((__pyx_v_x2 - __pyx_v_x1) > __pyx_v_threshold);
+      __pyx_t_1 = ((__pyx_v_x2 - __pyx_v_x1) > __pyx_v_threshold);
 
-      if (__pyx_t_9) {
-
-      } else {
-
-        __pyx_t_1 = __pyx_t_9;
-
-        goto __pyx_L39_bool_binop_done;
-      }
-      __pyx_t_9 = ((42.0 * __pyx_v_ay3) >= __pyx_f_7cymodab_c_min(fabs(__pyx_v_yl), fabs(__pyx_v_yr)));
-
-
-      __pyx_t_1 = __pyx_t_9;
-
-      __pyx_L39_bool_binop_done:;
       if (__pyx_t_1) {
 
 
-        /* "cymodab.pyx":274
- *             # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
- *             if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):
- *                 bisection = 1             # <<<<<<<<<<<<<<
- *                 side = 0
- *                 margin *= 0.5
+        /* "cymodab.pyx":279
+ *             # smaller residual halves the distance to the root, as bisection does.
+ *             if x2 - x1 > threshold:
+ *                 y_min = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket             # <<<<<<<<<<<<<<
+ *                 if 42.0 * ay3 < y_min:
+ *                     pass  # Fast residual progress: needs no cap
 */
-        __pyx_v_bisection = 1;
+        __pyx_v_y_min = __pyx_f_7cymodab_c_min(fabs(__pyx_v_yl), fabs(__pyx_v_yr));
 
-        /* "cymodab.pyx":275
- *             if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):
- *                 bisection = 1
- *                 side = 0             # <<<<<<<<<<<<<<
- *                 margin *= 0.5
- *     return NAN
+        /* "cymodab.pyx":280
+ *             if x2 - x1 > threshold:
+ *                 y_min = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket
+ *                 if 42.0 * ay3 < y_min:             # <<<<<<<<<<<<<<
+ *                     pass  # Fast residual progress: needs no cap
+ *                 elif residual_steps < MAX_RESIDUAL_STEPS and 4.0 * ay3 < y_min:
 */
-        __pyx_v_side = 0;
+        __pyx_t_1 = ((42.0 * __pyx_v_ay3) < __pyx_v_y_min);
 
-        /* "cymodab.pyx":276
- *                 bisection = 1
- *                 side = 0
- *                 margin *= 0.5             # <<<<<<<<<<<<<<
+        if (__pyx_t_1) {
+
+          goto __pyx_L39;
+        }
+
+        /* "cymodab.pyx":282
+ *                 if 42.0 * ay3 < y_min:
+ *                     pass  # Fast residual progress: needs no cap
+ *                 elif residual_steps < MAX_RESIDUAL_STEPS and 4.0 * ay3 < y_min:             # <<<<<<<<<<<<<<
+ *                     residual_steps += 1
+ *                 else:
+*/
+        __pyx_t_9 = (__pyx_v_residual_steps < __pyx_v_MAX_RESIDUAL_STEPS);
+
+        if (__pyx_t_9) {
+
+        } else {
+
+          __pyx_t_1 = __pyx_t_9;
+
+          goto __pyx_L40_bool_binop_done;
+        }
+        __pyx_t_9 = ((4.0 * __pyx_v_ay3) < __pyx_v_y_min);
+
+
+        __pyx_t_1 = __pyx_t_9;
+
+        __pyx_L40_bool_binop_done:;
+        if (__pyx_t_1) {
+
+
+          /* "cymodab.pyx":283
+ *                     pass  # Fast residual progress: needs no cap
+ *                 elif residual_steps < MAX_RESIDUAL_STEPS and 4.0 * ay3 < y_min:
+ *                     residual_steps += 1             # <<<<<<<<<<<<<<
+ *                 else:
+ *                     bisection = 1
+*/
+          __pyx_v_residual_steps = (__pyx_v_residual_steps + 1);
+
+          /* "cymodab.pyx":282
+ *                 if 42.0 * ay3 < y_min:
+ *                     pass  # Fast residual progress: needs no cap
+ *                 elif residual_steps < MAX_RESIDUAL_STEPS and 4.0 * ay3 < y_min:             # <<<<<<<<<<<<<<
+ *                     residual_steps += 1
+ *                 else:
+*/
+          goto __pyx_L39;
+        }
+
+        /* "cymodab.pyx":285
+ *                     residual_steps += 1
+ *                 else:
+ *                     bisection = 1             # <<<<<<<<<<<<<<
+ *                     side = 0
+ *                     margin *= 0.5
+*/
+        /*else*/ {
+          __pyx_v_bisection = 1;
+
+          /* "cymodab.pyx":286
+ *                 else:
+ *                     bisection = 1
+ *                     side = 0             # <<<<<<<<<<<<<<
+ *                     margin *= 0.5
+ *                     residual_steps = 0
+*/
+          __pyx_v_side = 0;
+
+          /* "cymodab.pyx":287
+ *                     bisection = 1
+ *                     side = 0
+ *                     margin *= 0.5             # <<<<<<<<<<<<<<
+ *                     residual_steps = 0
+ *             else:
+*/
+          __pyx_v_margin = (__pyx_v_margin * 0.5);
+
+          /* "cymodab.pyx":288
+ *                     side = 0
+ *                     margin *= 0.5
+ *                     residual_steps = 0             # <<<<<<<<<<<<<<
+ *             else:
+ *                 residual_steps = 0
+*/
+          __pyx_v_residual_steps = 0;
+        }
+        __pyx_L39:;
+
+        /* "cymodab.pyx":278
+ *             # 4 times for no more than MAX_RESIDUAL_STEPS consecutive steps. Near a root where |f| grows as x^2, a 4x
+ *             # smaller residual halves the distance to the root, as bisection does.
+ *             if x2 - x1 > threshold:             # <<<<<<<<<<<<<<
+ *                 y_min = c_min(fabs(yl), fabs(yr))  # Best true residual of the bracket
+ *                 if 42.0 * ay3 < y_min:
+*/
+        goto __pyx_L38;
+      }
+
+      /* "cymodab.pyx":290
+ *                     residual_steps = 0
+ *             else:
+ *                 residual_steps = 0             # <<<<<<<<<<<<<<
  *     return NAN
  * 
 */
-        __pyx_v_margin = (__pyx_v_margin * 0.5);
-
-        /* "cymodab.pyx":273
- *             # Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
- *             # (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
- *             if x2 - x1 > threshold and 42.0 * ay3 >= c_min(fabs(yl), fabs(yr)):             # <<<<<<<<<<<<<<
- *                 bisection = 1
- *                 side = 0
-*/
+      /*else*/ {
+        __pyx_v_residual_steps = 0;
       }
+      __pyx_L38:;
     }
     __pyx_L27:;
   }
 
 
-  /* "cymodab.pyx":277
- *                 side = 0
- *                 margin *= 0.5
+  /* "cymodab.pyx":291
+ *             else:
+ *                 residual_steps = 0
  *     return NAN             # <<<<<<<<<<<<<<
  * 
  * 
@@ -5198,6 +5298,9 @@ static double __pyx_f_7cymodab_modAB_root(PyObject *__pyx_v_f, double __pyx_v_x1
   __Pyx_AddTraceback("cymodab.modAB_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
+
+
+
 
 
 
@@ -5443,7 +5546,7 @@ static PyObject *__pyx_pf_7cymodab_modAB_root(CYTHON_UNUSED PyObject *__pyx_self
   return __pyx_r;
 }
 
-/* "cymodab.pyx":289
+/* "cymodab.pyx":303
  * # ---------------------------------------------------------------------------
  * 
  * cpdef bint t_same_sign(double x, double y):             # <<<<<<<<<<<<<<
@@ -5461,7 +5564,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static int __pyx_f_7cymodab_t_same_sign(double __pyx_v_x, double __pyx_v_y, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
 
-  /* "cymodab.pyx":290
+  /* "cymodab.pyx":304
  * 
  * cpdef bint t_same_sign(double x, double y):
  *     return same_sign(x, y)             # <<<<<<<<<<<<<<
@@ -5474,7 +5577,7 @@ static int __pyx_f_7cymodab_t_same_sign(double __pyx_v_x, double __pyx_v_y, CYTH
   }
   goto __pyx_L0;
 
-  /* "cymodab.pyx":289
+  /* "cymodab.pyx":303
  * # ---------------------------------------------------------------------------
  * 
  * cpdef bint t_same_sign(double x, double y):             # <<<<<<<<<<<<<<
@@ -5528,39 +5631,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x,&__pyx_mstate_global->__pyx_n_u_y,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 289, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 303, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 289, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 303, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 289, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 303, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_same_sign", 0) < (0)) __PYX_ERR(0, 289, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_same_sign", 0) < (0)) __PYX_ERR(0, 303, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, i); __PYX_ERR(0, 289, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, i); __PYX_ERR(0, 303, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 289, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 303, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 289, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 303, __pyx_L3_error)
     }
-    __pyx_v_x = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L3_error)
-    __pyx_v_y = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L3_error)
+    __pyx_v_x = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L3_error)
+    __pyx_v_y = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 289, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("t_same_sign", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 303, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5592,8 +5695,8 @@ static PyObject *__pyx_pf_7cymodab_2t_same_sign(CYTHON_UNUSED PyObject *__pyx_se
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("t_same_sign", 0);
-  __pyx_t_1 = __pyx_f_7cymodab_t_same_sign(__pyx_v_x, __pyx_v_y, 1); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7cymodab_t_same_sign(__pyx_v_x, __pyx_v_y, 1); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -5618,7 +5721,7 @@ static PyObject *__pyx_pf_7cymodab_2t_same_sign(CYTHON_UNUSED PyObject *__pyx_se
   return __pyx_r;
 }
 
-/* "cymodab.pyx":292
+/* "cymodab.pyx":306
  *     return same_sign(x, y)
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):             # <<<<<<<<<<<<<<
@@ -5636,7 +5739,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static double __pyx_f_7cymodab_t_safe_midpoint(double __pyx_v_x1, double __pyx_v_x2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_r;
 
-  /* "cymodab.pyx":293
+  /* "cymodab.pyx":307
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):
  *     return safe_midpoint(x1, x2)             # <<<<<<<<<<<<<<
@@ -5649,7 +5752,7 @@ static double __pyx_f_7cymodab_t_safe_midpoint(double __pyx_v_x1, double __pyx_v
   }
   goto __pyx_L0;
 
-  /* "cymodab.pyx":292
+  /* "cymodab.pyx":306
  *     return same_sign(x, y)
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):             # <<<<<<<<<<<<<<
@@ -5703,39 +5806,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x1,&__pyx_mstate_global->__pyx_n_u_x2,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 292, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 306, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 292, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 306, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 292, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 306, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_midpoint", 0) < (0)) __PYX_ERR(0, 292, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_midpoint", 0) < (0)) __PYX_ERR(0, 306, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, i); __PYX_ERR(0, 292, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, i); __PYX_ERR(0, 306, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 292, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 306, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 292, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 306, __pyx_L3_error)
     }
-    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 292, __pyx_L3_error)
-    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 292, __pyx_L3_error)
+    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 306, __pyx_L3_error)
+    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 306, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 292, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("t_safe_midpoint", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 306, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5767,8 +5870,8 @@ static PyObject *__pyx_pf_7cymodab_4t_safe_midpoint(CYTHON_UNUSED PyObject *__py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("t_safe_midpoint", 0);
-  __pyx_t_1 = __pyx_f_7cymodab_t_safe_midpoint(__pyx_v_x1, __pyx_v_x2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 292, __pyx_L1_error)
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7cymodab_t_safe_midpoint(__pyx_v_x1, __pyx_v_x2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 306, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -5793,7 +5896,7 @@ static PyObject *__pyx_pf_7cymodab_4t_safe_midpoint(CYTHON_UNUSED PyObject *__py
   return __pyx_r;
 }
 
-/* "cymodab.pyx":295
+/* "cymodab.pyx":309
  *     return safe_midpoint(x1, x2)
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):             # <<<<<<<<<<<<<<
@@ -5810,7 +5913,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static double __pyx_f_7cymodab_t_safe_secant(double __pyx_v_x1, double __pyx_v_y1, double __pyx_v_x2, double __pyx_v_y2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_r;
 
-  /* "cymodab.pyx":296
+  /* "cymodab.pyx":310
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):
  *     return safe_secant(x1, y1, x2, y2)             # <<<<<<<<<<<<<<
@@ -5821,7 +5924,7 @@ static double __pyx_f_7cymodab_t_safe_secant(double __pyx_v_x1, double __pyx_v_y
   }
   goto __pyx_L0;
 
-  /* "cymodab.pyx":295
+  /* "cymodab.pyx":309
  *     return safe_midpoint(x1, x2)
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):             # <<<<<<<<<<<<<<
@@ -5876,53 +5979,53 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_x1,&__pyx_mstate_global->__pyx_n_u_y1,&__pyx_mstate_global->__pyx_n_u_x2,&__pyx_mstate_global->__pyx_n_u_y2,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 295, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 309, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 295, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 309, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 295, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 309, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 295, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 309, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 295, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 309, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_secant", 0) < (0)) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "t_safe_secant", 0) < (0)) __PYX_ERR(0, 309, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 4; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, i); __PYX_ERR(0, 295, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, i); __PYX_ERR(0, 309, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 4)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 309, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 309, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 309, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 309, __pyx_L3_error)
     }
-    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L3_error)
-    __pyx_v_y1 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L3_error)
-    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L3_error)
-    __pyx_v_y2 = __Pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L3_error)
+    __pyx_v_x1 = __Pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_x1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L3_error)
+    __pyx_v_y1 = __Pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L3_error)
+    __pyx_v_x2 = __Pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_x2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L3_error)
+    __pyx_v_y2 = __Pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 295, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("t_safe_secant", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 309, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5956,8 +6059,8 @@ static PyObject *__pyx_pf_7cymodab_6t_safe_secant(CYTHON_UNUSED PyObject *__pyx_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("t_safe_secant", 0);
-  __pyx_t_1 = __pyx_f_7cymodab_t_safe_secant(__pyx_v_x1, __pyx_v_y1, __pyx_v_x2, __pyx_v_y2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7cymodab_t_safe_secant(__pyx_v_x1, __pyx_v_y1, __pyx_v_x2, __pyx_v_y2, 1); if (unlikely(__pyx_t_1 == ((double)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 309, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -6343,48 +6446,48 @@ __Pyx_RefNannySetupContext("PyInit_cymodab", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_modAB_root, __pyx_t_2) < (0)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cymodab.pyx":289
+  /* "cymodab.pyx":303
  * # ---------------------------------------------------------------------------
  * 
  * cpdef bint t_same_sign(double x, double y):             # <<<<<<<<<<<<<<
  *     return same_sign(x, y)
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_3t_same_sign, 0, __pyx_mstate_global->__pyx_n_u_t_same_sign, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_3t_same_sign, 0, __pyx_mstate_global->__pyx_n_u_t_same_sign, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_same_sign, __pyx_t_2) < (0)) __PYX_ERR(0, 289, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_same_sign, __pyx_t_2) < (0)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cymodab.pyx":292
+  /* "cymodab.pyx":306
  *     return same_sign(x, y)
  * 
  * cpdef double t_safe_midpoint(double x1, double x2):             # <<<<<<<<<<<<<<
  *     return safe_midpoint(x1, x2)
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_5t_safe_midpoint, 0, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_5t_safe_midpoint, 0, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, __pyx_t_2) < (0)) __PYX_ERR(0, 292, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_midpoint, __pyx_t_2) < (0)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cymodab.pyx":295
+  /* "cymodab.pyx":309
  *     return safe_midpoint(x1, x2)
  * 
  * cpdef double t_safe_secant(double x1, double y1, double x2, double y2):             # <<<<<<<<<<<<<<
  *     return safe_secant(x1, y1, x2, y2)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_7t_safe_secant, 0, __pyx_mstate_global->__pyx_n_u_t_safe_secant, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7cymodab_7t_safe_secant, 0, __pyx_mstate_global->__pyx_n_u_t_safe_secant, NULL, __pyx_mstate_global->__pyx_n_u_cymodab, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 309, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_secant, __pyx_t_2) < (0)) __PYX_ERR(0, 295, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_t_safe_secant, __pyx_t_2) < (0)) __PYX_ERR(0, 309, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "cymodab.pyx":1
@@ -6504,30 +6607,30 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
     const struct { const unsigned int length: 5; } str_length_index[] = {{1},{11},{20},{12},{8},{8},{10},{8},{12},{8},{13},{18},{18},{7},{1},{5},{7},{10},{3},{10},{15},{13},{11},{6},{1},{2},{2},{4},{1},{2},{2},{4}};
-    const struct { const unsigned int length: 10; } bytes_length_index[] = {{16},{1013},{20},{16}};
+    const struct { const unsigned int length: 11; } bytes_length_index[] = {{16},{1064},{20},{16}};
     #ifndef CYTHON_COMPRESS_STRINGS
       #define CYTHON_COMPRESS_STRINGS 90
     #endif
-    #if (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (853 bytes) */
-static const char cstring[] = "x\332\205S\261n\343F\020\025-*\247\234\345X\264h;V\022 \264\345\342\232\003(\323\300\005\207\303\201\212\214 Mp\262\345&AB\254I*\020N\022Mq\025H\251\256\334r\312-\267\334\222\245J\225.U\262\344\047\370\0232\\\331\316\001\027\344X\314\314\016g\337\314\274\231}\353/\306Q@n^\336.\346\236\367\016\305\273Ew\350S\357\227pN/\303\201\347\221\311$\242\204\206\036~\203\331\304/\364\230\014\047JG\301l\244\376L\310X\351xFF\2176\r\023\212j\230x~4\215ft8\tI\262\230\370\303\350\345\223#\361G(=\204\243S\342\2077\304\177\377P\321`H\303q2&s\324S\364\270\035o\032E\3646\272MB\032\204\0032\033Q\352%d\020z\343ap\033\r\047\217\307$\364\311\346\200u$\303?\047\177\221\321,L\346s{\336\236\323h\264X\330\213\366\002\215u\351\000H\246o\263\037\300\205+\256\255K\207\353Cwed\247\257\326\257~\2763\356\333\245\312>\270\271n\026b\037~\345\177\313fj\337\177Q\252XB+T\223\033\231\376\354C\302\216\231\233Uk\354\002L\350\345\210x\016[p\n1\327\271\313\373\002\203\276d\006\263\230\303\246\240nPf\263.\224\301\316\252\273,\316\377\377\367}\265T\251~\2301\227\365\241\001\027\334\340-\356\213#iIG\306\377\002d\033\261\315\354L\257\203V\2102\264\241\227\351UVa\327`\025p;\354\nK\263\262j\021V3\340;N8\025h6\340\234o\361S\036\013]\270\342ZZ\367\317K;\365\365\356\251\350\211@\266d\220\266\322`\331Z\006++\253\357\303oB\023\246\350KS\3662\343\000|$\002\275\277\013K8\202b]4u\3228\377\324\365_\211\252\245\035\003t\350\3400j\273l\006?B\234\325\033p\0067\274\314\333\374\022\013<\0237rK\036K73\217x\203w8\311\014\023o\370|\017#\372\242!:*B\325v\205\370V\216\035\2361\037\371\304\214v^\305\031>5m \027\016L\261f<4\036\023\317q^ZV?P\240\016\237\342\330\352&t\021\254\205$%\342X\270\205\243\203ei9\326\347`|\371\243\354\272te?\335K\333\351eJ\227\366\362b\265\267\2623\363{\241=\211-\005\202-\030J\340\n\355\324Y\002\0478$\254\273W\364\244\232G\273\340\256\007\004(f\350\3455\214\316\253_\261`3\305m\\\025\252f\213uSd\212d\365C\210\363M\253\252\313]\266\340\0327y\257\250\371\342\321\350\362g\310\246#p4\237x\317\245\226\327\352P\201~A""\314G\367\213\211\2259\266\322\344/\204-\272R\313\366\217x\023\207\022\310\023\371\307\262\275\354\257\014\\\013\363\033\014R\203+\326\301\374\232W\324\356\253\004:\377\351a\r\342\\\001\342\313\370<\340\267\030\364\031\300\363T+\026\250\240\361\030\311\233\"\214#f\262\203\013{\222^/\255\245\263\214W\225U\377\316\270\303\345P\200\207\005\305Mn\251\267\262.=X\257\025\331N\361\032\326\245\"\016}o6\024\374\003NS\375\006";
-    PyObject *data = __Pyx_DecompressString(cstring, 853, 1);
+    #if (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (885 bytes) */
+static const char cstring[] = "x\332\205S=o\343F\020%-*Vb9&-\312\216\225\017\204:\371\2004\007P\246\200;\004A@EF\220&8\331\272&AB\254H*\020\"\211\226\270\n\304T.\267\334r\313-Y\262T\251\362J\225[\362\047\350\047d\226\262\235\003.\310\251\230\235\035\r\337\274\2317\373\275\237L\243\000\r_\334%+\317{\r\346u\322\033\373\330\3739\\\341\233p\344yh6\2130\302\241\007\277\321r\346\313s\212\306\263\342\214\202\345\244\370g\206\246\3059_\242\311\243\217\303\030\3031\216=?ZDK<\236\205(Nf\3768z\361\024\210\375\tX\017\340\360\002\371\341\020\371\177>0\032\215q8\215\247h\005\347\002\"n\327[D\021\276\213\356\342\020\007\341\010-\047\030{1\032\205\336t\034\334E\343\331\3435\016}\264\277\000\217x\374\307\354/4Y\206\361je\257\332+\034M\222\304N\332\t8[\345\214\"\241\035\221W\324\245\267L\335*\347\333swc\210\313\227\333\227?\2755vm\245\\\247n\256\231\322\324\351/\354\357\264\221\331\273\217\224\262\305Uy4\230!\264&\267\204\366\025C\271vx\037\223&qE\245J\256\251I\3739`w\350\001\275\244s\2461\227\r8\244\177L\014b\021\207,(\\\016\3571\261I\217\226\250-*\047d\236\377\377\337\273\212R\256\334/\211K\006\264F\257\231\301Z\314\347\027\251\225:\351\374_\000\2617G\304\026\232NUiJ\264M\373B\253\2202yC-\twLn\201\232%*2\255j\320/\031b\230\203[\243\035v\300.\331\234k\334\345oRk\367\211r\254oO.y\237\007i+\r\262V\026\254[\353`c\t\275N\177\345*7\371 5\323\2760\316\250\017#\201\350o\334\342\016\307\300\013gN6\317\337\017\375W\241\212rlP\215vA\226\352\tY\322\037\350\\\3505zE\207\254\304\332\354\006\010^\361az\2206SW\230\027\254\306\272\014\t\303\204/|v\n\031\003^\343\335\"\243\340v\013\370V\016\035^\021\037\346\t\025\355\274\002j>5m\300,\034\272\000\316p\251=\026^\201^\252\320\317\nP\207-@6\335\244=\000k\301\220b\336\344\256\014t\201\226\232\003?\007\362K\357T\327R7\035d\247Y;\273\311\360\332^_oN7\2660\277\346\352\2239(@\240\005\2430\260L\307:\211\3513\020\tx\367eOE\363\340\313\331\365)\242\030*\364\363*d\347\225OI\260W\361\010V\005\027\332\002o\014\223BB?\247\363|\337j\321\345\tI\230\312L\326\227\234\257\037\235\036;\204i:\034\244y/""\332I\325\274\252\3232\035\310\301\274\363\275T\254\304\240\225\006\373\206\333\274\227\252\242~\301\032 J\220>K\177_\267\327\203\215\001ka~\016I\205pr\035\314\317X\271\330\375\242\200\306~|X\203y^\000\302\313\3700\340\027\220\364\001\300N\246\356\252\37316axRT]&\366Y\000\233\327)Ty\350A\n9\344j^o\361\356\366\371\253\265\teN7\316f\361\026\300\237s\224\357e\222]\230\360\262\205\t\273\237\353\026\337?\252\255\322`\226\364\276-Tq\344\263\331*\222!\304\276\333\317\352\037\307\006\017{";
+    PyObject *data = __Pyx_DecompressString(cstring, 885, 1);
     #define __Pyx_DecompressString_LZSS_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) > 0 && (CYTHON_COMPRESS_STRINGS) <= 90 /* compression: lzss (1051 bytes) */
-static const char cstring[] = "\377?cymodab\177.pyx__P\002\000\377PyDict_N\377extRef__\377annotate\377____func\336\004\001main\003\002od\273ul\025\002nam\035\002q\367ual\004\005test\3763\000is_coro\377utineasy\337ncio.\010\006sc\365l\024\000_L\000trac\337eback\213\004fi\177temsmax\005\000\375r\241\000AB_roo\377tpopsetd\377efaultt_\377safe_mid\357poin\007\005sec\371a\007\003\221\000signv\377aluesxx1\377x2xtolyy\3571y2y\006\000\320\000\026\377\220a\330\004\013\2109\220\377A\220S\230\001\320\000\027\377\320\027A\300\021\330%8\377\3208I\310\021\3602\000\177\005\025\220A\340\004\024\001\001\377\025\220Z\230z\250\032\260\3771\360\006\000\005!\240\001\376\003\001\032\230\021\330\004\007\200\377s\210\"\210A\330\010\014\177\210E\220\024\220Q\340O\000\3775\220\002\220%\220q\230\277\004\230A\230T\240\"\000\t\377\210\021\210!\2104\210r\375\220-\002t\2101\210D\220\377\003\2201\330\010\017\210q\373\340\004\002\032\360\010\000\005\010\377\200u\210A\210T\220\023\377\220E\230\021\230$\230c\377\240\031\250!\2504\250q\3627\007\330B\001\313\0011\330\004\020\373\220\001\001\001\003\2202\220Q\377\330\004\010\210\005\210U\220\335!j\001\r\210S\230\000!\330\377\010\013\2101\330\014\021\220\277\035\230a\230t\240\010\000\023\377\2205\230\002\230%\230q\377\240\004\240A\240U\250!\377\360\n\000\r\020\320\017%\377\240Q\240d\250$\250d\377\260$\260d\270$\270d\377\300!\330\020\025\220[\240\377\001\240\024\240T\250\024\250?Q\330\021\026\220c\206 \023\000\177]\240!\2404\240t\225\000\277t\2604\260q\340\001\017\330\375\014W\017\010\000\r\021\220\004\373\220B\212@\014\017\210u\220\377C\220q\330\020\023\2203\377\220b\230\003\2302\230R\376\236\0003\240b\250\002\250\"\377\250A\330\024\031\230\023\230\277B\230a\330\021\024/\000c\373\230\022\037\000T\240\023\240B\264\035\002\227\002S\306\000!\340\337\0003s\210c\354 o\0001\340\010\301@:\354\006\021\211 4\220r\272@\377\000u\023q\005x\255@\001\330\020\311\001\337\022\2304\230r\264@\020\024\353\220D\223 $\242 s\240\"\327\240A\330\016\000B\224\000\001\340\352\235\0004\335@\003s\010\004\250A""\377\250T\260\022\2602\260R\377\260t\2701\270E\300\022\177\3001\330\024 \240\001\000\002R\006\001\002@\002\300\000\021\304\001\021\307`?\r\020\210s\220#\242@\321 \312\307 \024\367\003\025\303`\r\001\220a\373\220t\377\000Q\340\014\031\230\277\021\340\010\016\210d\300C\013\322\307`t\327B\256 t\247 a\330\237\020\027\220q\340\345\003\326B\017\377\210y\230\001\230\024\230Q\272\260\001E\001\005D\230\007\354@4\355\240\230@\024\220\007\0145\250\001\177\340\014\020\220\005\220T\225!\3545\010\227a\003\230\310\000\032\230)\377\2401\240D\250\001\330\025\337\031\230\032\2403\226`#\250\177^\2702\270T\300\021\224`\343\024\033\"\000\264B\213a\024\030\2309\005\367\204\002\300\"\004\230G\223d\223`&\350a\004\230\311@1\035\034\"\0002\034O5\260\001\360\276`\303!\"\267`\375r\225\0004\240u\250B\250\377d\260#\260U\270!\270\3774\270q\300\005\300T\310\237\021\310!\330\020L\002\247 \330o\020\032\230!\247\205\002\320\000\003\004\265;\350\"4\212\205\001\320\000u\001\004\007\013\210=\275#";
-    PyObject *data = __Pyx_DecompressString_LZSS(cstring, 1051, 1318);
+    #elif (CYTHON_COMPRESS_STRINGS) > 0 && (CYTHON_COMPRESS_STRINGS) <= 90 /* compression: lzss (1099 bytes) */
+static const char cstring[] = "\377?cymodab\177.pyx__P\002\000\377PyDict_N\377extRef__\377annotate\377____func\336\004\001main\003\002od\273ul\025\002nam\035\002q\367ual\004\005test\3763\000is_coro\377utineasy\337ncio.\010\006sc\365l\024\000_L\000trac\337eback\213\004fi\177temsmax\005\000\375r\241\000AB_roo\377tpopsetd\377efaultt_\377safe_mid\357poin\007\005sec\371a\007\003\221\000signv\377aluesxx1\377x2xtolyy\3571y2y\006\000\320\000\026\377\220a\330\004\013\2109\220\377A\220S\230\001\320\000\027\377\320\027A\300\021\330%8\377\3208I\310\021\3602\000\177\005\025\220A\340\004\024\001\001\377\025\220Z\230z\250\032\260\3771\360\006\000\005!\240\001\376\003\001\032\230\021\330\004\"\240\377!\330\004\036\230a\340\004\377\007\200s\210\"\210A\330\377\010\014\210E\220\024\220Q\375\340Y\0005\220\002\220%\220\377q\230\004\230A\230T\240\376,\000\t\210\021\210!\2104\367\210r\2209\000\007\200t\210\3771\210D\220\003\2201\330\277\010\017\210q\340\004\002\032\360\377\010\000\005\010\200u\210A\377\210T\220\023\220E\230\021\377\230$\230c\240\031\250!/\2504\250q7\007\330B\001\325\001\2771\330\004\020\220\001\001\001\003\377\2202\220Q\330\004\010\210\337\005\210U\220!j\001\r\210\375S\230\000!\330\010\013\2101\377\330\014\021\220\035\230a\230\373t\240\010\000\023\2205\230\002\377\230%\230q\240\004\240A\377\240U\250!\360\n\000\r\377\020\320\017%\240Q\240d\377\250$\250d\260$\260d\377\270$\270d\300!\330\020\377\025\220[\240\001\240\024\240\377T\250\024\250Q\330\021\026\363\220c\220 \023\000]\240!\240\3674\240t\225\000t\2604\260\333q\340\001\017\330\014W\017\010\000\277\r\021\220\004\220B\224@\014\377\017\210u\220C\220q\330\377\020\023\2203\220b\230\003\357\2302\230R\236\0003\240b\377\250\002\250\"\250A\330\024\377\031\230\023\230B\230a\330\273\021\024/\000c\230\022\037\000TO\240\023\240B\035\002\227\002S\306\000;!\340\337\0003\210c\354 o\000\2471\340\010\313@\354\006\021\211 4S\220r\304@\377\000\023q\005x\255@\367\001\330\020\311\001\022\2304\230\275r\264@\020\024\220D\223 $~\242 s\240\"\240A\330\016\000\255B\224\000""\001\340\235\0004\335@\003\376s\010\004\250A\250T\260\022\377\2602\260R\260t\2701\377\270E\300\022\3001\330\024\047 \240\001\000\002\006\001\002@\002\300\000\365\021\304\001\021\321`\r\020\210s\243\220#\242@\321 \307 \024\367\003\025\274\303`\r\001\220a\220t\377\000Q\377\340\014\031\230\021\340\010\016+\210d\300C\013\307`t\327B\256 \375t\247 a\330\020\027\220q\371\340\345\003\326B\017\210y\230\001\257\230\024\230Q\260\001E\001\005D\333\230\007\354@4\240\230@\024\220\376\007\0145\250\001\340\014\020\220\307\005\220T\225!5\010\227a\003\230\376\310\000\032\230)\2401\240D\377\250\001\330\025\031\230\032\240\3753\226`#\250^\2702\2707T\300\021\224`\024\033\"\000\264B\236\213a\024\030\230\005\367\204\002\300\"\004c\230G\223d\223`\350a\004\230\311@\3621\035\034\"\0002\0345\260\001\360K\014\000\302\"\"\267`\321A\020v\001\377Q\230d\240!\2405\250\370\222A\201 \331\204\003$\230b\240\001\377\340\025$\240B\320&9\373\270\024\265\000\022\3004\300r=\310\214@&\240a\340\246C\302\001\373\024\036\337`\024%\240Q\340\373\020!\273\206\001\013\2101\320\000W\032\230!\264\207\001;\221B4\263\205\001{\320\000\236\001\004\013\210=\346#";
+    PyObject *data = __Pyx_DecompressString_LZSS(cstring, 1099, 1369);
     #define __Pyx_DecompressString_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (1318 bytes) */
-static const char bytes[] = "?cymodab.pyx__Pyx_PyDict_NextRef__annotate____func____main____module____name____qualname____test___is_coroutineasyncio.coroutinescline_in_tracebackcymodabfitemsmaxitermodAB_rootpopsetdefaultt_safe_midpointt_safe_secantt_same_signvaluesxx1x2xtolyy1y2ytol\320\000\026\220a\330\004\013\2109\220A\220S\230\001\320\000\027\320\027A\300\021\330%8\3208I\310\021\3602\000\005\025\220A\340\004\024\220A\340\004\025\220Z\230z\250\032\2601\360\006\000\005!\240\001\360\006\000\005\032\230\021\330\004\007\200s\210\"\210A\330\010\014\210E\220\024\220Q\340\004\013\2105\220\002\220%\220q\230\004\230A\230T\240\021\330\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\340\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\360\010\000\005\010\200u\210A\210T\220\023\220E\230\021\230$\230c\240\031\250!\2504\250q\330\010\017\210q\340\004\t\210\021\330\004\t\210\021\330\004\013\2101\330\004\020\220\001\330\004\020\220\003\2202\220Q\330\004\010\210\005\210U\220!\2201\330\010\r\210S\220\002\220!\330\010\013\2101\330\014\021\220\035\230a\230t\2401\330\014\023\2205\230\002\230%\230q\240\004\240A\240U\250!\360\n\000\r\020\320\017%\240Q\240d\250$\250d\260$\260d\270$\270d\300!\330\020\025\220[\240\001\240\024\240T\250\024\250Q\330\021\026\220c\230\021\330\020\025\220]\240!\2404\240t\2504\250t\2604\260q\340\020\025\220]\240!\2404\240t\2504\250t\2604\260q\330\014\023\2205\230\002\230%\230q\240\004\240A\240U\250!\360\010\000\r\021\220\004\220B\220a\330\014\017\210u\220C\220q\330\020\023\2203\220b\230\003\2302\230R\230t\2403\240b\250\002\250\"\250A\330\024\031\230\023\230B\230a\330\021\024\220B\220c\230\022\2302\230T\240\023\240B\240b\250\002\250!\330\020\025\220S\230\002\230!\340\010\013\2103\210c\220\021\330\014\023\2201\340\010\024\220A\330\010\013\2101\330\014\021\220\021\220!\2204\220r\230\021\330\014\021\220\023\220B\220a\330\014\017\210x\220q\230\001\330\020\026\220c\230\022\2304\230r\240\021\330\020\024\220D""\230\002\230$\230a\230s\240\"\240A\330\020\024\220B\220b\230\001\340\020\023\2204\220q\230\003\2302\230T\240\023\240B\240b\250\004\250A\250T\260\022\2602\260R\260t\2701\270E\300\022\3001\330\024 \240\001\330\024 \240\001\330\024 \240\002\240\"\240A\330\024\031\230\021\330\024\031\230\021\360\006\000\r\020\210s\220#\220Q\330\020\025\220Q\330\021\024\220C\220q\330\020\025\220Q\340\020\025\220Q\220a\220t\2302\230Q\340\014\031\230\021\340\010\016\210d\220!\2201\330\010\013\2104\210t\2202\220Q\330\014\017\210t\2203\220a\330\020\027\220q\340\014\023\2201\340\010\013\2101\330\014\017\210y\230\001\230\024\230Q\330\020\024\220E\230\024\230Q\330\020\024\220D\230\007\230t\2404\240q\340\020\024\220E\230\024\230Q\330\020\024\220D\230\007\230t\2405\250\001\340\014\020\220\005\220T\230\021\330\014\017\210y\230\001\230\024\230Q\330\020\023\2205\230\003\2301\330\024\032\230)\2401\240D\250\001\330\025\031\230\032\2403\240d\250#\250^\2702\270T\300\021\300!\330\024\033\2301\330\020\023\2203\220c\230\021\330\024\030\230\005\230T\240\021\330\020\024\220D\230\004\230G\2404\240t\2504\250q\340\020\023\2205\230\004\230A\330\024\032\230)\2401\240D\250\001\330\025\031\230\032\2403\240d\250#\250^\2702\270T\300\021\300!\330\024\034\230A\330\020\023\2203\220c\230\021\330\024\030\230\005\230T\240\021\330\020\024\220D\230\004\230G\2404\240t\2505\260\001\360\010\000\r\020\210s\220\"\220C\220r\230\032\2404\240u\250B\250d\260#\260U\270!\2704\270q\300\005\300T\310\021\310!\330\020\034\230A\330\020\027\220q\330\020\032\230!\330\004\013\2101\320\000\032\230!\330\004\013\210;\220a\220t\2304\230t\2401\320\000\034\230A\330\004\013\210=\230\001\230\024\230Q";
+    #else /* compression: none (1369 bytes) */
+static const char bytes[] = "?cymodab.pyx__Pyx_PyDict_NextRef__annotate____func____main____module____name____qualname____test___is_coroutineasyncio.coroutinescline_in_tracebackcymodabfitemsmaxitermodAB_rootpopsetdefaultt_safe_midpointt_safe_secantt_same_signvaluesxx1x2xtolyy1y2ytol\320\000\026\220a\330\004\013\2109\220A\220S\230\001\320\000\027\320\027A\300\021\330%8\3208I\310\021\3602\000\005\025\220A\340\004\024\220A\340\004\025\220Z\230z\250\032\2601\360\006\000\005!\240\001\360\006\000\005\032\230\021\330\004\"\240!\330\004\036\230a\340\004\007\200s\210\"\210A\330\010\014\210E\220\024\220Q\340\004\013\2105\220\002\220%\220q\230\004\230A\230T\240\021\330\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\340\004\t\210\021\210!\2104\210r\220\021\330\004\007\200t\2101\210D\220\003\2201\330\010\017\210q\360\010\000\005\010\200u\210A\210T\220\023\220E\230\021\230$\230c\240\031\250!\2504\250q\330\010\017\210q\340\004\t\210\021\330\004\t\210\021\330\004\013\2101\330\004\020\220\001\330\004\020\220\003\2202\220Q\330\004\010\210\005\210U\220!\2201\330\010\r\210S\220\002\220!\330\010\013\2101\330\014\021\220\035\230a\230t\2401\330\014\023\2205\230\002\230%\230q\240\004\240A\240U\250!\360\n\000\r\020\320\017%\240Q\240d\250$\250d\260$\260d\270$\270d\300!\330\020\025\220[\240\001\240\024\240T\250\024\250Q\330\021\026\220c\230\021\330\020\025\220]\240!\2404\240t\2504\250t\2604\260q\340\020\025\220]\240!\2404\240t\2504\250t\2604\260q\330\014\023\2205\230\002\230%\230q\240\004\240A\240U\250!\360\010\000\r\021\220\004\220B\220a\330\014\017\210u\220C\220q\330\020\023\2203\220b\230\003\2302\230R\230t\2403\240b\250\002\250\"\250A\330\024\031\230\023\230B\230a\330\021\024\220B\220c\230\022\2302\230T\240\023\240B\240b\250\002\250!\330\020\025\220S\230\002\230!\340\010\013\2103\210c\220\021\330\014\023\2201\340\010\024\220A\330\010\013\2101\330\014\021\220\021\220!\2204\220r\230\021\330\014\021\220\023\220B\220a\330\014\017\210x\220q\230\001\330\020\026\220c\230\022\2304""\230r\240\021\330\020\024\220D\230\002\230$\230a\230s\240\"\240A\330\020\024\220B\220b\230\001\340\020\023\2204\220q\230\003\2302\230T\240\023\240B\240b\250\004\250A\250T\260\022\2602\260R\260t\2701\270E\300\022\3001\330\024 \240\001\330\024 \240\001\330\024 \240\002\240\"\240A\330\024\031\230\021\330\024\031\230\021\360\006\000\r\020\210s\220#\220Q\330\020\025\220Q\330\021\024\220C\220q\330\020\025\220Q\340\020\025\220Q\220a\220t\2302\230Q\340\014\031\230\021\340\010\016\210d\220!\2201\330\010\013\2104\210t\2202\220Q\330\014\017\210t\2203\220a\330\020\027\220q\340\014\023\2201\340\010\013\2101\330\014\017\210y\230\001\230\024\230Q\330\020\024\220E\230\024\230Q\330\020\024\220D\230\007\230t\2404\240q\340\020\024\220E\230\024\230Q\330\020\024\220D\230\007\230t\2405\250\001\340\014\020\220\005\220T\230\021\330\014\017\210y\230\001\230\024\230Q\330\020\023\2205\230\003\2301\330\024\032\230)\2401\240D\250\001\330\025\031\230\032\2403\240d\250#\250^\2702\270T\300\021\300!\330\024\033\2301\330\020\023\2203\220c\230\021\330\024\030\230\005\230T\240\021\330\020\024\220D\230\004\230G\2404\240t\2504\250q\340\020\023\2205\230\004\230A\330\024\032\230)\2401\240D\250\001\330\025\031\230\032\2403\240d\250#\250^\2702\270T\300\021\300!\330\024\034\230A\330\020\023\2203\220c\230\021\330\024\030\230\005\230T\240\021\330\020\024\220D\230\004\230G\2404\240t\2505\260\001\360\014\000\r\020\210s\220\"\220C\220r\230\021\330\020\030\230\005\230Q\230d\240!\2405\250\004\250A\250Q\330\020\023\2205\230\002\230$\230b\240\001\340\025$\240B\320&9\270\024\270T\300\022\3004\300r\310\021\330\024&\240a\340\024 \240\001\330\024\033\2301\330\024\036\230a\330\024%\240Q\340\020!\240\021\330\004\013\2101\320\000\032\230!\330\004\013\210;\220a\220t\2304\230t\2401\320\000\034\230A\330\004\013\210=\230\001\230\024\230Q";
     PyObject *data = NULL;
     #define __Pyx_DecompressString_UNUSED
     #define __Pyx_DecompressString_LZSS_UNUSED
@@ -6660,20 +6763,20 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   {
     const __Pyx_PyCode_New_function_description descr = {7, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 124};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_f, __pyx_mstate->__pyx_n_u_x1, __pyx_mstate->__pyx_n_u_x2, __pyx_mstate->__pyx_n_u_y, __pyx_mstate->__pyx_n_u_xtol, __pyx_mstate->__pyx_n_u_ytol, __pyx_mstate->__pyx_n_u_maxiter};
-    __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_modAB_root, __pyx_mstate->__pyx_kp_b_iso88591_A_88I_2_A_A_Zz_1_s_A_E_Q_5_q_AT, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_modAB_root, __pyx_mstate->__pyx_kp_b_iso88591_A_88I_2_A_A_Zz_1_a_s_A_E_Q_5_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 289};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 303};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_x, __pyx_mstate->__pyx_n_u_y};
     __pyx_mstate_global->__pyx_codeobj_tab[1] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_t_same_sign, __pyx_mstate->__pyx_kp_b_iso88591_a_9AS, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[1])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 292};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 306};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_x1, __pyx_mstate->__pyx_n_u_x2};
     __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_t_safe_midpoint, __pyx_mstate->__pyx_kp_b_iso88591_A_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 295};
+    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 309};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_x1, __pyx_mstate->__pyx_n_u_y1, __pyx_mstate->__pyx_n_u_x2, __pyx_mstate->__pyx_n_u_y2};
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_cymodab_pyx, __pyx_mstate->__pyx_n_u_t_safe_secant, __pyx_mstate->__pyx_kp_b_iso88591_at4t1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }

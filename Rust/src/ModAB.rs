@@ -205,6 +205,8 @@ where
     // Each return from A&B to bisection halves the margin of the switching test, so that
     // borderline switches are rejected after unsuccessful A&B phases.
     let mut margin = 1.0;
+    const MAX_RESIDUAL_STEPS: u32 = 3; // Max consecutive A&B steps kept by a 4x residual reduction alone
+    let mut residual_steps: u32 = 0;
     let mut last: i32 = 0; // Endpoint set by the last evaluation: 1 = x1, -1 = x2, 0 = none
     // Last endpoints dropped on each side
     let (mut xl, mut fl, mut xr, mut fr) = (f64::NAN, f64::NAN, f64::NAN, f64::NAN);
@@ -313,11 +315,23 @@ where
                 (x2, y2, f2, last) = (x3, y3, y3, -1);
             }
             // Fallback if AB fails to reduce the bracket width, unless it still shrinks the residual more than 42 times
-            // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1)
-            if x2 - x1 > threshold && 42.0 * ay3 >= yl.abs().min(yr.abs()) {
-                bisection = true;
-                side = 0;
-                margin *= 0.5;
+            // (2^(1074/200) = 41.4: at this rate the residual underflows within 200 steps from |y| = 1), or more than
+            // 4 times for no more than MAX_RESIDUAL_STEPS consecutive steps. Near a root where |f| grows as x^2, a 4x
+            // smaller residual halves the distance to the root, as bisection does.
+            if x2 - x1 > threshold {
+                let y_min = yl.abs().min(yr.abs()); // Best true residual of the bracket
+                if 42.0 * ay3 < y_min {
+                    // Fast residual progress: needs no cap
+                } else if residual_steps < MAX_RESIDUAL_STEPS && 4.0 * ay3 < y_min {
+                    residual_steps += 1;
+                } else {
+                    bisection = true;
+                    side = 0;
+                    margin *= 0.5;
+                    residual_steps = 0;
+                }
+            } else {
+                residual_steps = 0;
             }
         }
     }
