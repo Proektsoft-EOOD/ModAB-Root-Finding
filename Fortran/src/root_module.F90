@@ -2760,10 +2760,7 @@
 !    non-linear equations in structural mechanics", IOP Conf. Ser.: Mater. Sci. Eng. 1276,
 !    Feb. 2023.
 !  * Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
-!    Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm.
-!    Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
-!  * Ganchovski, N.; Smith, O.; Rackauckas, C.; Tomov, L.; Traykov, A.
-!    Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm.
+!    Improvements to the Modified Anderson-Björck (modAB) Root-Finding Algorithm.
 !    Algorithms 2026, 19, 332. https://doi.org/10.3390/a19050332
 !  * Includes additional fixes proposed by L. Tomov, as follows:
 !    1. The secant point is clamped to the interval [p1.X, p2.X] before the X-convergence exit
@@ -2776,6 +2773,7 @@
 !       or the curvature changes sign within the bracket.
 !    2. Closing step: an A&B point is kept at least half the x-tolerance away from the endpoint
 !       that was just evaluated, so that one-sided convergence still closes the bracket.
+
     subroutine ModAB(me,ax,bx,fax,fbx,xzero,fzero,iflag)
 
     implicit none
@@ -2784,12 +2782,13 @@
     real(wp),intent(in)    :: ax      !! left endpoint of initial interval
     real(wp),intent(in)    :: bx      !! right endpoint of initial interval
     real(wp),intent(in)    :: fax     !! `f(ax)`
-    real(wp),intent(in)    :: fbx     !! `f(ax)`
+    real(wp),intent(in)    :: fbx     !! `f(bx)`
     real(wp),intent(out)   :: xzero   !! abscissa approximating a zero of `f` in the interval `ax`,`bx`
     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-1`=NaN residual, `-2`=max iterations reached)
 
-    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,yl,yr,ym,r,k,threshold,dy,h
+    real(wp) :: x1,x2,x3,y1,y2,y3,f1,f2,yl,yr,ym,r,k,dy,h
+    real(wp) :: threshold !! threshold to fall back to bisection if AB fails to shrink the interval enough
     real(wp) :: xl,fl,xr,fr !! last endpoints dropped on the left and on the right
     logical :: have_l,have_r !! whether `xl` and `xr` are set
     logical :: bends !! the curvature changes sign within the bracket
@@ -2815,7 +2814,7 @@
     ! borderline switches are rejected after unsuccessful A&B phases.
     margin = 1.0_wp
     residual_steps = 0
-    threshold = x2-x1 !! threshold to fall back to bisection if AB fails to shrink the interval enough
+    threshold = x2-x1
     last = 0
     have_l = .false.; have_r = .false.
     xl = 0.0_wp; fl = 0.0_wp; xr = 0.0_wp; fr = 0.0_wp
@@ -2957,9 +2956,10 @@
 !  Shared safeguards for the bracketing solvers.
 !
 !  These helpers carry the overflow/NaN postconditions that [[ModAB]] relies on.
-!  They are the Fortran form of the reference implementation in
-!  `C#/Root/Node.cs` and `C#/Root/Solvers/{Solver,RModAB}.cs`, so a change to
-!  the numerics belongs in one place rather than inline in the solver.
+!  They are the Fortran form of the C# reference implementation in
+!  https://github.com/Proektsoft-EOOD/ModAB-Root-Finding (`C#/Root/Node.cs` and
+!  `C#/Root/Solvers/{Solver,RModAB}.cs`), so a change to the numerics belongs
+!  in one place rather than inline in the solver.
 !
 !  NaN and infinity are detected with ordered comparisons ([[is_nan]],
 !  [[is_finite]]) rather than `ieee_arithmetic`. A procedure that uses that
